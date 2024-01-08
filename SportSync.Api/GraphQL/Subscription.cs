@@ -1,4 +1,4 @@
-﻿namespace sport_sync.GraphQL;
+﻿namespace SportSync.GraphQL;
 
 public class Subscription
 {

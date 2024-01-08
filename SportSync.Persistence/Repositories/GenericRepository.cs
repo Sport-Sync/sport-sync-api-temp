@@ -52,20 +52,4 @@ internal abstract class GenericRepository<TEntity>
     /// </summary>
     /// <param name="entity">The entity to be removed from the database.</param>
     public void Remove(TEntity entity) => DbContext.Remove(entity);
-
-    /// <summary>
-    /// Checks if any entity meets the specified specification.
-    /// </summary>
-    /// <param name="specification">The specification.</param>
-    /// <returns>True if any entity meets the specified specification, otherwise false.</returns>
-    protected async Task<bool> AnyAsync(Specification<TEntity> specification) =>
-        await DbContext.Set<TEntity>().AnyAsync(specification);
-
-    /// <summary>
-    /// Gets the first entity that meets the specified specification.
-    /// </summary>
-    /// <param name="specification">The specification.</param>
-    /// <returns>The maybe instance that may contain the first entity that meets the specified specification.</returns>
-    protected async Task<Maybe<TEntity>> FirstOrDefaultAsync(Specification<TEntity> specification) =>
-        await DbContext.Set<TEntity>().FirstOrDefaultAsync(specification);
 }

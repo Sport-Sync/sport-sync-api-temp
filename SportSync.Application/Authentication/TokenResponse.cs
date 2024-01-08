@@ -1,4 +1,4 @@
-﻿namespace sport_sync.Contracts.Authentication;
+﻿namespace SportSync.Application.Authentication;
 
 public class TokenResponse
 {

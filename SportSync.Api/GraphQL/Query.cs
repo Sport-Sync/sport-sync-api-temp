@@ -1,6 +1,6 @@
-﻿namespace sport_sync.GraphQL;
+﻿namespace SportSync.GraphQL;
 
 public class Query
 {
-    public string Hello() => "World";
+    public string Test() => "Test";
 }

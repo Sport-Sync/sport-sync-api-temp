@@ -1,5 +1,8 @@
 ﻿//using FluentValidation;
+
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using SportSync.Application.Core.Abstractions.Common;
 
 namespace SportSync.Application
 {
@@ -14,7 +17,30 @@ namespace SportSync.Application
         {
             //services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
+            services.RegisterRequestHandlers();
+
             return services;
+        }
+
+        private static void RegisterRequestHandlers(this IServiceCollection services)
+        {
+            var requestHandlerTypes = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .Where(t => !t.IsAbstract &&
+                            !t.IsInterface &&
+                            t.GetInterfaces().Any(i => i.IsGenericType &&
+                                                       i.GetGenericTypeDefinition() == typeof(IInputHandler<,>)));
+
+            foreach (var handlerType in requestHandlerTypes)
+            {
+                services.AddScoped(handlerType);
+                //foreach (var interfaceType in handlerType.GetInterfaces()
+                //             .Where(i => i.IsGenericType &&
+                //                         i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
+                //{
+                //    services.AddScoped(interfaceType, handlerType);
+                //}
+            }
         }
     }
 }
