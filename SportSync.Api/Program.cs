@@ -1,38 +1,33 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using sport_sync.GraphQL;
+using SportSync.Application;
+using SportSync.Infrastructure;
+using SportSync.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration)
+    .AddPersistence(builder.Configuration);
 
 builder.Services
     .AddGraphQLServer()
     .AddAuthorization()
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
-    .AddSubscriptionType<Subscription>();
-//.AddGlobalObjectIdentification();
-
-//builder.Services
-//    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
-//        var tokenSettings = builder.Configuration
-//            .GetSection("JwtSettings").Get<JwtSettings>();
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidIssuer = tokenSettings.Issuer,
-//            ValidateIssuer = true,
-//            ValidAudience = tokenSettings.Audience,
-//            ValidateAudience = true,
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.Secret)),
-//            ValidateIssuerSigningKey = true,
-//            //ClockSkew = TimeSpan.Zero // enable this line to validate the expiration time below 5mins
-//        };
-//    });
+    .AddSubscriptionType<Subscription>()
+    .AddGlobalObjectIdentification();
 
 var app = builder.Build();
 
+using IServiceScope serviceScope = app.Services.CreateScope();
+using SportSyncDbContext dbContext = serviceScope.ServiceProvider.GetRequiredService<SportSyncDbContext>();
+dbContext.Database.Migrate();
+
+app.UseAuthentication();
+app.UseAuthorization();
+//app.UseWebSockets();
 app.MapGraphQL();
 
 app.Run();

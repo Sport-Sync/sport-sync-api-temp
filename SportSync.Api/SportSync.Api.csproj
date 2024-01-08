@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>sport_sync</RootNamespace>
   </PropertyGroup>
@@ -10,11 +9,11 @@
   <ItemGroup>
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.8.1" />
     <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.8.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.14" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SportSync.Application\SportSync.Application.csproj" />
+    <ProjectReference Include="..\SportSync.Infrastructure\SportSync.Infrastructure.csproj" />
+    <ProjectReference Include="..\SportSync.Persistence\SportSync.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
