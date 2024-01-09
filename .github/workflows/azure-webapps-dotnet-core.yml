@@ -3,7 +3,7 @@ name: Build and deploy
 env:
   AZURE_WEBAPP_NAME: sport-sync-app
   AZURE_WEBAPP_PACKAGE_PATH: '.'
-  DOTNET_VERSION: '7'
+  DOTNET_VERSION: '7.0.x'
 
 on:
   push:
