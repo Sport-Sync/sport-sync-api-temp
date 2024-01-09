@@ -1,5 +1,5 @@
 ﻿using SportSync.Application.Authentication;
-using SportSync.Application.Users;
+using SportSync.Application.Users.CreateUser;
 
 namespace SportSync.GraphQL;
 

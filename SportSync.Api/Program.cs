@@ -14,6 +14,8 @@ builder.Services
 
 builder.Services
     .AddGraphQLServer()
+    .AddProjections()
+    .AddFiltering()
     .AddAuthorization()
     .AddQueryType<Query>()
     .AddMutationType<Mutation>();

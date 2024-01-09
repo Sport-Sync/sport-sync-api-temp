@@ -1,14 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>sport_sync</RootNamespace>
+    <UserSecretsId>66a1e70d-095a-426a-a5c5-09eedbd11d1e</UserSecretsId>
   </PropertyGroup>
 
 	<ItemGroup>
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.8.1" />
     <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.8.1" />
+    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="13.8.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.14">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

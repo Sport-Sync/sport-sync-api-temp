@@ -1,4 +1,5 @@
-﻿using SportSync.Domain.Core.Abstractions;
+﻿using HotChocolate;
+using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
@@ -30,22 +31,27 @@ public class User : Entity, IAuditableEntity, ISoftDeletableEntity
     {
     }
 
-    public string FirstName { get; }
+    public string FirstName { get; set; }
 
-    public string LastName { get; }
+    public string LastName { get; set; }
 
+    [GraphQLIgnore]
     public string FullName => $"{FirstName} {LastName}";
 
-    public string Email { get; }
+    public string Email { get; set; }
 
-    public string Phone { get; }
+    public string Phone { get; set; }
 
-    public DateTime CreatedOnUtc { get; }
+    [GraphQLIgnore]
+    public DateTime CreatedOnUtc { get; set; }
 
-    public DateTime? ModifiedOnUtc { get; }
+    [GraphQLIgnore]
+    public DateTime? ModifiedOnUtc { get; set; }
 
-    public DateTime? DeletedOnUtc { get; }
+    [GraphQLIgnore]
+    public DateTime? DeletedOnUtc { get; set; }
 
+    [GraphQLIgnore]
     public bool Deleted { get; }
 
     public Result ChangePassword(string passwordHash)

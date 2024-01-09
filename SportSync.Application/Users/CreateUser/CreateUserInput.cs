@@ -2,7 +2,7 @@
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Domain.Core.Primitives.Result;
 
-namespace SportSync.Application.Users;
+namespace SportSync.Application.Users.CreateUser;
 
 public record CreateUserInput : IInput<Result<TokenResponse>>
 {

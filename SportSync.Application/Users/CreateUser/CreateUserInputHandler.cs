@@ -9,7 +9,7 @@ using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.ValueObjects;
 
-namespace SportSync.Application.Users;
+namespace SportSync.Application.Users.CreateUser;
 
 public class CreateUserInputHandler : IInputHandler<CreateUserInput, Result<TokenResponse>>
 {

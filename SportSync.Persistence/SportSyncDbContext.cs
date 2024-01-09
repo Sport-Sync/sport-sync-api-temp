@@ -15,7 +15,7 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
 {
     private readonly IDateTime _dateTime;
 
-    private DbSet<User> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public SportSyncDbContext(DbContextOptions options, IDateTime dateTime)
         : base(options)
