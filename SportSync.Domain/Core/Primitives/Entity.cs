@@ -32,7 +32,7 @@ public abstract class Entity : IEquatable<Entity>
     /// <summary>
     /// Gets or sets the entity identifier.
     /// </summary>
-    public Guid Id { get; private set; }
+    public Guid Id { get; set; }
 
     public static bool operator ==(Entity a, Entity b)
     {
