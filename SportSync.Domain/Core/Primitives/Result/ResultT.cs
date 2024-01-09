@@ -27,6 +27,6 @@
         /// <exception cref="InvalidOperationException"> when <see cref="Result.IsFailure"/> is true.</exception>
         public TValue Value => IsSuccess
             ? _value
-            : throw new InvalidOperationException("The value of a failure result can not be accessed.");
+            : default;
     }
 }

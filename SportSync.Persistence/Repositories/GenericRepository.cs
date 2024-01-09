@@ -1,4 +1,6 @@
-﻿using SportSync.Application.Core.Abstractions.Data;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Maybe;
 
@@ -52,4 +54,12 @@ internal abstract class GenericRepository<TEntity>
     /// </summary>
     /// <param name="entity">The entity to be removed from the database.</param>
     public void Remove(TEntity entity) => DbContext.Remove(entity);
+
+    /// <summary>
+    /// Checks if any entity meets the specified condition
+    /// </summary>
+    /// <param name="predicate">The condition</param>
+    /// <returns>True if any entity meets the specified condition, otherwise false.</returns>
+    protected async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate) =>
+        await DbContext.Set<TEntity>().AnyAsync(predicate);
 }

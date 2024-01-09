@@ -10,4 +10,7 @@ internal sealed class UserRepository : GenericRepository<User>, IUserRepository
         : base(dbContext)
     {
     }
+
+    public async Task<bool> IsEmailUniqueAsync(string email) => !await AnyAsync(x => x.Email == email);
+    public async Task<bool> IsPhoneUniqueAsync(string phone) => !await AnyAsync(x => x.Phone == phone);
 }

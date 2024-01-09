@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SportSync.Application.Core.Abstractions.Data;
+using SportSync.Domain.Repositories;
+using SportSync.Persistence.Repositories;
 
 namespace SportSync.Persistence;
 
@@ -23,7 +25,7 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<SportSyncDbContext>());
 
-        //services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         return services;
     }

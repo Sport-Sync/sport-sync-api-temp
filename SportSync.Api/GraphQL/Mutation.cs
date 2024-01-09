@@ -5,6 +5,6 @@ namespace SportSync.GraphQL;
 
 public class Mutation
 {
-    public async Task<TokenResponse> CreateUser([Service] CreateUserInputHandler inputHandler, CreateUserInput input) =>
-        await inputHandler.Handle(input);
+    public async Task<Domain.Core.Primitives.Result.Result<TokenResponse>> CreateUser([Service] CreateUserInputHandler inputHandler, CreateUserInput input, CancellationToken cancellationToken) =>
+        await inputHandler.Handle(input, cancellationToken);
 }

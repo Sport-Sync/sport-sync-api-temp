@@ -1,5 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using sport_sync.Middleware;
 using SportSync.Application;
-using SportSync.Application.Users;
 using SportSync.GraphQL;
 using SportSync.Infrastructure;
 using SportSync.Persistence;
@@ -16,16 +17,17 @@ builder.Services
     .AddAuthorization()
     .AddQueryType<Query>()
     .AddMutationType<Mutation>();
-    //.AddSubscriptionType<Subscription>()
-    //.RegisterService<CreateUserRequestHandler>();
-    //.AddGlobalObjectIdentification();
+//.AddSubscriptionType<Subscription>()
+//.RegisterService<CreateUserRequestHandler>();
+//.AddGlobalObjectIdentification();
 
 var app = builder.Build();
 
 using IServiceScope serviceScope = app.Services.CreateScope();
 using SportSyncDbContext dbContext = serviceScope.ServiceProvider.GetRequiredService<SportSyncDbContext>();
-//dbContext.Database.Migrate();
+dbContext.Database.Migrate();
 
+app.UseCustomExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseWebSockets();

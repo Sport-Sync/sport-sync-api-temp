@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a concrete domain error.
 /// </summary>
-public sealed class Error
+public sealed class Error : ValueObject
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Error"/> class.
@@ -32,4 +32,10 @@ public sealed class Error
     /// Gets the empty error instance.
     /// </summary>
     internal static Error None => new Error(string.Empty, string.Empty);
+
+    protected override IEnumerable<object> GetAtomicValues()
+    {
+        yield return Code;
+        yield return Message;
+    }
 }

@@ -4,12 +4,13 @@ namespace SportSync.Domain.Core.Errors;
 
 public static class DomainErrors
 {
-
     public static class User
     {
         public static Error NotFound => new ("User.NotFound", "The user with the specified identifier was not found.");
 
         public static Error DuplicateEmail => new ("User.DuplicateEmail", "The specified email is already in use.");
+
+        public static Error DuplicatePhone => new("User.DuplicatePhone", "The specified phone number is already in use.");
 
         public static Error CannotChangePassword => new (
             "User.CannotChangePassword",

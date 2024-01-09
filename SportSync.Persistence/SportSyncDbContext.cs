@@ -6,6 +6,8 @@ using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Maybe;
+using SportSync.Domain.Entities;
+using SportSync.Persistence.Configurations;
 
 namespace SportSync.Persistence;
 
@@ -13,10 +15,17 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
 {
     private readonly IDateTime _dateTime;
 
+    private DbSet<User> Users { get; set; }
+
     public SportSyncDbContext(DbContextOptions options, IDateTime dateTime)
         : base(options)
     {
         _dateTime = dateTime;
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 
     public new DbSet<TEntity> Set<TEntity>()
