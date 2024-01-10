@@ -11,14 +11,14 @@ using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Users.CreateUser;
 
-public class CreateUserMutationHandler : IMutationHandler<CreateUserInput, TokenResponse>
+public class CreateUserInputHandler : IInputHandler<CreateUserInput, TokenResponse>
 {
     private readonly IJwtProvider _jwtProvider;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateUserMutationHandler(
+    public CreateUserInputHandler(
         IJwtProvider jwtProvider,
         IPasswordHasher passwordHasher,
         IUserRepository userRepository, IUnitOfWork unitOfWork)

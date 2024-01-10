@@ -1,3 +1,4 @@
+using AppAny.HotChocolate.FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using sport_sync.GraphQL;
 using SportSync.Application;
@@ -19,6 +20,10 @@ builder.Services
     .AddProjections()
     .AddFiltering()
     .AddAuthorization()
+    .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>
+    {
+        errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
+    }))
     .AddQueryType<Query>()
     .AddMutationType<Mutation>();
 //.AddSubscriptionType<Subscription>()

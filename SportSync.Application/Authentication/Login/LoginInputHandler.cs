@@ -9,13 +9,13 @@ using SportSync.Domain.Services;
 
 namespace SportSync.Application.Authentication.Login;
 
-public class LoginMutationHandler : IMutationHandler<LoginInput, TokenResponse>
+public class LoginInputHandler : IInputHandler<LoginInput, TokenResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHashChecker _passwordHashChecker;
     private readonly IJwtProvider _jwtProvider;
 
-    public LoginMutationHandler(IUserRepository userRepository, IPasswordHashChecker passwordHashChecker, IJwtProvider jwtProvider)
+    public LoginInputHandler(IUserRepository userRepository, IPasswordHashChecker passwordHashChecker, IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
         _passwordHashChecker = passwordHashChecker;
