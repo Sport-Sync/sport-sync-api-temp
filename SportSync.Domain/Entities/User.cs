@@ -55,6 +55,7 @@ public class User : Entity, IAuditableEntity, ISoftDeletableEntity
     [GraphQLIgnore]
     public bool Deleted { get; }
 
+    [GraphQLIgnore]
     public Result ChangePassword(string passwordHash)
     {
         if (passwordHash == _passwordHash)
