@@ -4,21 +4,21 @@ using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Cryptography;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
-using SportSync.Domain.Core.Primitives.Result;
+using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Users.CreateUser;
 
-public class CreateUserInputHandler : IInputHandler<CreateUserInput, Result<TokenResponse>>
+public class CreateUserMutationHandler : IMutationHandler<CreateUserInput, TokenResponse>
 {
     private readonly IJwtProvider _jwtProvider;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateUserInputHandler(
+    public CreateUserMutationHandler(
         IJwtProvider jwtProvider,
         IPasswordHasher passwordHasher,
         IUserRepository userRepository, IUnitOfWork unitOfWork)
@@ -29,23 +29,23 @@ public class CreateUserInputHandler : IInputHandler<CreateUserInput, Result<Toke
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<TokenResponse>> Handle(CreateUserInput input, CancellationToken cancellationToken)
+    public async Task<TokenResponse> Handle(CreateUserInput input, CancellationToken cancellationToken)
     {
         if (!await _userRepository.IsEmailUniqueAsync(input.Email))
         {
-            return Result.Failure<TokenResponse>(DomainErrors.User.DuplicateEmail);
+            throw new DomainException(DomainErrors.User.DuplicateEmail);
         }
 
         if (!await _userRepository.IsPhoneUniqueAsync(input.Phone))
         {
-            return Result.Failure<TokenResponse>(DomainErrors.User.DuplicatePhone);
+            throw new DomainException(DomainErrors.User.DuplicatePhone);
         }
 
         var passwordResult = Password.Create(input.Password);
 
         if (passwordResult.IsFailure)
         {
-            return Result.Failure<TokenResponse>(passwordResult.Error);
+            throw new DomainException(passwordResult.Error);
         }
 
         var passwordHash = _passwordHasher.HashPassword(passwordResult.Value);
@@ -58,6 +58,6 @@ public class CreateUserInputHandler : IInputHandler<CreateUserInput, Result<Toke
 
         var token = _jwtProvider.Create(user);
 
-        return Result.Success(new TokenResponse(token));
+        return new TokenResponse(token);
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Cryptography;
+using SportSync.Domain.Services;
 using SportSync.Infrastructure.Authentication;
 using SportSync.Infrastructure.Authentication.Settings;
 using SportSync.Infrastructure.Common;

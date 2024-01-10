@@ -4,6 +4,7 @@ using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.Services;
 
 namespace SportSync.Domain.Entities;
 
@@ -65,6 +66,10 @@ public class User : Entity, IAuditableEntity, ISoftDeletableEntity
 
         return Result.Success();
     }
+
+    [GraphQLIgnore]
+    public bool VerifyPasswordHash(string password, IPasswordHashChecker passwordHashChecker)
+        => !string.IsNullOrWhiteSpace(password) && passwordHashChecker.HashesMatch(_passwordHash, password);
 
     public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
     {

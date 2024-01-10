@@ -34,10 +34,15 @@ public static class DomainErrors
         public static Error MissingDigit => new (
             "Password.MissingDigit",
             "The password requires at least one digit.");
+    }
 
-        public static Error MissingNonAlphaNumeric => new (
-            "Password.MissingNonAlphaNumeric",
-            "The password requires at least one non-alphanumeric.");
+    public static class Email
+    {
+        public static Error NullOrEmpty => new Error("Email.NullOrEmpty", "The email is required.");
+
+        public static Error LongerThanAllowed => new Error("Email.LongerThanAllowed", "The email is longer than allowed.");
+
+        public static Error InvalidFormat => new Error("Email.InvalidFormat", "The email format is invalid.");
     }
 
     public static class General

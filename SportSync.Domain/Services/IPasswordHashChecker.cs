@@ -1,4 +1,4 @@
-﻿namespace SportSync.Application.Core.Abstractions.Cryptography;
+﻿namespace SportSync.Domain.Services;
 
 /// <summary>
 /// Represents the password hash checker interfaces.

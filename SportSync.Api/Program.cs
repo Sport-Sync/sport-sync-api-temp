@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using sport_sync.Middleware;
+using sport_sync.GraphQL;
 using SportSync.Application;
 using SportSync.GraphQL;
 using SportSync.Infrastructure;
@@ -11,6 +11,8 @@ builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration)
     .AddPersistence(builder.Configuration);
+
+builder.Services.AddErrorFilter<GraphQLErrorFilter>();
 
 builder.Services
     .AddGraphQLServer()
@@ -29,7 +31,7 @@ using IServiceScope serviceScope = app.Services.CreateScope();
 using SportSyncDbContext dbContext = serviceScope.ServiceProvider.GetRequiredService<SportSyncDbContext>();
 dbContext.Database.Migrate();
 
-app.UseCustomExceptionHandler();
+//app.UseCustomExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseWebSockets();

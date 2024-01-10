@@ -13,7 +13,6 @@ public sealed class Password : ValueObject
     private static readonly Func<char, bool> IsLower = c => c >= 'a' && c <= 'z';
     private static readonly Func<char, bool> IsUpper = c => c >= 'A' && c <= 'Z';
     private static readonly Func<char, bool> IsDigit = c => c >= '0' && c <= '9';
-    private static readonly Func<char, bool> IsNonAlphaNumeric = c => !(IsLower(c) || IsUpper(c) || IsDigit(c));
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Password"/> class.
@@ -40,7 +39,6 @@ public sealed class Password : ValueObject
             .Ensure(p => p.Any(IsLower), DomainErrors.Password.MissingLowercaseLetter)
             .Ensure(p => p.Any(IsUpper), DomainErrors.Password.MissingUppercaseLetter)
             .Ensure(p => p.Any(IsDigit), DomainErrors.Password.MissingDigit)
-            .Ensure(p => p.Any(IsNonAlphaNumeric), DomainErrors.Password.MissingNonAlphaNumeric)
             .Map(p => new Password(p));
 
     protected override IEnumerable<object> GetAtomicValues()

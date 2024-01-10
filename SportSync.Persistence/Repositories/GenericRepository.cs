@@ -62,4 +62,12 @@ internal abstract class GenericRepository<TEntity>
     /// <returns>True if any entity meets the specified condition, otherwise false.</returns>
     protected async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate) =>
         await DbContext.Set<TEntity>().AnyAsync(predicate);
+
+    /// <summary>
+    /// Gets the first entity that meets the specified condition.
+    /// </summary>
+    /// <param name="predicate">The condition.</param>
+    /// <returns>The maybe instance that may contain the first entity that meets the specified condition.</returns>
+    protected async Task<Maybe<TEntity>> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate) =>
+        await DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
 }
