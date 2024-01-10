@@ -9,6 +9,7 @@ using SportSync.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
+    .AddHttpContextAccessor()
     .AddApplication()
     .AddInfrastructure(builder.Configuration)
     .AddPersistence(builder.Configuration);

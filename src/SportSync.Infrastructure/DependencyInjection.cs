@@ -37,7 +37,7 @@ public static class DependencyInjection
 
         //services.Configure<MessageBrokerSettings>(configuration.GetSection(MessageBrokerSettings.SettingsKey));
 
-        //services.AddScoped<IUserIdentifierProvider, UserIdentifierProvider>();
+        services.AddScoped<IUserIdentifierProvider, UserIdentifierProvider>();
 
         services.AddScoped<IJwtProvider, JwtProvider>();
 

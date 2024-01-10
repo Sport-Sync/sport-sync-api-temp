@@ -1,4 +1,5 @@
 ﻿using HotChocolate.Authorization;
+using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Entities;
 
@@ -8,6 +9,7 @@ public class Query
 {
     [Authorize]
     [UseProjection]
-    [UseFiltering]
-    public IQueryable<User> GetUsers([Service] IDbContext dbContext) => dbContext.Set<User>();
+    [UseFirstOrDefault]
+    public IQueryable<User> Me([Service] IDbContext dbContext, [Service] IUserIdentifierProvider userIdentifierProvider)
+        => dbContext.Set<User>().Where(x => x.Id == userIdentifierProvider.UserId);
 }
