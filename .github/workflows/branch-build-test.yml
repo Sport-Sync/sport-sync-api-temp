@@ -7,7 +7,9 @@ env:
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - '*'
+      - '!master'
   workflow_dispatch:
 
 permissions:
@@ -37,6 +39,7 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Test
+        working-directory: ./tests
         run: dotnet test --configuration Release --no-build
 
       - name: Publish
