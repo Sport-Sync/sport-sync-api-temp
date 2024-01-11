@@ -1,4 +1,4 @@
-name: Build and deploy
+name: Build and test
 
 env:
   AZURE_WEBAPP_NAME: sport-sync-app
@@ -44,5 +44,5 @@ jobs:
 
     steps:
       - name: Test
-        working-directory: ./tests
+        working-directory: tests
         run: dotnet test --configuration Release --no-build
