@@ -1,6 +1,6 @@
 ﻿namespace sport_sync.GraphQL;
 
-public class GraphQLErrorFilter : IErrorFilter
+public class GraphQlErrorFilter : IErrorFilter
 {
     public IError OnError(IError error)
     {

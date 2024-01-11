@@ -55,7 +55,7 @@ internal class ExceptionHandlerMiddleware
         (HttpStatusCode httpStatusCode, IReadOnlyCollection<SportSync.Domain.Core.Primitives.Error> errors) = GetHttpStatusCodeAndErrors(exception);
 
         httpContext.Response.ContentType = "application/json";
-
+        
         httpContext.Response.StatusCode = (int)httpStatusCode;
 
         var serializerOptions = new JsonSerializerOptions

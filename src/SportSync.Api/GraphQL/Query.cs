@@ -10,6 +10,6 @@ public class Query
     [Authorize]
     [UseProjection]
     [UseFirstOrDefault]
-    public IQueryable<User> Me([Service] IDbContext dbContext, [Service] IUserIdentifierProvider userIdentifierProvider)
+    public IQueryable<User> Me([Service(ServiceKind.Synchronized)] IDbContext dbContext, [Service] IUserIdentifierProvider userIdentifierProvider)
         => dbContext.Set<User>().Where(x => x.Id == userIdentifierProvider.UserId);
 }

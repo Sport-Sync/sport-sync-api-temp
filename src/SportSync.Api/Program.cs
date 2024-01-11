@@ -20,7 +20,7 @@ public class Program
             .AddInfrastructure(builder.Configuration)
             .AddPersistence(builder.Configuration);
 
-        builder.Services.AddErrorFilter<GraphQLErrorFilter>();
+        builder.Services.AddErrorFilter<GraphQlErrorFilter>();
 
         builder.Services.AddCors(x => x.AddDefaultPolicy(policy =>
         {
