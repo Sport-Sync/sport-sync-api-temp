@@ -119,7 +119,7 @@ public static class TestServices
 
 public class TestLogger : ILogger
 {
-    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+    public IDisposable BeginScope<TState>(TState state) where TState : notnull
     {
         throw new NotImplementedException();
     }
