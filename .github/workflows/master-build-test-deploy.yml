@@ -44,6 +44,9 @@ jobs:
       - name: Publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
   deploy:
     permissions:
       contents: none

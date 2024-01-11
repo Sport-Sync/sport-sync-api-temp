@@ -36,6 +36,5 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
 
-      - name: Api Test
-        working-directory: tests/SportSync.Api.Tests/
+      - name: Test
         run: dotnet test --configuration Release --no-build
