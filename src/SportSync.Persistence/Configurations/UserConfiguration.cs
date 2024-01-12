@@ -10,6 +10,9 @@ namespace SportSync.Persistence.Configurations
         {
             builder.HasKey(user => user.Id);
 
+            builder.HasIndex(x => x.Email).IsUnique();
+            builder.HasIndex(x => x.Phone).IsUnique();
+
             builder.Property<string>("_passwordHash")
                 .HasField("_passwordHash")
                 .HasColumnName("PasswordHash")

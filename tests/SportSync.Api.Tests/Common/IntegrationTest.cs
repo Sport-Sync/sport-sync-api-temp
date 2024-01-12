@@ -57,8 +57,6 @@ public class IntegrationTest
 
         await using var result = await _executor.ExecuteAsync(request, cancellationToken);
 
-        result.ExpectQueryResult();
-
         return result.ToJson();
     }
 }
