@@ -13,9 +13,12 @@ public class GraphQlErrorFilter : IErrorFilter
     {
         var message = error.Exception?.Message ?? error.Message;
 
-        using var scope = _scopeFactory.CreateScope();
-        var service = scope.ServiceProvider.GetRequiredService<ILogger<GraphQlErrorFilter>>();
-        service.LogError(error.Exception, "An exception occurred: {message}", message);
+        if (error.Exception != null)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var service = scope.ServiceProvider.GetRequiredService<ILogger<GraphQlErrorFilter>>();
+            service.LogError(error.Exception, "An exception occurred: {message}", message);
+        }
 
         return error
             .RemoveExtensions()
