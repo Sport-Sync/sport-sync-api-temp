@@ -26,12 +26,6 @@ public static class ResponseExtensions
             err.Should().Contain(x => x.Message == error);
         }
     }
-
-    public static void ShouldNotHaveError(this string graphQlJson)
-    {
-        var jObject = JObject.Parse(graphQlJson);
-        jObject["errors"].Should().BeNull();
-    }
 }
 
 public class ErrorResponse

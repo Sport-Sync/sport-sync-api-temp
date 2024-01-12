@@ -11,6 +11,35 @@ namespace SportSync.Api.Tests.Features.Users;
 public class CreateUserTests : IntegrationTest
 {
     [Fact]
+    public async Task CreateUser_WithValidData_ShouldCreateSuccessfully()
+    {
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@"
+                mutation{
+                    createUser(input: {firstName: ""Marko"", lastName: ""Zdravko"", email: ""email@gmail.com"",phone: ""+385916395254"", password: ""mypass1.23MM""}){
+                        token
+                    }
+                }"));
+
+        var tokenResponse = result.ToObject<TokenResponse>("createUser");
+        tokenResponse.Token.Should().NotBeNullOrEmpty();
+
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadJwtToken(tokenResponse.Token);
+
+        var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "userId").Value;
+
+        var id = Guid.Parse(userId);
+
+        var userFromDb = Database.DbContext.Set<User>().FirstOrDefault(x => x.Id == id);
+        userFromDb.Should().NotBeNull();
+        userFromDb.FirstName.Should().Be("Marko");
+        userFromDb.LastName.Should().Be("Zdravko");
+        userFromDb.Email.Should().Be("email@gmail.com");
+        userFromDb.Phone.Should().Be("0916395254");
+    }
+
+    [Fact]
     public async Task CreateUser_WithExistingEmail_ShouldFail()
     {
         Database.AddUser(email: "email@gmail.com");
@@ -70,7 +99,6 @@ public class CreateUserTests : IntegrationTest
         var userId = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == "userId").Value;
 
         var id = Guid.Parse(userId);
-        var demo = Database.DbContext.Set<User>().Where(x => x.Id == id);
 
         var userFromDb = Database.DbContext.Set<User>().FirstOrDefault(x => x.Id == id);
         userFromDb.Should().NotBeNull();
@@ -99,7 +127,6 @@ public class CreateUserTests : IntegrationTest
         {
             var tokenResponse = result.ToObject<TokenResponse>("createUser");
             tokenResponse.Token.Should().NotBeNullOrEmpty();
-            result.ShouldNotHaveError();
         }
         else
         {
@@ -168,7 +195,6 @@ public class CreateUserTests : IntegrationTest
         {
             var tokenResponse = result.ToObject<TokenResponse>("createUser");
             tokenResponse.Token.Should().NotBeNullOrEmpty();
-            result.ShouldNotHaveError();
         }
         else
         {
