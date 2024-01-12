@@ -37,6 +37,6 @@ public class CreateUserInputValidator : AbstractValidator<CreateUserInput>
 
         RuleFor(x => x.Password)
             .NotEmpty()
-            .WithMessage("Password is required.");
+            .WithMessage("The password is required.");
     }
 }

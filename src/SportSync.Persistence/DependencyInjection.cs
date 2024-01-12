@@ -25,6 +25,13 @@ public static class DependencyInjection
 
         services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<SportSyncDbContext>());
 
+        services.AddRepositories();
+
+        return services;
+    }
+
+    public static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
         services.AddScoped<IUserRepository, UserRepository>();
 
         return services;

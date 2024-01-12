@@ -63,6 +63,7 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
 
         return await base.SaveChangesAsync(cancellationToken);
     }
+
     private void UpdateAuditableEntities(DateTime utcNow)
     {
         foreach (EntityEntry<IAuditableEntity> entityEntry in ChangeTracker.Entries<IAuditableEntity>())
