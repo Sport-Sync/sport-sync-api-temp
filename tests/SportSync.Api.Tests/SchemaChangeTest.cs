@@ -1,7 +1,7 @@
 using HotChocolate.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter.Xunit;
-using SportSync.GraphQL;
+using sport_sync.GraphQL.Types;
 
 namespace SportSync.Api.Tests;
 

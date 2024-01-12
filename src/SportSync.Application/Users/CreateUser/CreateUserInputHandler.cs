@@ -1,4 +1,5 @@
-﻿using SportSync.Application.Authentication;
+﻿using System.Numerics;
+using SportSync.Application.Authentication;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Cryptography;
@@ -35,6 +36,8 @@ public class CreateUserInputHandler : IInputHandler<CreateUserInput, TokenRespon
         {
             throw new DomainException(DomainErrors.User.DuplicateEmail);
         }
+
+        input.Phone = input.Phone.Replace("+385", "0");
 
         if (!await _userRepository.IsPhoneUniqueAsync(input.Phone))
         {

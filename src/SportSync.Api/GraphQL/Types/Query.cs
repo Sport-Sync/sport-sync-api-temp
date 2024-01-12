@@ -3,7 +3,7 @@ using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Entities;
 
-namespace SportSync.GraphQL;
+namespace sport_sync.GraphQL.Types;
 
 public class Query
 {

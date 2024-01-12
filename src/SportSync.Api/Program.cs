@@ -1,8 +1,9 @@
 using AppAny.HotChocolate.FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using sport_sync.GraphQL;
+using sport_sync.GraphQL.Types;
+using sport_sync.Setup;
 using SportSync.Application;
-using SportSync.GraphQL;
 using SportSync.Infrastructure;
 using SportSync.Persistence;
 
@@ -20,8 +21,6 @@ public class Program
             .AddInfrastructure(builder.Configuration)
             .AddPersistence(builder.Configuration);
 
-        builder.Services.AddErrorFilter<GraphQlErrorFilter>();
-
         builder.Services.AddCors(x => x.AddDefaultPolicy(policy =>
         {
             policy.AllowAnyOrigin();
@@ -30,6 +29,7 @@ public class Program
 
         builder.Services
             .AddGraphQLServer()
+            .AddErrorFilter<GraphQlErrorFilter>()
             .AddProjections()
             .AddFiltering()
             .AddAuthorization()
@@ -43,6 +43,8 @@ public class Program
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();
 
+        builder.Host.SetupSerilog(builder.Configuration.GetConnectionString("SportSyncDb"));
+
         var app = builder.Build();
 
         using IServiceScope serviceScope = app.Services.CreateScope();
@@ -51,7 +53,6 @@ public class Program
 
         app.UseCors();
 
-        //app.UseCustomExceptionHandler();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();

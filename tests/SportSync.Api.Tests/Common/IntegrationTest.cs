@@ -2,8 +2,8 @@
 using HotChocolate.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using sport_sync.GraphQL.Types;
 using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.GraphQL;
 
 namespace SportSync.Api.Tests.Common;
 
