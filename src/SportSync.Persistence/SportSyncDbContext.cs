@@ -20,11 +20,18 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
 
     public DbSet<User> Users { get; set; }
 
-    public SportSyncDbContext(DbContextOptions options, IDateTime dateTime, IMediator mediator)
+    //public SportSyncDbContext(DbContextOptions options, IDateTime dateTime, IMediator mediator)
+    //    : base(options)
+    //{
+    //    _dateTime = dateTime;
+    //    _mediator = mediator;
+    //}
+
+
+    public SportSyncDbContext(DbContextOptions options, IDateTime dateTime)
         : base(options)
     {
         _dateTime = dateTime;
-        _mediator = mediator;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
