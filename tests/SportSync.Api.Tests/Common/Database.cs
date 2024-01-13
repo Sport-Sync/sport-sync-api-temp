@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
@@ -27,7 +28,7 @@ public class Database
 
         var dateTimeMock = new Mock<IDateTime>();
 
-        var dbContext = new SportSyncDbContext(options, dateTimeMock.Object);
+        var dbContext = new SportSyncDbContext(options, dateTimeMock.Object, new Mock<IMediator>().Object);
         database.DbContext = dbContext;
         database.UnitOfWork = dbContext;
 

@@ -8,7 +8,7 @@ using SportSync.Domain.Services;
 
 namespace SportSync.Domain.Entities;
 
-public class User : Entity, IAuditableEntity, ISoftDeletableEntity
+public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
 {
     private string _passwordHash;
 

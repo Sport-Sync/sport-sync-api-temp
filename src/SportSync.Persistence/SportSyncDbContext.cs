@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Abstractions;
+using SportSync.Domain.Core.Events;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
@@ -14,13 +16,15 @@ namespace SportSync.Persistence;
 public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
 {
     private readonly IDateTime _dateTime;
+    private readonly IMediator _mediator;
 
     public DbSet<User> Users { get; set; }
 
-    public SportSyncDbContext(DbContextOptions options, IDateTime dateTime)
+    public SportSyncDbContext(DbContextOptions options, IDateTime dateTime, IMediator mediator)
         : base(options)
     {
         _dateTime = dateTime;
+        _mediator = mediator;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -60,6 +64,8 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         UpdateAuditableEntities(utcNow);
 
         UpdateSoftDeletableEntities(utcNow);
+
+        await PublishDomainEvents(cancellationToken);
 
         return await base.SaveChangesAsync(cancellationToken);
     }
@@ -111,5 +117,21 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
 
             UpdateDeletedEntityEntryReferencesToUnchanged(referenceEntry.TargetEntry);
         }
+    }
+    
+    private async Task PublishDomainEvents(CancellationToken cancellationToken)
+    {
+        List<EntityEntry<AggregateRoot>> aggregateRoots = ChangeTracker
+            .Entries<AggregateRoot>()
+            .Where(entityEntry => entityEntry.Entity.DomainEvents.Any())
+            .ToList();
+
+        List<IDomainEvent> domainEvents = aggregateRoots.SelectMany(entityEntry => entityEntry.Entity.DomainEvents).ToList();
+
+        aggregateRoots.ForEach(entityEntry => entityEntry.Entity.ClearDomainEvents());
+
+        IEnumerable<Task> tasks = domainEvents.Select(domainEvent => _mediator.Publish(domainEvent, cancellationToken));
+
+        await Task.WhenAll(tasks);
     }
 }
