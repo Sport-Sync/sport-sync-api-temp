@@ -28,7 +28,8 @@ public class Database
 
         var dateTimeMock = new Mock<IDateTime>();
 
-        var dbContext = new SportSyncDbContext(options, dateTimeMock.Object, new Mock<IMediator>().Object);
+        var dbContext = new SportSyncDbContext(options, dateTimeMock.Object);
+        //var dbContext = new SportSyncDbContext(options, dateTimeMock.Object, new Mock<IMediator>().Object);
         dbContext.Database.EnsureCreated();
 
         database.DbContext = dbContext;
