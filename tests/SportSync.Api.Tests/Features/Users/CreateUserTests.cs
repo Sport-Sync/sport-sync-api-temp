@@ -8,6 +8,7 @@ using SportSync.Domain.Entities;
 
 namespace SportSync.Api.Tests.Features.Users;
 
+[Collection("IntegrationTests")]
 public class CreateUserTests : IntegrationTest
 {
     [Fact]
@@ -59,13 +60,13 @@ public class CreateUserTests : IntegrationTest
     [Fact]
     public async Task CreateUser_WithExistingPhone_ShouldFail()
     {
-        Database.AddUser(phone: "09876543");
+        Database.AddUser(phone: "098376543");
         await Database.SaveChangesAsync();
 
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@"
                 mutation{
-                    createUser(input: {firstName: ""Marko"", lastName: ""Zdravko"", email: ""email@gmail.com"",phone: ""09876543"", password: ""mypass1.23MM""}){
+                    createUser(input: {firstName: ""Marko"", lastName: ""Zdravko"", email: ""email@gmail.com"",phone: ""098376543"", password: ""mypass1.23MM""}){
                         token
                     }
                 }"));
@@ -74,10 +75,10 @@ public class CreateUserTests : IntegrationTest
     }
 
     [Theory]
-    [InlineData("+3859876543", "09876543")]
-    [InlineData("09836513", "09836513")]
-    [InlineData("+38598 76543", "09876543")]
-    [InlineData("+385 98765 43", "09876543")]
+    [InlineData("+385987654321", "0987654321")]
+    [InlineData("0983651322", "0983651322")]
+    [InlineData("+38598 765243", "098765243")]
+    [InlineData("+385 98 987 543", "098987543")]
     [InlineData("091 598 7643", "0915987643")]
     public async Task CreateUser_PhoneNumber_ShouldBeParsedToSingleFormat(string phoneNumberInput, string expectedPhoneSaved)
     {
@@ -103,6 +104,8 @@ public class CreateUserTests : IntegrationTest
         var userFromDb = Database.DbContext.Set<User>().FirstOrDefault(x => x.Id == id);
         userFromDb.Should().NotBeNull();
         userFromDb.Phone.Should().Be(expectedPhoneSaved);
+
+        Database.DbContext.Remove(userFromDb);
     }
 
     [Theory]

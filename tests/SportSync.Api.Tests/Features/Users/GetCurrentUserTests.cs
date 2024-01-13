@@ -5,6 +5,7 @@ using SportSync.Domain.Entities;
 
 namespace SportSync.Api.Tests.Features.Users;
 
+[Collection("IntegrationTests")]
 public class GetCurrentUserTests : IntegrationTest
 {
     [Fact]

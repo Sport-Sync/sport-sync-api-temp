@@ -1,4 +1,5 @@
-﻿using SportSync.Domain.Core.Events;
+﻿using HotChocolate;
+using SportSync.Domain.Core.Events;
 
 namespace SportSync.Domain.Core.Primitives;
 
@@ -31,6 +32,7 @@ public abstract class AggregateRoot : Entity
     /// <summary>
     /// Gets the domain events. This collection is readonly.
     /// </summary>
+    [GraphQLIgnore]
     public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     /// <summary>
