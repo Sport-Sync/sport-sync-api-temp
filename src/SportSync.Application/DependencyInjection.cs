@@ -20,7 +20,7 @@ namespace SportSync.Application
             return services;
         }
 
-        private static void RegisterRequestHandlers(this IServiceCollection services)
+        public static IServiceCollection RegisterRequestHandlers(this IServiceCollection services)
         {
             var requestHandlerTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()
@@ -33,6 +33,8 @@ namespace SportSync.Application
             {
                 services.AddScoped(handlerType);
             }
+
+            return services;
         }
     }
 }

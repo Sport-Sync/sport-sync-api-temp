@@ -33,6 +33,13 @@ public static class DependencyInjection
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SettingsKey));
 
+        services.RegisterInfrastructureServices();
+
+        return services;
+    }
+
+    public static IServiceCollection RegisterInfrastructureServices(this IServiceCollection services)
+    {
         //services.Configure<MailSettings>(configuration.GetSection(MailSettings.SettingsKey));
 
         //services.Configure<MessageBrokerSettings>(configuration.GetSection(MessageBrokerSettings.SettingsKey));

@@ -28,6 +28,8 @@ public class Database
         var dateTimeMock = new Mock<IDateTime>();
 
         var dbContext = new SportSyncDbContext(options, dateTimeMock.Object);
+        dbContext.Database.EnsureCreated();
+
         database.DbContext = dbContext;
         database.UnitOfWork = dbContext;
 
