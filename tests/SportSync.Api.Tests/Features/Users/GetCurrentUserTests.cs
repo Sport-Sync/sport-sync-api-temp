@@ -20,6 +20,7 @@ public class GetCurrentUserTests : IntegrationTest
                     firstName
                 }
             }"));
+
         var userResponse = result.ToObject<User>("me");
 
         userResponse.FirstName.Should().Be("Ante");
@@ -36,6 +37,7 @@ public class GetCurrentUserTests : IntegrationTest
                     firstName
                 }
             }"));
+
         var userResponse = result.ToObject<User>("me");
 
         userResponse.Should().BeNull();
