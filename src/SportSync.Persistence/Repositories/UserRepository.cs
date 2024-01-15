@@ -7,7 +7,7 @@ namespace SportSync.Persistence.Repositories;
 
 internal sealed class UserRepository : GenericRepository<User>, IUserRepository
 {
-    public UserRepository(IDbContext dbContext) 
+    public UserRepository(IDbContext dbContext)
         : base(dbContext)
     {
     }

@@ -19,24 +19,21 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
     private readonly IMediator _mediator;
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Event> Events { get; set; }
+    public DbSet<EventMember> EventMembers { get; set; }
 
-    //public SportSyncDbContext(DbContextOptions options, IDateTime dateTime, IMediator mediator)
-    //    : base(options)
-    //{
-    //    _dateTime = dateTime;
-    //    _mediator = mediator;
-    //}
-
-
-    public SportSyncDbContext(DbContextOptions options, IDateTime dateTime)
+    public SportSyncDbContext(DbContextOptions options, IDateTime dateTime, IMediator mediator)
         : base(options)
     {
         _dateTime = dateTime;
+        _mediator = mediator;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new EventConfiguration());
+        modelBuilder.ApplyConfiguration(new EventMemberConfiguration());
     }
 
     public new DbSet<TEntity> Set<TEntity>()

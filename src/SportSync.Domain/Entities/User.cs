@@ -4,6 +4,8 @@ using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.DomainEvents;
+using SportSync.Domain.Enumerations;
 using SportSync.Domain.Services;
 
 namespace SportSync.Domain.Entities;
@@ -55,7 +57,11 @@ public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     [GraphQLIgnore]
     public bool Deleted { get; }
 
-    [GraphQLIgnore]
+    public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
+    {
+        return new User(firstName, lastName, email, phone, passwordHash);
+    }
+
     public Result ChangePassword(string passwordHash)
     {
         if (passwordHash == _passwordHash)
@@ -72,8 +78,13 @@ public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public bool VerifyPasswordHash(string password, IPasswordHashChecker passwordHashChecker)
         => !string.IsNullOrWhiteSpace(password) && passwordHashChecker.HashesMatch(_passwordHash, password);
 
-    public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
+    public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers,
+        DateOnly startingDate, TimeOnly startTime, TimeOnly endTime, string notes)
     {
-        return new User(firstName, lastName, email, phone, passwordHash);
+        var @event = new Event(this, name, sportType, address, price, numberOfPlayers, startingDate, startTime, endTime, notes);
+
+        AddDomainEvent(new EventCreatedDomainEvent(@event));
+
+        return @event;
     }
 }

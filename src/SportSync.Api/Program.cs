@@ -48,8 +48,8 @@ public class Program
         var app = builder.Build();
 
         using IServiceScope serviceScope = app.Services.CreateScope();
-        using SportSyncDbContext dbContext = serviceScope.ServiceProvider.GetRequiredService<SportSyncDbContext>();
-        dbContext.Database.Migrate();
+        await using SportSyncDbContext dbContext = serviceScope.ServiceProvider.GetRequiredService<SportSyncDbContext>();
+        await dbContext.Database.MigrateAsync();
 
         app.UseCors();
 

@@ -32,6 +32,12 @@ internal abstract class GenericRepository<TEntity>
     public async Task<Maybe<TEntity>> GetByIdAsync(Guid id) => await DbContext.GetByIdAsync<TEntity>(id);
 
     /// <summary>
+    /// Gets the queryable of entities
+    /// </summary>
+    /// <returns></returns>
+    public IQueryable<TEntity> Get() => DbContext.Set<TEntity>();
+
+    /// <summary>
     /// Inserts the specified entity into the database.
     /// </summary>
     /// <param name="entity">The entity to be inserted into the database.</param>
