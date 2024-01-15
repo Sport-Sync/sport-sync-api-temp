@@ -11,7 +11,7 @@ public class GraphQlErrorFilter : IErrorFilter
 
     public IError OnError(IError error)
     {
-        var message = error.Exception?.Message ?? error.Message;
+        var message = error.Exception?.InnerException?.Message ?? error.Exception?.Message ?? error.Message;
 
         if (error.Exception != null)
         {

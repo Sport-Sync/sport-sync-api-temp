@@ -19,8 +19,8 @@ public class EventMember : Entity, IAuditableEntity, ISoftDeletableEntity
     {
     }
 
-    public Guid EventId { get; private set; }
-    public Guid UserId { get; private set; }
+    public Guid EventId { get; set; }
+    public Guid UserId { get; set; }
     public bool IsAdmin { get; set; }
     public bool IsCreator { get; set; }
 

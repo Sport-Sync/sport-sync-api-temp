@@ -17,7 +17,7 @@ internal class EventMemberConfiguration : IEntityTypeConfiguration<EventMember>
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Event>()
-            .WithMany()
+            .WithMany(x => x.Members)
             .HasForeignKey(member => member.EventId)
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);

@@ -29,8 +29,6 @@ internal class EventConfiguration : IEntityTypeConfiguration<Event>
             .HasConversion<TimeOnlyConverter>()
             .IsRequired();
 
-        //builder.HasMany(ev => ev.Members).WithMany();
-
         builder.Property(ev => ev.CreatedOnUtc).IsRequired();
 
         builder.Property(ev => ev.ModifiedOnUtc);
