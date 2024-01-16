@@ -2,6 +2,8 @@ using AppAny.HotChocolate.FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using sport_sync.GraphQL;
 using sport_sync.GraphQL.Types;
+using sport_sync.GraphQL.Types.Mutations;
+using sport_sync.GraphQL.Types.Queries;
 using sport_sync.Setup;
 using SportSync.Application;
 using SportSync.Infrastructure;
@@ -37,8 +39,11 @@ public class Program
             {
                 errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
             }))
-            .AddQueryType<Query>()
-            .AddMutationType<Mutation>();
+            .AddQueryType(q => q.Name("Query"))
+            .AddType<UserQuery>()
+            .AddMutationType(q => q.Name("Mutation"))
+            .AddType<UserMutation>()
+            .AddType<EventMutation>();
         //.AddSubscriptionType<Subscription>()
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();

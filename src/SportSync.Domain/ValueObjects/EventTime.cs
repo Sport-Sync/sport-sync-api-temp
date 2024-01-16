@@ -5,29 +5,31 @@ namespace SportSync.Domain.ValueObjects;
 
 public sealed class EventTime : ValueObject
 {
-    public DateOnly Date { get; set; }
+    public DayOfWeek DayOfWeek { get; set; }
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
     public bool RepeatWeekly { get; set; }
 
-    private EventTime(DateOnly date, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
+    private EventTime(DayOfWeek dayOfWeek, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
     {
-        Date = date;
+        DayOfWeek = dayOfWeek;
         StartTime = startTime;
         EndTime = endTime;
         RepeatWeekly = repeatWeekly;
     }
 
-    public string Value => ToString();
+    //public string Value => ToString();
 
     protected override IEnumerable<object> GetAtomicValues()
     {
-        throw new NotImplementedException();
+        yield return DayOfWeek;
+        yield return StartTime.ToShortTimeString();
+        yield return EndTime.ToShortTimeString();
     }
 
-    public static EventTime Create(DateOnly date, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
+    public static EventTime Create(DayOfWeek dayOfWeek, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
     {
-        return new EventTime(date, startTime, endTime, repeatWeekly);
+        return new EventTime(dayOfWeek, startTime, endTime, repeatWeekly);
     }
 
     public override string ToString()
@@ -36,18 +38,19 @@ public sealed class EventTime : ValueObject
 
         if (RepeatWeekly)
         {
-            sb.Append(Date.DayOfWeek);
-        }
-        else
-        {
-            sb.Append(Date.ToShortDateString());
+            sb.Append("Every ");
         }
 
-        sb.Append("(");
+        sb.Append(DayOfWeek);
+        sb.Append(" ");
         sb.Append(StartTime.ToShortTimeString());
         sb.Append("-");
         sb.Append(EndTime.ToShortTimeString());
-        sb.Append(")");
+
+        if (RepeatWeekly)
+        {
+            sb.Append("(Only once)");
+        }
 
         return sb.ToString();
     }

@@ -12,12 +12,12 @@ public class CreateEventInput : IInput<Guid>
     public decimal Price { get; set; }
     public int NumberOfPlayers { get; set; }
     public string? Notes { get; set; }
-    public List<EventTimeInput> EventTime { get; set; }
+    public List<TimeInput> EventTime { get; set; }
 }
 
-public class EventTimeInput
+public class TimeInput
 {
-    public DateTime Date { get; set; }
+    public DayOfWeek DayOfWeek { get; set; }
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
     public bool RepeatWeekly { get; set; }

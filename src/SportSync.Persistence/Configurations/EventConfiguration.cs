@@ -10,16 +10,6 @@ internal class EventConfiguration : IEntityTypeConfiguration<Event>
     {
         builder.HasKey(ev => ev.Id);
 
-        builder.OwnsMany(user => user.Schedule, firstNameBuilder =>
-        {
-            firstNameBuilder.WithOwner();
-
-            firstNameBuilder.Property(schedule => schedule.Value)
-                .HasColumnName(nameof(Event.Schedule))
-                .IsRequired();
-        });
-
-
         builder.Property(ev => ev.Name).IsRequired();
         builder.Property(ev => ev.Address).IsRequired();
         builder.Property(ev => ev.Price).IsRequired();

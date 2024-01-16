@@ -3,9 +3,10 @@ using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 
-namespace sport_sync.GraphQL.Types;
+namespace sport_sync.GraphQL.Types.Queries;
 
-public class Query
+[ExtendObjectType("Query")]
+public class UserQuery
 {
     [Authorize]
     [UseProjection]

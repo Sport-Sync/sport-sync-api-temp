@@ -43,9 +43,9 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
         var user = maybeUser.Value;
 
         var eventTimes = request.EventTime.Select(time => EventTime.Create(
-           DateOnly.FromDateTime(time.Date.Date), 
-           TimeOnly.FromDateTime(time.StartTime.UtcDateTime), 
-           TimeOnly.FromDateTime(time.EndTime.UtcDateTime), 
+           time.DayOfWeek,
+           TimeOnly.FromDateTime(time.StartTime.UtcDateTime),
+           TimeOnly.FromDateTime(time.EndTime.UtcDateTime),
            time.RepeatWeekly));
 
         var @event = user.CreateEvent(request.Name, request.SportType, request.Address, request.Price,

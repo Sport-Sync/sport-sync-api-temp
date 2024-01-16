@@ -27,9 +27,8 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
         Address = address;
         Price = price;
         NumberOfPlayers = numberOfPlayers;
-        //Schedule = string.Join("; ", schedule.Select(x => x.Value));
-        Schedule = schedule.ToList();
         Notes = notes;
+        Schedule = string.Join("; ", schedule.Select(x => x.ToString()));
 
         _members.Add(EventMember.Create(_creatorId, Id, true));
     }
@@ -45,11 +44,11 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public decimal Price { get; set; }
     public int NumberOfPlayers { get; set; }
     public string Notes { get; set; }
-    public List<EventTime> Schedule { get; set; }
+    public string Schedule { get; set; }
 
     [NotMapped]
     public Guid CreatorId => _creatorId;
-    public ICollection<EventMember> Members => _members.ToList();
+    public IReadOnlyCollection<EventMember> Members => _members.ToList();
 
     [GraphQLIgnore]
     public DateTime CreatedOnUtc { get; set; }
