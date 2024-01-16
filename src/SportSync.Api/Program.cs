@@ -2,6 +2,8 @@ using AppAny.HotChocolate.FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using sport_sync.GraphQL;
 using sport_sync.GraphQL.Types;
+using sport_sync.GraphQL.Types.Mutations;
+using sport_sync.GraphQL.Types.Queries;
 using sport_sync.Setup;
 using SportSync.Application;
 using SportSync.Infrastructure;
@@ -37,8 +39,12 @@ public class Program
             {
                 errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
             }))
-            .AddQueryType<Query>()
-            .AddMutationType<Mutation>();
+            .AddQueryType(q => q.Name("Query"))
+            .AddType<UserQuery>()
+            .AddType<EventQuery>()
+            .AddMutationType(q => q.Name("Mutation"))
+            .AddType<UserMutation>()
+            .AddType<EventMutation>();
         //.AddSubscriptionType<Subscription>()
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();
@@ -48,8 +54,8 @@ public class Program
         var app = builder.Build();
 
         using IServiceScope serviceScope = app.Services.CreateScope();
-        using SportSyncDbContext dbContext = serviceScope.ServiceProvider.GetRequiredService<SportSyncDbContext>();
-        dbContext.Database.Migrate();
+        await using SportSyncDbContext dbContext = serviceScope.ServiceProvider.GetRequiredService<SportSyncDbContext>();
+        await dbContext.Database.MigrateAsync();
 
         app.UseCors();
 

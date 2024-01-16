@@ -1,9 +1,25 @@
 ﻿schema {
   query: Query
+  mutation: Mutation
+}
+
+type GetDatesByDayOfWeekResponse {
+  dates: [DateTime!]!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput): TokenResponse
+  login(input: LoginInput): TokenResponse
+  createEvent(input: CreateEventInput): UUID! @authorize
 }
 
 type Query {
   me: User @authorize
+  datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
+}
+
+type TokenResponse {
+  token: String!
 }
 
 type User {
@@ -14,12 +30,72 @@ type User {
   id: UUID!
 }
 
+input CreateEventInput {
+  memberIds: [UUID!]!
+  name: String!
+  sportType: SportType!
+  address: String!
+  price: Decimal!
+  numberOfPlayers: Int!
+  notes: String
+  eventTime: [TimeInput!]!
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  password: String!
+}
+
+input GetDatesByDayOfWeekInput {
+  dayOfWeek: DayOfWeek!
+  numberOfDates: Int!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input TimeInput {
+  dayOfWeek: DayOfWeek!
+  startDate: DateTime!
+  startTime: DateTime!
+  endTime: DateTime!
+  repeatWeekly: Boolean!
+}
+
 enum ApplyPolicy {
   BEFORE_RESOLVER
   AFTER_RESOLVER
   VALIDATION
 }
 
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum SportType {
+  FOOTBALL
+  HANDBALL
+  BASKETBALL
+  TENNIS
+}
+
 directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"The built-in `Decimal` scalar type."
+scalar Decimal
 
 scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")

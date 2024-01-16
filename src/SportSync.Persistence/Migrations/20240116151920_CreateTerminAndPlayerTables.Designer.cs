@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240116151920_CreateTerminAndPlayerTables")]
+    partial class CreateTerminAndPlayerTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,6 +61,10 @@ namespace SportSync.Persistence.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Schedule")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SportType")
                         .HasColumnType("int");
@@ -110,51 +117,6 @@ namespace SportSync.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EventMembers");
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.EventSchedule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("EndTimeUtc")
-                        .HasColumnType("time");
-
-                    b.Property<Guid>("EventId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("RepeatWeekly")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("StartTimeUtc")
-                        .HasColumnType("time");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.ToTable("EventSchedule");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.Player", b =>
@@ -322,15 +284,6 @@ namespace SportSync.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SportSync.Domain.Entities.EventSchedule", b =>
-                {
-                    b.HasOne("SportSync.Domain.Entities.Event", null)
-                        .WithMany("Schedules")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SportSync.Domain.Entities.Player", b =>
                 {
                     b.HasOne("SportSync.Domain.Entities.Termin", null)
@@ -358,8 +311,6 @@ namespace SportSync.Persistence.Migrations
             modelBuilder.Entity("SportSync.Domain.Entities.Event", b =>
                 {
                     b.Navigation("Members");
-
-                    b.Navigation("Schedules");
 
                     b.Navigation("Termins");
                 });

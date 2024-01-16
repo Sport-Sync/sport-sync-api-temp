@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\src\SportSync.Api\SportSync.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="__snapshots__\__mismatch__\" />
+  </ItemGroup>
+
 </Project>

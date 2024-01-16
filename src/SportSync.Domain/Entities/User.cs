@@ -1,14 +1,16 @@
 ﻿using HotChocolate;
-using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.DomainEvents;
+using SportSync.Domain.Enumerations;
 using SportSync.Domain.Services;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
-public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
+public class User : AggregateRoot
 {
     private string _passwordHash;
 
@@ -43,17 +45,10 @@ public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
 
     public string Phone { get; set; }
 
-    [GraphQLIgnore]
-    public DateTime CreatedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public DateTime? ModifiedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public DateTime? DeletedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public bool Deleted { get; }
+    public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
+    {
+        return new User(firstName, lastName, email, phone, passwordHash);
+    }
 
     [GraphQLIgnore]
     public Result ChangePassword(string passwordHash)
@@ -72,8 +67,13 @@ public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public bool VerifyPasswordHash(string password, IPasswordHashChecker passwordHashChecker)
         => !string.IsNullOrWhiteSpace(password) && passwordHashChecker.HashesMatch(_passwordHash, password);
 
-    public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
+    [GraphQLIgnore]
+    public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
     {
-        return new User(firstName, lastName, email, phone, passwordHash);
+        var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, notes);
+
+        AddDomainEvent(new EventCreatedDomainEvent(@event));
+
+        return @event;
     }
 }

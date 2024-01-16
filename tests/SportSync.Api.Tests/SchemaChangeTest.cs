@@ -1,7 +1,8 @@
 using HotChocolate.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter.Xunit;
-using sport_sync.GraphQL.Types;
+using sport_sync.GraphQL.Types.Mutations;
+using sport_sync.GraphQL.Types.Queries;
 
 namespace SportSync.Api.Tests;
 
@@ -15,7 +16,12 @@ public class SchemaChangeTest
             .AddProjections()
             .AddFiltering()
             .AddAuthorization()
-            .AddQueryType<Query>()
+            .AddQueryType(q => q.Name("Query"))
+            .AddType<UserQuery>()
+            .AddType<EventQuery>()
+            .AddMutationType(q => q.Name("Mutation"))
+            .AddType<UserMutation>()
+            .AddType<EventMutation>()
             .BuildSchemaAsync();
 
         schema.ToString().MatchSnapshot();

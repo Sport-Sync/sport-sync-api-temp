@@ -2,7 +2,7 @@
 
 namespace SportSync.Infrastructure.Common;
 
-internal sealed class MachineDateTime : IDateTime
+internal sealed class DateTimeProvider : IDateTime
 {
     public DateTime UtcNow => DateTime.UtcNow;
 }
