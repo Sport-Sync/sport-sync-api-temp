@@ -51,10 +51,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
         var @event = user.CreateEvent(request.Name, request.SportType, request.Address, request.Price,
             request.NumberOfPlayers, eventTimes, request.Notes);
 
-        foreach (var memberId in request.MemberIds)
-        {
-            @event.AddMember(memberId);
-        }
+        @event.AddMembers(request.MemberIds);
 
         _eventRepository.Insert(@event);
 

@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using HotChocolate;
-using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
@@ -8,12 +6,12 @@ using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
-public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
+public class Event : AggregateRoot
 {
     private readonly HashSet<EventMember> _members = new();
     private readonly Guid _creatorId;
 
-    internal Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
+    private Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(creator, "The creator is required.", nameof(creator));
@@ -31,7 +29,6 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
         Schedule = string.Join("; ", schedule.Select(x => x.ToString()));
 
         _members.Add(EventMember.Create(_creatorId, Id, true));
-        CreateFutureTermins();
     }
 
     private Event()
@@ -51,25 +48,23 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public Guid CreatorId => _creatorId;
     public IReadOnlyCollection<EventMember> Members => _members.ToList();
 
-    [GraphQLIgnore]
-    public DateTime CreatedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public DateTime? ModifiedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public DateTime? DeletedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public bool Deleted { get; }
-
-    public void AddMember(Guid userId)
+    public static Event Create(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
     {
-        _members.Add(EventMember.Create(userId, this.Id));
+        var @event = new Event(creator, name, sportType, address, price, numberOfPlayers, schedule, notes);
+
+        return @event;
     }
 
-    private void CreateFutureTermins()
+    public void AddMembers(List<Guid> userIds)
     {
-
+        foreach (Guid userId in userIds)
+        {
+            _members.Add(EventMember.Create(userId, Id));
+        }
     }
+
+    //private static List<Termin> CreateFutureTermins()
+    //{
+
+    //}
 }

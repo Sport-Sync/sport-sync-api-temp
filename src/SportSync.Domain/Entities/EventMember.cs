@@ -1,10 +1,8 @@
-﻿using HotChocolate;
-using SportSync.Domain.Core.Abstractions;
-using SportSync.Domain.Core.Primitives;
+﻿using SportSync.Domain.Core.Primitives;
 
 namespace SportSync.Domain.Entities;
 
-public class EventMember : Entity, IAuditableEntity, ISoftDeletableEntity
+public class EventMember : Entity
 {
     private EventMember(Guid userId, Guid eventId, bool isCreator = false)
         : base(Guid.NewGuid())
@@ -23,15 +21,6 @@ public class EventMember : Entity, IAuditableEntity, ISoftDeletableEntity
     public Guid UserId { get; set; }
     public bool IsAdmin { get; set; }
     public bool IsCreator { get; set; }
-
-    [GraphQLIgnore]
-    public DateTime CreatedOnUtc { get; }
-    [GraphQLIgnore]
-    public DateTime? ModifiedOnUtc { get; }
-    [GraphQLIgnore]
-    public DateTime? DeletedOnUtc { get; }
-    [GraphQLIgnore]
-    public bool Deleted { get; }
 
     public static EventMember Create(Guid userId, Guid eventId, bool isCreator = false)
     {

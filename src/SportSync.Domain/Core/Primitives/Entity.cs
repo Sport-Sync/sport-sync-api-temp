@@ -1,11 +1,13 @@
-﻿using SportSync.Domain.Core.Utility;
+﻿using HotChocolate;
+using SportSync.Domain.Core.Abstractions;
+using SportSync.Domain.Core.Utility;
 
 namespace SportSync.Domain.Core.Primitives;
 
 /// <summary>
 /// Represents the base class that all entities derive from.
 /// </summary>
-public abstract class Entity : IEquatable<Entity>
+public abstract class Entity : IEquatable<Entity>, IAuditableEntity, ISoftDeletableEntity
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Entity"/> class.
@@ -33,6 +35,18 @@ public abstract class Entity : IEquatable<Entity>
     /// Gets or sets the entity identifier.
     /// </summary>
     public Guid Id { get; set; }
+
+    [GraphQLIgnore]
+    public DateTime CreatedOnUtc { get; set; }
+
+    [GraphQLIgnore]
+    public DateTime? ModifiedOnUtc { get; set; }
+
+    [GraphQLIgnore]
+    public DateTime? DeletedOnUtc { get; set; }
+
+    [GraphQLIgnore]
+    public bool Deleted { get; }
 
     public static bool operator ==(Entity a, Entity b)
     {

@@ -1,5 +1,4 @@
 ﻿using HotChocolate;
-using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
@@ -11,7 +10,7 @@ using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
-public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
+public class User : AggregateRoot
 {
     private string _passwordHash;
 
@@ -46,18 +45,6 @@ public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
 
     public string Phone { get; set; }
 
-    [GraphQLIgnore]
-    public DateTime CreatedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public DateTime? ModifiedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public DateTime? DeletedOnUtc { get; set; }
-
-    [GraphQLIgnore]
-    public bool Deleted { get; }
-
     public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
     {
         return new User(firstName, lastName, email, phone, passwordHash);
@@ -81,7 +68,7 @@ public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
 
     public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
     {
-        var @event = new Event(this, name, sportType, address, price, numberOfPlayers, schedule, notes);
+        var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, schedule, notes);
 
         AddDomainEvent(new EventCreatedDomainEvent(@event));
 
