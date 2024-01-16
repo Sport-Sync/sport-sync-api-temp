@@ -51,8 +51,8 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
             time.EndTimeUtc,
             time.RepeatWeekly)).ToList();
 
-        @event.AddSchedules(eventSchedules);
         @event.AddMembers(request.MemberIds);
+        @event.AddSchedules(eventSchedules);
 
         _eventRepository.Insert(@event);
 

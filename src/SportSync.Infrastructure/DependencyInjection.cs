@@ -50,7 +50,7 @@ public static class DependencyInjection
 
         services.AddScoped<IJwtProvider, JwtProvider>();
 
-        services.AddTransient<IDateTime, MachineDateTime>();
+        services.AddTransient<IDateTime, DateTimeProvider>();
 
         services.AddTransient<IPasswordHasher, PasswordHasher>();
 

@@ -10,6 +10,7 @@ using sport_sync.GraphQL.Types.Mutations;
 using sport_sync.GraphQL.Types.Queries;
 using SportSync.Application;
 using SportSync.Application.Core.Abstractions.Authentication;
+using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Users.CreateUser;
 using SportSync.Infrastructure;
 using SportSync.Infrastructure.Authentication.Settings;
@@ -23,6 +24,7 @@ public class IntegrationTest : IDisposable
 
     public IServiceProvider ServiceProvider { get; set; }
     public Mock<IUserIdentifierProvider> UserIdentifierMock { get; set; }
+    public Mock<IDateTime> DateTimeProviderMock { get; set; }
     public Database Database { get; private set; }
 
     public IntegrationTest()
@@ -30,6 +32,7 @@ public class IntegrationTest : IDisposable
         Database = Database.Create();
 
         UserIdentifierMock = new Mock<IUserIdentifierProvider>();
+        DateTimeProviderMock = new Mock<IDateTime>();
         UserIdentifierMock.Setup(x => x.UserId).Returns(Guid.NewGuid);
 
         ServiceProvider = new ServiceCollection()
@@ -67,7 +70,8 @@ public class IntegrationTest : IDisposable
                         x.TokenExpirationInDays = 1;
                     })
                 .AddScoped(_ => UserIdentifierMock.Object)
-                .BuildServiceProvider();
+                .AddScoped(_ => DateTimeProviderMock.Object)
+            .BuildServiceProvider();
 
         _executor = ServiceProvider.GetRequiredService<RequestExecutorProxy>();
     }
