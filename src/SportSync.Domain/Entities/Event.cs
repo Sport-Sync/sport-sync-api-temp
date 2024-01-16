@@ -31,6 +31,7 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
         Schedule = string.Join("; ", schedule.Select(x => x.ToString()));
 
         _members.Add(EventMember.Create(_creatorId, Id, true));
+        CreateFutureTermins();
     }
 
     private Event()
@@ -65,5 +66,10 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public void AddMember(Guid userId)
     {
         _members.Add(EventMember.Create(userId, this.Id));
+    }
+
+    private void CreateFutureTermins()
+    {
+
     }
 }
