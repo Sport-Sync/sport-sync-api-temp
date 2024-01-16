@@ -1,9 +1,10 @@
-﻿namespace sport_sync.GraphQL.Types.Queries;
+﻿using SportSync.Application.Core.Abstractions.Common;
 
-[ExtendObjectType("Query")]
-public class DateQuery
+namespace SportSync.Application.Events.GetDatesByDayOfWeek;
+
+public class GetDatesByDayOfWeekInputHandler : IInputHandler<GetDatesByDayOfWeekInput, GetDatesByDayOfWeekResponse>
 {
-    public DatesResponse GetDatesByDayOfWeek(GetDatesInput input)
+    public Task<GetDatesByDayOfWeekResponse> Handle(GetDatesByDayOfWeekInput input, CancellationToken cancellationToken)
     {
         // TODO: make validation for numberOfDates to be in range
         var futureDates = new List<DateTime>();
@@ -18,21 +19,9 @@ public class DateQuery
             nextDate = nextDate.AddDays(7);
         }
 
-        return new DatesResponse()
+        return Task.FromResult(new GetDatesByDayOfWeekResponse
         {
             Dates = futureDates
-        };
+        });
     }
-}
-
-// TODO: move to files
-public class DatesResponse
-{
-    public List<DateTime> Dates { get; set; }
-}
-
-public class GetDatesInput
-{
-    public DayOfWeek DayOfWeek { get; set; }
-    public int NumberOfDates { get; set; }
 }
