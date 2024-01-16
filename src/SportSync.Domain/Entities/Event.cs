@@ -9,6 +9,7 @@ namespace SportSync.Domain.Entities;
 public class Event : AggregateRoot
 {
     private readonly HashSet<EventMember> _members = new();
+    private readonly HashSet<Termin> _termins = new();
     private readonly Guid _creatorId;
 
     private Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
@@ -29,6 +30,7 @@ public class Event : AggregateRoot
         Schedule = string.Join("; ", schedule.Select(x => x.ToString()));
 
         _members.Add(EventMember.Create(_creatorId, Id, true));
+        AddFutureTermins(schedule);
     }
 
     private Event()
@@ -47,8 +49,10 @@ public class Event : AggregateRoot
     [NotMapped]
     public Guid CreatorId => _creatorId;
     public IReadOnlyCollection<EventMember> Members => _members.ToList();
+    public IReadOnlyCollection<Termin> Termins => _termins.ToList();
 
-    public static Event Create(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
+    public static Event Create(
+        User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
     {
         var @event = new Event(creator, name, sportType, address, price, numberOfPlayers, schedule, notes);
 
@@ -63,8 +67,46 @@ public class Event : AggregateRoot
         }
     }
 
-    //private static List<Termin> CreateFutureTermins()
-    //{
+    private void AddFutureTermins(IEnumerable<EventTime> eventTimes)
+    {
+        var termins = CreateFutureTermins(eventTimes);
 
-    //}
+        foreach (Termin termin in termins)
+        {
+            _termins.Add(termin);
+        }
+    }
+
+    // Refactor
+    private IEnumerable<Termin> CreateFutureTermins(IEnumerable<EventTime> eventTimes)
+    {
+        var singleTerminEventTimes = eventTimes.Where(x => !x.RepeatWeekly);
+        var repeatableTerminEventTimes = eventTimes.Where(x => x.RepeatWeekly);
+
+        foreach (EventTime eventTime in singleTerminEventTimes)
+        {
+            var termin = Termin.Create(this, eventTime.StartDate, eventTime.StartTime, eventTime.EndTime);
+            CopyMembersToTermin(termin);
+            yield return termin;
+        }
+
+        int numberOfTerminsCreatedInFuture = 4; // Read from config
+        foreach (EventTime eventTime in repeatableTerminEventTimes)
+        {
+            var terminDate = eventTime.StartDate;
+            for (int i = 0; i < numberOfTerminsCreatedInFuture; i++)
+            {
+                var termin = Termin.Create(this, terminDate, eventTime.StartTime, eventTime.EndTime);
+                CopyMembersToTermin(termin);
+                terminDate = terminDate.AddDays(7);
+                yield return termin;
+            }
+        }
+    }
+
+    private void CopyMembersToTermin(Termin termin)
+    {
+        var memberUserIds = _members.Select(x => x.UserId).ToList();
+        termin.AddPlayers(memberUserIds);
+    }
 }

@@ -6,13 +6,15 @@ namespace SportSync.Domain.ValueObjects;
 public sealed class EventTime : ValueObject
 {
     public DayOfWeek DayOfWeek { get; set; }
+    public DateOnly StartDate { get; set; }
     public TimeOnly StartTime { get; set; }
     public TimeOnly EndTime { get; set; }
     public bool RepeatWeekly { get; set; }
 
-    private EventTime(DayOfWeek dayOfWeek, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
+    private EventTime(DayOfWeek dayOfWeek, DateOnly startDate, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
     {
         DayOfWeek = dayOfWeek;
+        StartDate = startDate;
         StartTime = startTime;
         EndTime = endTime;
         RepeatWeekly = repeatWeekly;
@@ -23,13 +25,14 @@ public sealed class EventTime : ValueObject
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return DayOfWeek;
+        yield return StartDate.ToShortDateString();
         yield return StartTime.ToShortTimeString();
         yield return EndTime.ToShortTimeString();
     }
 
-    public static EventTime Create(DayOfWeek dayOfWeek, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
+    public static EventTime Create(DayOfWeek dayOfWeek, DateOnly startDate, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
     {
-        return new EventTime(dayOfWeek, startTime, endTime, repeatWeekly);
+        return new EventTime(dayOfWeek, startDate, startTime, endTime, repeatWeekly);
     }
 
     public override string ToString()
@@ -49,7 +52,9 @@ public sealed class EventTime : ValueObject
 
         if (RepeatWeekly)
         {
-            sb.Append("(Only once)");
+            sb.Append("(Only once - ");
+            sb.Append(StartDate.ToShortDateString());
+            sb.Append(")");
         }
 
         return sb.ToString();

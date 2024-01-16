@@ -23,6 +23,7 @@ internal class EventMemberConfiguration : IEntityTypeConfiguration<EventMember>
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(member => member.IsAdmin).IsRequired().HasDefaultValue(false);
+        builder.Property(member => member.IsCreator).IsRequired().HasDefaultValue(false);
 
         builder.Property(member => member.CreatedOnUtc).IsRequired();
 

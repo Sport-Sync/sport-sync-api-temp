@@ -21,6 +21,8 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
     public DbSet<User> Users { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<EventMember> EventMembers { get; set; }
+    public DbSet<Termin> Termins { get; set; }
+    public DbSet<Player> Players { get; set; }
 
     public SportSyncDbContext(DbContextOptions options, IDateTime dateTime, IMediator mediator)
         : base(options)
@@ -34,6 +36,8 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new EventConfiguration());
         modelBuilder.ApplyConfiguration(new EventMemberConfiguration());
+        modelBuilder.ApplyConfiguration(new TerminConfiguration());
+        modelBuilder.ApplyConfiguration(new PlayerConfiguration());
     }
 
     public new DbSet<TEntity> Set<TEntity>()

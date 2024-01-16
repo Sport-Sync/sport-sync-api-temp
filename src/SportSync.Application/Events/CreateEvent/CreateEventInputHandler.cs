@@ -29,6 +29,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
         _unitOfWork = unitOfWork;
     }
 
+    // TODO: validator (one validation: day of week should match start date)
     public async Task<Guid> Handle(CreateEventInput request, CancellationToken cancellationToken)
     {
         var creatorId = _userIdentifierProvider.UserId;
@@ -44,6 +45,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
 
         var eventTimes = request.EventTime.Select(time => EventTime.Create(
            time.DayOfWeek,
+           DateOnly.FromDateTime(time.StartDate),
            time.StartTimeUtc,
            time.EndTimeUtc,
            time.RepeatWeekly));

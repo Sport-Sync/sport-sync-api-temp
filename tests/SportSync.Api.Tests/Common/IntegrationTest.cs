@@ -6,7 +6,8 @@ using HotChocolate.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using sport_sync.GraphQL;
-using sport_sync.GraphQL.Types;
+using sport_sync.GraphQL.Types.Mutations;
+using sport_sync.GraphQL.Types.Queries;
 using SportSync.Application;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Users.CreateUser;
@@ -41,8 +42,12 @@ public class IntegrationTest : IDisposable
             .AddAuthorizationHandler<IntegrationTestAuthorizationHandler>()
             .AddProjections()
             .AddFiltering()
-            .AddQueryType<Query>()
-            .AddMutationType<Mutation>()
+            .AddQueryType(q => q.Name("Query"))
+            .AddType<UserQuery>()
+            .AddType<EventQuery>()
+            .AddMutationType(q => q.Name("Mutation"))
+            .AddType<UserMutation>()
+            .AddType<EventMutation>()
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>
             {
                 errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
