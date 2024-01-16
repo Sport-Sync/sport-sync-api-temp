@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SportSync.Domain.Entities;
-using SportSync.Persistence.Converters;
 
 namespace SportSync.Persistence.Configurations;
 
@@ -11,23 +10,23 @@ internal class EventConfiguration : IEntityTypeConfiguration<Event>
     {
         builder.HasKey(ev => ev.Id);
 
+        builder.OwnsMany(user => user.Schedule, firstNameBuilder =>
+        {
+            firstNameBuilder.WithOwner();
+
+            firstNameBuilder.Property(schedule => schedule.Value)
+                .HasColumnName(nameof(Event.Schedule))
+                .IsRequired();
+        });
+
+
         builder.Property(ev => ev.Name).IsRequired();
         builder.Property(ev => ev.Address).IsRequired();
         builder.Property(ev => ev.Price).IsRequired();
         builder.Property(ev => ev.NumberOfPlayers).IsRequired();
         builder.Property(ev => ev.Notes);
 
-        builder.Property(ev => ev.StartingDate)
-            .HasConversion<DateOnlyConverter>()
-            .IsRequired();
-
-        builder.Property(ev => ev.StartTime)
-            .HasConversion<TimeOnlyConverter>()
-            .IsRequired();
-
-        builder.Property(ev => ev.EndTime)
-            .HasConversion<TimeOnlyConverter>()
-            .IsRequired();
+        builder.Property(ev => ev.Schedule).IsRequired();
 
         builder.Property(ev => ev.CreatedOnUtc).IsRequired();
 

@@ -4,6 +4,7 @@ using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
@@ -12,8 +13,7 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     private readonly HashSet<EventMember> _members = new();
     private readonly Guid _creatorId;
 
-    internal Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers,
-        DateOnly startingDate, TimeOnly startTime, TimeOnly endTime, string notes)
+    internal Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(creator, "The creator is required.", nameof(creator));
@@ -27,9 +27,8 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
         Address = address;
         Price = price;
         NumberOfPlayers = numberOfPlayers;
-        StartingDate = startingDate;
-        StartTime = startTime;
-        EndTime = endTime;
+        //Schedule = string.Join("; ", schedule.Select(x => x.Value));
+        Schedule = schedule.ToList();
         Notes = notes;
 
         _members.Add(EventMember.Create(_creatorId, Id, true));
@@ -46,9 +45,7 @@ public class Event : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public decimal Price { get; set; }
     public int NumberOfPlayers { get; set; }
     public string Notes { get; set; }
-    public DateOnly StartingDate { get; set; }
-    public TimeOnly StartTime { get; set; }
-    public TimeOnly EndTime { get; set; }
+    public List<EventTime> Schedule { get; set; }
 
     [NotMapped]
     public Guid CreatorId => _creatorId;

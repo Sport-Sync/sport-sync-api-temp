@@ -7,6 +7,7 @@ using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Services;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
@@ -78,10 +79,9 @@ public class User : AggregateRoot, IAuditableEntity, ISoftDeletableEntity
     public bool VerifyPasswordHash(string password, IPasswordHashChecker passwordHashChecker)
         => !string.IsNullOrWhiteSpace(password) && passwordHashChecker.HashesMatch(_passwordHash, password);
 
-    public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers,
-        DateOnly startingDate, TimeOnly startTime, TimeOnly endTime, string notes)
+    public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
     {
-        var @event = new Event(this, name, sportType, address, price, numberOfPlayers, startingDate, startTime, endTime, notes);
+        var @event = new Event(this, name, sportType, address, price, numberOfPlayers, schedule, notes);
 
         AddDomainEvent(new EventCreatedDomainEvent(@event));
 

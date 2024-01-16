@@ -6,6 +6,7 @@ using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Events.CreateEvent;
 
@@ -41,9 +42,14 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
 
         var user = maybeUser.Value;
 
+        var eventTimes = request.EventTime.Select(time => EventTime.Create(
+           DateOnly.FromDateTime(time.Date.Date), 
+           TimeOnly.FromDateTime(time.StartTime.UtcDateTime), 
+           TimeOnly.FromDateTime(time.EndTime.UtcDateTime), 
+           time.RepeatWeekly));
+
         var @event = user.CreateEvent(request.Name, request.SportType, request.Address, request.Price,
-            request.NumberOfPlayers, DateOnly.FromDateTime(request.StartingDate.Date), 
-            TimeOnly.FromTimeSpan(request.StartTime.TimeOfDay), TimeOnly.FromTimeSpan(request.EndTime.TimeOfDay), request.Notes);
+            request.NumberOfPlayers, eventTimes, request.Notes);
 
         foreach (var memberId in request.MemberIds)
         {
