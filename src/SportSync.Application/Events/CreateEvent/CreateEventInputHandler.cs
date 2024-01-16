@@ -6,7 +6,6 @@ using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
-using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Events.CreateEvent;
 
@@ -28,7 +27,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async Task<Guid> Handle(CreateEventInput request, CancellationToken cancellationToken)
     {
         var creatorId = _userIdentifierProvider.UserId;

@@ -50,6 +50,7 @@ public class User : AggregateRoot
         return new User(firstName, lastName, email, phone, passwordHash);
     }
 
+    [GraphQLIgnore]
     public Result ChangePassword(string passwordHash)
     {
         if (passwordHash == _passwordHash)
@@ -66,6 +67,7 @@ public class User : AggregateRoot
     public bool VerifyPasswordHash(string password, IPasswordHashChecker passwordHashChecker)
         => !string.IsNullOrWhiteSpace(password) && passwordHashChecker.HashesMatch(_passwordHash, password);
 
+    [GraphQLIgnore]
     public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
     {
         var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, notes);

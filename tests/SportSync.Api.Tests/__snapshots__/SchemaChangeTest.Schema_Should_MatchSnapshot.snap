@@ -3,43 +3,6 @@
   mutation: Mutation
 }
 
-type Error {
-  code: String
-  message: String
-}
-
-type Event {
-  name: String
-  sportType: SportType!
-  address: String
-  price: Decimal!
-  numberOfPlayers: Int!
-  notes: String
-  schedules: [EventSchedule]
-  members: [EventMember]
-  termins: [Termin]
-  memberUserIds: [UUID!]
-  id: UUID!
-}
-
-type EventMember {
-  eventId: UUID!
-  userId: UUID!
-  isAdmin: Boolean!
-  isCreator: Boolean!
-  id: UUID!
-}
-
-type EventSchedule {
-  eventId: UUID!
-  dayOfWeek: DayOfWeek!
-  startDate: Date!
-  startTimeUtc: TimeSpan!
-  endTimeUtc: TimeSpan!
-  repeatWeekly: Boolean!
-  id: UUID!
-}
-
 type GetDatesByDayOfWeekResponse {
   dates: [DateTime!]!
 }
@@ -50,36 +13,9 @@ type Mutation {
   createEvent(input: CreateEventInput): UUID! @authorize
 }
 
-type Player {
-  terminId: UUID!
-  userId: UUID!
-  id: UUID!
-}
-
 type Query {
   me: User @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
-}
-
-type Result {
-  isSuccess: Boolean!
-  isFailure: Boolean!
-  error: Error
-}
-
-type Termin {
-  eventId: UUID!
-  date: Date!
-  startTimeUtc: TimeSpan!
-  endTimeUtc: TimeSpan!
-  eventName: String
-  sportType: SportType!
-  address: String
-  price: Decimal!
-  numberOfPlayers: Int!
-  notes: String
-  players: [Player]
-  id: UUID!
 }
 
 type TokenResponse {
@@ -87,8 +23,6 @@ type TokenResponse {
 }
 
 type User {
-  changePassword(passwordHash: String): Result
-  createEvent(name: String sportType: SportType! address: String price: Decimal! numberOfPlayers: Int! notes: String): Event
   firstName: String
   lastName: String
   email: String
@@ -158,16 +92,10 @@ enum SportType {
 
 directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
 
-"The `Date` scalar represents an ISO-8601 compliant date type."
-scalar Date
-
 "The `DateTime` scalar represents an ISO-8601 compliant date time type."
 scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
 
 "The built-in `Decimal` scalar type."
 scalar Decimal
-
-"The `TimeSpan` scalar represents an ISO-8601 compliant duration type."
-scalar TimeSpan
 
 scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
