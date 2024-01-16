@@ -66,9 +66,9 @@ public class User : AggregateRoot
     public bool VerifyPasswordHash(string password, IPasswordHashChecker passwordHashChecker)
         => !string.IsNullOrWhiteSpace(password) && passwordHashChecker.HashesMatch(_passwordHash, password);
 
-    public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, IEnumerable<EventTime> schedule, string notes)
+    public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
     {
-        var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, schedule, notes);
+        var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, notes);
 
         AddDomainEvent(new EventCreatedDomainEvent(@event));
 

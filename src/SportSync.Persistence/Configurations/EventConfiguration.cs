@@ -15,9 +15,7 @@ internal class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(ev => ev.Price).IsRequired();
         builder.Property(ev => ev.NumberOfPlayers).IsRequired();
         builder.Property(ev => ev.Notes);
-
-        builder.Property(ev => ev.Schedule).IsRequired();
-
+        
         builder.Property(ev => ev.CreatedOnUtc).IsRequired();
 
         builder.Property(ev => ev.ModifiedOnUtc);

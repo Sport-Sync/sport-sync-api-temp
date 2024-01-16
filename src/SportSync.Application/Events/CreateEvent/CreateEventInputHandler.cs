@@ -28,8 +28,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
-
-    // TODO: validator (one validation: day of week should match start date)
+    
     public async Task<Guid> Handle(CreateEventInput request, CancellationToken cancellationToken)
     {
         var creatorId = _userIdentifierProvider.UserId;
@@ -43,16 +42,16 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
 
         var user = maybeUser.Value;
 
-        var eventTimes = request.EventTime.Select(time => EventTime.Create(
-           time.DayOfWeek,
-           DateOnly.FromDateTime(time.StartDate),
-           time.StartTimeUtc,
-           time.EndTimeUtc,
-           time.RepeatWeekly));
+        var @event = user.CreateEvent(request.Name, request.SportType, request.Address, request.Price, request.NumberOfPlayers, request.Notes);
 
-        var @event = user.CreateEvent(request.Name, request.SportType, request.Address, request.Price,
-            request.NumberOfPlayers, eventTimes, request.Notes);
+        var eventSchedules = request.EventTime.Select(time => EventSchedule.Create(
+            time.DayOfWeek,
+            DateOnly.FromDateTime(time.StartDate),
+            time.StartTimeUtc,
+            time.EndTimeUtc,
+            time.RepeatWeekly)).ToList();
 
+        @event.AddSchedules(eventSchedules);
         @event.AddMembers(request.MemberIds);
 
         _eventRepository.Insert(@event);
