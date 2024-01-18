@@ -45,7 +45,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
 
         var eventSchedules = request.EventTime.Select(time => EventSchedule.Create(
             time.DayOfWeek,
-            DateOnly.FromDateTime(time.StartDate),
+            DateOnly.FromDateTime(time.StartDate.DateTime),
             time.StartTimeUtc,
             time.EndTimeUtc,
             time.RepeatWeekly)).ToList();

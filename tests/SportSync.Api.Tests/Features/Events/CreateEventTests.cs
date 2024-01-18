@@ -12,6 +12,8 @@ public class CreateEventTests : IntegrationTest
     [Fact]
     public async Task CreateEvent_WithValidData_ShouldCreateSuccessfully()
     {
+        var eventDateTimeTomorrow = DateTime.Today.AddDays(1);
+        var eventDateTimeDayAfterTommorow = DateTime.Today.AddDays(2);
         var creator = Database.AddUser();
         var member = Database.AddUser("Marko");
         await Database.SaveChangesAsync();
@@ -30,15 +32,15 @@ public class CreateEventTests : IntegrationTest
                   sportType:FOOTBALL,
                   eventTime:[
                     {{
-                        dayOfWeek: FRIDAY,
-                        startDate: ""2024-01-26 13:59:39.967"",
+                        dayOfWeek: {eventDateTimeTomorrow.DayOfWeek.ToString().ToUpper()},
+                        startDate: ""{eventDateTimeTomorrow}"",
                         startTime: ""2024-01-20 13:59:39.967"",
                         endTime: ""2024-01-20 13:59:39.967"",
                         repeatWeekly: false
                     }},
                     {{
-                        dayOfWeek: MONDAY,
-                        startDate: ""2024-01-22 13:59:39.967"",
+                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
+                        startDate: ""{eventDateTimeDayAfterTommorow}"",
                         startTime: ""2024-01-22 19:00:00+02:00"",
                         endTime: ""2024-01-20 20:00:00+02:00"",
                         repeatWeekly: true

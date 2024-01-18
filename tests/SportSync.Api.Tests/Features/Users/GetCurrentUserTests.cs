@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
-using SportSync.Domain.Entities;
+using SportSync.Domain.DtoTypes;
 
 namespace SportSync.Api.Tests.Features.Users;
 
@@ -22,7 +22,7 @@ public class GetCurrentUserTests : IntegrationTest
                 }
             }"));
 
-        var userResponse = result.ToObject<User>("me");
+        var userResponse = result.ToObject<UserType>("me");
 
         userResponse.FirstName.Should().Be("Ante");
     }
@@ -39,7 +39,7 @@ public class GetCurrentUserTests : IntegrationTest
                 }
             }"));
 
-        var userResponse = result.ToObject<User>("me");
+        var userResponse = result.ToObject<UserType>("me");
 
         userResponse.Should().BeNull();
     }
