@@ -1,12 +1,10 @@
-﻿using HotChocolate;
-using SportSync.Domain.Core.Errors;
+﻿using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Services;
-using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
@@ -38,7 +36,6 @@ public class User : AggregateRoot
 
     public string LastName { get; set; }
 
-    [GraphQLIgnore]
     public string FullName => $"{FirstName} {LastName}";
 
     public string Email { get; set; }
@@ -50,7 +47,6 @@ public class User : AggregateRoot
         return new User(firstName, lastName, email, phone, passwordHash);
     }
 
-    [GraphQLIgnore]
     public Result ChangePassword(string passwordHash)
     {
         if (passwordHash == _passwordHash)
@@ -63,11 +59,9 @@ public class User : AggregateRoot
         return Result.Success();
     }
 
-    [GraphQLIgnore]
     public bool VerifyPasswordHash(string password, IPasswordHashChecker passwordHashChecker)
         => !string.IsNullOrWhiteSpace(password) && passwordHashChecker.HashesMatch(_passwordHash, password);
 
-    [GraphQLIgnore]
     public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
     {
         var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, notes);

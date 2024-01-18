@@ -1,19 +1,16 @@
-﻿using SportSync.Domain.Core.Primitives;
+﻿using System.Linq.Expressions;
 using SportSync.Domain.Core.Primitives.Maybe;
+using SportSync.Domain.DtoTypes;
 using SportSync.Domain.Entities;
 
 namespace SportSync.Domain.Repositories;
 
-public interface IUserRepository : IRepository<User>
+public interface IUserRepository
 {
     Task<Maybe<User>> GetByIdAsync(Guid userId);
     Task<Maybe<User>> GetByEmailAsync(string email);
     Task<bool> IsEmailUniqueAsync(string email);
     Task<bool> IsPhoneUniqueAsync(string phone);
     void Insert(User user);
-}
-
-public interface IRepository<T> where T : Entity
-{
-    IQueryable<T> Get();
+    IQueryable<UserType> GetWhere(Expression<Func<User, bool>> where);
 }

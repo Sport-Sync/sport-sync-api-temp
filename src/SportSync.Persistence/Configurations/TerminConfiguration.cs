@@ -20,7 +20,7 @@ internal class TerminConfiguration : IEntityTypeConfiguration<Termin>
         builder.Property(termin => termin.EventName).IsRequired();
         builder.Property(termin => termin.Address).IsRequired();
         builder.Property(termin => termin.Price).IsRequired();
-        builder.Property(termin => termin.NumberOfPlayers).IsRequired();
+        builder.Property(termin => termin.NumberOfPlayersExpected).IsRequired();
         builder.Property(termin => termin.Notes);
 
         builder.Property(termin => termin.Date)

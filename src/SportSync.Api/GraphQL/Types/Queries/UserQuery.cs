@@ -1,6 +1,6 @@
 ﻿using HotChocolate.Authorization;
 using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Domain.Entities;
+using SportSync.Domain.DtoTypes;
 using SportSync.Domain.Repositories;
 
 namespace sport_sync.GraphQL.Types.Queries;
@@ -9,8 +9,8 @@ namespace sport_sync.GraphQL.Types.Queries;
 public class UserQuery
 {
     [Authorize]
-    [UseProjection]
     [UseFirstOrDefault]
-    public IQueryable<User> Me([Service(ServiceKind.Synchronized)] IUserRepository repository, [Service] IUserIdentifierProvider userIdentifierProvider)
-        => repository.Get().Where(x => x.Id == userIdentifierProvider.UserId);
+    [UseProjection]
+    public IQueryable<UserType> Me([Service(ServiceKind.Synchronized)] IUserRepository repository, [Service] IUserIdentifierProvider userIdentifierProvider)
+        => repository.GetWhere(x => x.Id == userIdentifierProvider.UserId);
 }

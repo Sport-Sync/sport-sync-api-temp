@@ -1,7 +1,6 @@
 ﻿using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
-using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
@@ -20,7 +19,7 @@ public class Termin : Entity
         Address = @event.Address;
         SportType = @event.SportType;
         Price = @event.Price;
-        NumberOfPlayers = @event.NumberOfPlayers;
+        NumberOfPlayersExpected = @event.NumberOfPlayers;
         Notes = @event.Notes;
         Date = date;
         StartTimeUtc = startTime;
@@ -29,7 +28,7 @@ public class Termin : Entity
 
     private Termin()
     {
-        
+
     }
 
     public Guid EventId { get; set; }
@@ -40,8 +39,9 @@ public class Termin : Entity
     public SportType SportType { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
-    public int NumberOfPlayers { get; set; }
+    public int NumberOfPlayersExpected { get; set; }
     public string Notes { get; set; }
+
     public IReadOnlyCollection<Player> Players => _players.ToList();
 
     public static Termin Create(Event @event, DateOnly date, TimeOnly startTime, TimeOnly endTime)
