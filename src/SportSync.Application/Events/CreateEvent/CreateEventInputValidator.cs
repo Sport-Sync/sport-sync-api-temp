@@ -7,8 +7,13 @@ public class CreateEventInputValidator : AbstractValidator<CreateEventInput>
     public CreateEventInputValidator()
     {
         RuleForEach(x => x.EventTime)
-            .Must(x => x.StartDate.Date > DateTime.Today)
-            .WithMessage("StartDate should be after today.")
+            .Where(x => x.StartDate.Date == DateTime.Today)
+            .Must(x => x.StartTimeUtc > TimeOnly.FromDateTime(DateTime.UtcNow))
+            .WithMessage("The time is in past for today.");
+
+        RuleForEach(x => x.EventTime)
+            .Must(x => x.StartDate.Date >= DateTime.Today)
+            .WithMessage("StartDate should not be in past.")
             .Must(x => x.StartDate.DayOfWeek == x.DayOfWeek)
             .WithMessage("StartDate should be on the same day as 'DayOfWeek' input");
 

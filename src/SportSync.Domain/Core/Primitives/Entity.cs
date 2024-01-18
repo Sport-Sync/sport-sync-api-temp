@@ -1,5 +1,4 @@
-﻿using HotChocolate;
-using SportSync.Domain.Core.Abstractions;
+﻿using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Utility;
 
 namespace SportSync.Domain.Core.Primitives;
@@ -36,16 +35,12 @@ public abstract class Entity : IEquatable<Entity>, IAuditableEntity, ISoftDeleta
     /// </summary>
     public Guid Id { get; set; }
 
-    [GraphQLIgnore]
     public DateTime CreatedOnUtc { get; set; }
 
-    [GraphQLIgnore]
     public DateTime? ModifiedOnUtc { get; set; }
 
-    [GraphQLIgnore]
     public DateTime? DeletedOnUtc { get; set; }
 
-    [GraphQLIgnore]
     public bool Deleted { get; }
 
     public static bool operator ==(Entity a, Entity b)

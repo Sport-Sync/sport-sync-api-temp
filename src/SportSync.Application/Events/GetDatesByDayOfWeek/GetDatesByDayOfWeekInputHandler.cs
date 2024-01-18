@@ -17,11 +17,6 @@ public class GetDatesByDayOfWeekInputHandler : IInputHandler<GetDatesByDayOfWeek
         var currentDate = _dateTime.UtcNow.Date;
 
         var daysUntilNextDay = ((int)input.DayOfWeek - (int)currentDate.DayOfWeek + 7) % 7;
-        
-        if (daysUntilNextDay == 0)
-        {
-            daysUntilNextDay = 7;
-        }
 
         var nextDate = currentDate.AddDays(daysUntilNextDay);
 
