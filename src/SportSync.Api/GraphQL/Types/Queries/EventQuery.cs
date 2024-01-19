@@ -18,8 +18,17 @@ public class EventQuery
     [Authorize]
     [UseProjection]
     public IQueryable<TerminType> GetTermins(
-        [Service] IEventRepository repository,
+        [Service] ITerminRepository repository,
         [Service] IUserIdentifierProvider userIdentifierProvider,
         DateTime date)
-        => repository.GetTermins(userIdentifierProvider.UserId, date);
+        => repository.GetQueryable(x => x.Players.Any(c => c.UserId == userIdentifierProvider.UserId && DateOnly.FromDateTime(date) == x.Date));
+
+    [Authorize]
+    [UseFirstOrDefault]
+    [UseProjection]
+    public IQueryable<TerminType> GetTerminById(
+        [Service] ITerminRepository repository,
+        [Service] IUserIdentifierProvider userIdentifierProvider,
+        Guid id)
+        => repository.GetQueryable(x => x.Id == id && x.Players.Any(c => c.UserId == userIdentifierProvider.UserId));
 }

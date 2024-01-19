@@ -10,7 +10,7 @@ namespace SportSync.Persistence.Repositories;
 /// Represents the generic repository with the most common repository methods.
 /// </summary>
 /// <typeparam name="TEntity">The entity type.</typeparam>
-internal abstract class GenericRepository<TEntity>
+public abstract class GenericRepository<TEntity>
     where TEntity : Entity
 {
     /// <summary>

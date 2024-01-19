@@ -12,5 +12,5 @@ public class UserQuery
     [UseFirstOrDefault]
     [UseProjection]
     public IQueryable<UserType> Me([Service(ServiceKind.Synchronized)] IUserRepository repository, [Service] IUserIdentifierProvider userIdentifierProvider)
-        => repository.GetWhere(x => x.Id == userIdentifierProvider.UserId);
+        => repository.GetQueryable(x => x.Id == userIdentifierProvider.UserId);
 }

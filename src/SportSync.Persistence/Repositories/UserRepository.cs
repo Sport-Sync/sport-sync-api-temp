@@ -7,10 +7,10 @@ using SportSync.Domain.Repositories;
 
 namespace SportSync.Persistence.Repositories;
 
-internal sealed class UserRepository : GenericRepository<User>, IUserRepository
+internal sealed class UserRepository : QueryableGenericRepository<User, UserType>, IUserRepository
 {
     public UserRepository(IDbContext dbContext)
-        : base(dbContext)
+        : base(dbContext, UserType.PropertySelector)
     {
     }
 
@@ -18,17 +18,10 @@ internal sealed class UserRepository : GenericRepository<User>, IUserRepository
     public async Task<bool> IsPhoneUniqueAsync(string phone) => !await AnyAsync(x => x.Phone == phone);
     public async Task<Maybe<User>> GetByEmailAsync(string email) => await FirstOrDefaultAsync(x => x.Email == email);
 
-    public IQueryable<UserType> GetWhere(Expression<Func<User, bool>> where)
+    public IQueryable<UserType> GetQueryable(Expression<Func<User, bool>> where = null)
     {
         return DbContext.Set<User>()
             .Where(where)
-            .Select(x => new UserType
-            {
-                FirstName = x.FirstName,
-                LastName = x.LastName,
-                Email = x.Email,
-                Phone = x.Phone,
-                Id = x.Id
-            });
+            .Select(UserType.PropertySelector);
     }
 }
