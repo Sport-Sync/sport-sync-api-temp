@@ -17,9 +17,11 @@ type Query {
   me: UserType @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
+  terminById(id: UUID!): TerminType @authorize
 }
 
 type TerminType {
+  id: UUID!
   date: Date!
   startTimeUtc: TimeSpan!
   endTimeUtc: TimeSpan!
