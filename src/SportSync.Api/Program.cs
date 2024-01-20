@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AppAny.HotChocolate.FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using sport_sync.GraphQL;
@@ -54,7 +55,11 @@ public class Program
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();
 
-        builder.Host.SetupSerilog(builder.Configuration.GetConnectionString("SportSyncDb"));
+        string dbConnectionString = builder.Configuration.GetConnectionString("SportSyncDb");
+        Console.WriteLine(dbConnectionString);
+        Debug.WriteLine(dbConnectionString);
+
+        builder.Host.SetupSerilog(dbConnectionString);
 
         var app = builder.Build();
 
