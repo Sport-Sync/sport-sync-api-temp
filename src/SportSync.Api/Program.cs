@@ -2,7 +2,6 @@ using System.Diagnostics;
 using AppAny.HotChocolate.FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using sport_sync.GraphQL;
-using sport_sync.GraphQL.Types;
 using sport_sync.GraphQL.Types.Mutations;
 using sport_sync.GraphQL.Types.Queries;
 using sport_sync.Setup;
@@ -17,11 +16,6 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        builder.Configuration
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables();
 
         builder.Services
             .AddHttpContextAccessor()
@@ -55,11 +49,10 @@ public class Program
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();
 
-        string dbConnectionString = builder.Configuration.GetConnectionString("SportSyncDb");
-        Console.WriteLine(dbConnectionString);
-        Debug.WriteLine(dbConnectionString);
+        Debug.WriteLine($"ConnectionsString: {builder.Configuration.GetConnectionString("SportSyncDb")}");
+        Console.WriteLine($"Connections string: {builder.Configuration.GetConnectionString("SportSyncDb")}");
 
-        builder.Host.SetupSerilog(dbConnectionString);
+        builder.Host.SetupSerilog(builder.Configuration.GetConnectionString("SportSyncDb"));
 
         var app = builder.Build();
 
