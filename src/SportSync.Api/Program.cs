@@ -48,8 +48,7 @@ public class Program
         //.AddSubscriptionType<Subscription>()
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();
-
-        Debug.WriteLine($"ConnectionsString: {builder.Configuration.GetConnectionString("SportSyncDb")}");
+        
         Console.WriteLine($"Connections string: {builder.Configuration.GetConnectionString("SportSyncDb")}");
 
         builder.Host.SetupSerilog(builder.Configuration.GetConnectionString("SportSyncDb"));
