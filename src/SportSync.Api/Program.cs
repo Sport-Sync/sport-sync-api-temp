@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using AppAny.HotChocolate.FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using sport_sync.Formatters;
 using sport_sync.GraphQL;
 using sport_sync.GraphQL.Types.Mutations;
 using sport_sync.GraphQL.Types.Queries;
@@ -29,6 +29,8 @@ public class Program
             policy.AllowAnyHeader();
         }));
 
+        builder.Services.AddHttpResponseFormatter<CustomHttpResponseFormatter>();
+
         builder.Services
             .AddGraphQLServer()
             .AddErrorFilter<GraphQlErrorFilter>()
@@ -48,7 +50,7 @@ public class Program
         //.AddSubscriptionType<Subscription>()
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();
-        
+
         Console.WriteLine($"Connections string: {builder.Configuration.GetConnectionString("SportSyncDb")}");
 
         builder.Host.SetupSerilog(builder.Configuration.GetConnectionString("SportSyncDb"));
