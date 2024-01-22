@@ -74,30 +74,30 @@ public class Event : AggregateRoot
 
             if (schedule.RepeatWeekly)
             {
-                AddWeeklyRepeatableTermins(schedule.StartDate, schedule.StartTimeUtc, schedule.EndTimeUtc, numberOfTerminsToCreate);
+                AddWeeklyRepeatableTermins(schedule.StartDate, schedule, numberOfTerminsToCreate);
             }
             else
             {
-                AddTermin(schedule.StartDate, schedule.StartTimeUtc, schedule.EndTimeUtc);
+                AddTermin(schedule);
             }
         }
     }
 
-    public void AddTermin(DateOnly date, TimeOnly startTimeUtc, TimeOnly endTimeUtc)
+    public void AddTermin(EventSchedule schedule)
     {
-        var termin = Termin.Create(this, date, startTimeUtc, endTimeUtc);
+        var termin = Termin.Create(this, schedule.StartDate, schedule);
 
         termin.AddPlayers(MemberUserIds);
         _termins.Add(termin);
     }
 
-    public void AddWeeklyRepeatableTermins(DateOnly startDate, TimeOnly startTimeUtc, TimeOnly endTimeUtc, int numberOfTerminsToCreate)
+    public void AddWeeklyRepeatableTermins(DateOnly startDate, EventSchedule schedule, int numberOfTerminsToCreate)
     {
         var nextTerminDate = startDate;
 
         for (int i = 0; i < numberOfTerminsToCreate; i++)
         {
-            var nextTermin = Termin.Create(this, nextTerminDate, startTimeUtc, endTimeUtc);
+            var nextTermin = Termin.Create(this, nextTerminDate, schedule);
             nextTermin.AddPlayers(MemberUserIds);
             _termins.Add(nextTermin);
 

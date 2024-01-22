@@ -17,7 +17,7 @@ public class CreateAdditionalTerminsJob : IJob
     public CreateAdditionalTerminsJob(
         IEventRepository eventRepository,
         IOptions<EventSettings> eventSettings,
-        ILogger<CreateAdditionalTerminsJob> logger, 
+        ILogger<CreateAdditionalTerminsJob> logger,
         IUnitOfWork unitOfWork)
     {
         _eventRepository = eventRepository;
@@ -28,35 +28,34 @@ public class CreateAdditionalTerminsJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
+        _logger.LogInformation("Starting job '{name}'", nameof(CreateAdditionalTerminsJob));
+
         var repeatableEventSchedules = await _eventRepository.GetAllRepeatableEventSchedules();
+        var eventIds = repeatableEventSchedules.Select(x => x.Event.Id);
+        var eventsMap = (await _eventRepository.GetAllByIds(eventIds.ToList())).ToLookup(ev => ev.Id);
 
         foreach (var eventSchedule in repeatableEventSchedules)
         {
             var @event = eventSchedule.Event;
+            var lastTermin = eventSchedule.LastTermin;
+            var schedule = eventSchedule.Schedule;
 
-            var pendingTermins = @event.Termins.Where(t => t.Date > DateOnly.FromDateTime(DateTime.Today));
-
-            if (!pendingTermins.Any())
-            {
-                _logger.LogError("No termins found to be played for event {eventId} (active and weekly repeatable)", @event.Id);
-                continue;
-            }
-
-            var lastTermin = pendingTermins.OrderByDescending(t => t.Date).First();
-            var terminsToCreate = _eventSettings.NumberOfTerminsToCreateInFuture - pendingTermins.Count();
+            var terminsToCreate = _eventSettings.NumberOfTerminsToCreateInFuture - eventSchedule.PendingTerminsCount;
 
             if (terminsToCreate <= 0)
             {
                 continue;
             }
 
-            @event.AddWeeklyRepeatableTermins(
-                lastTermin.Date.AddDays(7), 
-                eventSchedule.StartTimeUtc, 
-                eventSchedule.EndTimeUtc, 
-                terminsToCreate);
+            var ev = eventsMap[eventSchedule.Event.Id].First();
 
-            await _unitOfWork.SaveChangesAsync();
+            ev.AddWeeklyRepeatableTermins(
+                lastTermin.Date.AddDays(7),
+                schedule,
+                terminsToCreate);
         }
+
+        await _unitOfWork.SaveChangesAsync();
+        _logger.LogInformation("Job '{name}' completed successfully", nameof(CreateAdditionalTerminsJob));
     }
 }

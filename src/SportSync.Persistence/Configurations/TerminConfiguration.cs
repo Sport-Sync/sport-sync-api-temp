@@ -17,6 +17,12 @@ internal class TerminConfiguration : IEntityTypeConfiguration<Termin>
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.HasOne<EventSchedule>()
+            .WithMany()
+            .HasForeignKey(termin => termin.ScheduleId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.Property(termin => termin.EventName).IsRequired();
         builder.Property(termin => termin.Address).IsRequired();
         builder.Property(termin => termin.Price).IsRequired();

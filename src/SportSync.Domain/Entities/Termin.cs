@@ -8,13 +8,14 @@ public class Termin : Entity
 {
     private readonly HashSet<Player> _players = new();
 
-    private Termin(Event @event, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+    private Termin(Event @event, DateOnly date, EventSchedule schedule)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(@event, "The event is required.", nameof(@event));
         Ensure.NotEmpty(@event.Id, "The event identifier is required.", $"{nameof(@event)}{nameof(@event.Id)}");
 
         EventId = @event.Id;
+        ScheduleId = @schedule.Id;
         EventName = @event.Name;
         Address = @event.Address;
         SportType = @event.SportType;
@@ -22,8 +23,8 @@ public class Termin : Entity
         NumberOfPlayersExpected = @event.NumberOfPlayers;
         Notes = @event.Notes;
         Date = date;
-        StartTimeUtc = startTime;
-        EndTimeUtc = endTime;
+        StartTimeUtc = schedule.StartTimeUtc;
+        EndTimeUtc = schedule.EndTimeUtc;
     }
 
     private Termin()
@@ -32,6 +33,7 @@ public class Termin : Entity
     }
 
     public Guid EventId { get; set; }
+    public Guid ScheduleId { get; set; }
     public DateOnly Date { get; set; }
     public TimeOnly StartTimeUtc { get; set; }
     public TimeOnly EndTimeUtc { get; set; }
@@ -44,9 +46,9 @@ public class Termin : Entity
 
     public IReadOnlyCollection<Player> Players => _players.ToList();
 
-    public static Termin Create(Event @event, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+    public static Termin Create(Event @event, DateOnly date, EventSchedule schedule)
     {
-        return new Termin(@event, date, startTime, endTime);
+        return new Termin(@event, date, schedule);
     }
 
     public void AddPlayers(List<Guid> userIds)

@@ -5,6 +5,7 @@ namespace SportSync.Domain.Entities;
 public class EventSchedule : Entity
 {
     private EventSchedule(DayOfWeek dayOfWeek, DateOnly startDate, TimeOnly startTimeUtc, TimeOnly endTimeUtc, bool repeatWeekly)
+        : base(Guid.NewGuid())
     {
         DayOfWeek = dayOfWeek;
         StartDate = startDate;
