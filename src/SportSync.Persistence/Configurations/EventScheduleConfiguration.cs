@@ -11,7 +11,7 @@ internal class EventScheduleConfiguration : IEntityTypeConfiguration<EventSchedu
     {
         builder.HasKey(sch => sch.Id);
 
-        builder.HasOne<Event>()
+        builder.HasOne(x => x.Event)
             .WithMany(x => x.Schedules)
             .HasForeignKey(sch => sch.EventId)
             .IsRequired()

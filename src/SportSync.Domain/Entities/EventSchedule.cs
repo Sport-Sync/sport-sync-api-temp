@@ -23,6 +23,7 @@ public class EventSchedule : Entity
     public TimeOnly StartTimeUtc { get; set; }
     public TimeOnly EndTimeUtc { get; set; }
     public bool RepeatWeekly { get; set; }
+    public Event Event { get; set; }
 
     public static EventSchedule Create(DayOfWeek dayOfWeek, DateOnly startDate, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
     {

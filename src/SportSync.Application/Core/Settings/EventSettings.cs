@@ -1,4 +1,4 @@
-﻿namespace SportSync.Infrastructure.Events.Settings;
+﻿namespace SportSync.Application.Core.Settings;
 
 public class EventSettings
 {

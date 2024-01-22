@@ -35,6 +35,7 @@ public class Event : AggregateRoot
 
     public string Name { get; set; }
     public SportType SportType { get; set; }
+    public EventStatus Status { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayers { get; set; }
@@ -53,19 +54,6 @@ public class Event : AggregateRoot
         return @event;
     }
 
-    public void AddSchedules(List<EventSchedule> schedules)
-    {
-        foreach (var schedule in schedules)
-        {
-            _schedules.Add(schedule);
-
-            foreach (var termin in CreateTerminsBySchedule(schedule))
-            {
-                _termins.Add(termin);
-            }
-        }
-    }
-
     public void AddMembers(List<Guid> userIds)
     {
         foreach (Guid userId in userIds)
@@ -78,29 +66,42 @@ public class Event : AggregateRoot
         }
     }
 
-    private IEnumerable<Termin> CreateTerminsBySchedule(EventSchedule schedule)
+    public void AddSchedules(List<EventSchedule> schedules, int numberOfTerminsToCreate)
     {
-        var termin = Termin.Create(this, schedule.StartDate, schedule.StartTimeUtc, schedule.EndTimeUtc);
+        foreach (var schedule in schedules)
+        {
+            _schedules.Add(schedule);
+
+            if (schedule.RepeatWeekly)
+            {
+                AddWeeklyRepeatableTermins(schedule.StartDate, schedule.StartTimeUtc, schedule.EndTimeUtc, numberOfTerminsToCreate);
+            }
+            else
+            {
+                AddTermin(schedule.StartDate, schedule.StartTimeUtc, schedule.EndTimeUtc);
+            }
+        }
+    }
+
+    public void AddTermin(DateOnly date, TimeOnly startTimeUtc, TimeOnly endTimeUtc)
+    {
+        var termin = Termin.Create(this, date, startTimeUtc, endTimeUtc);
 
         termin.AddPlayers(MemberUserIds);
+        _termins.Add(termin);
+    }
 
-        yield return termin;
+    public void AddWeeklyRepeatableTermins(DateOnly startDate, TimeOnly startTimeUtc, TimeOnly endTimeUtc, int numberOfTerminsToCreate)
+    {
+        var nextTerminDate = startDate;
 
-        if (schedule.RepeatWeekly)
+        for (int i = 0; i < numberOfTerminsToCreate; i++)
         {
-            int numberOfTerminsCreatedInFuture = 12; // TODO: Read from config
-            var nextTerminDate = schedule.StartDate.AddDays(7);
+            var nextTermin = Termin.Create(this, nextTerminDate, startTimeUtc, endTimeUtc);
+            nextTermin.AddPlayers(MemberUserIds);
+            _termins.Add(nextTermin);
 
-            for (int i = 0; i < numberOfTerminsCreatedInFuture; i++)
-            {
-                var nextTermin = Termin.Create(this, nextTerminDate, schedule.StartTimeUtc, schedule.EndTimeUtc);
-
-                nextTermin.AddPlayers(MemberUserIds);
-
-                nextTerminDate = nextTerminDate.AddDays(7);
-
-                yield return nextTermin;
-            }
+            nextTerminDate = nextTerminDate.AddDays(7);
         }
     }
 }
