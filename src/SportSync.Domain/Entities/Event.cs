@@ -1,5 +1,6 @@
 ﻿using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
 
 namespace SportSync.Domain.Entities;
@@ -51,6 +52,8 @@ public class Event : AggregateRoot
     {
         var @event = new Event(creator, name, sportType, address, price, numberOfPlayers, notes);
 
+        @event.RaiseDomainEvent(new EventCreatedDomainEvent(@event));
+
         return @event;
     }
 
@@ -71,37 +74,6 @@ public class Event : AggregateRoot
         foreach (var schedule in schedules)
         {
             _schedules.Add(schedule);
-
-            if (schedule.RepeatWeekly)
-            {
-                AddWeeklyRepeatableTermins(schedule.StartDate, schedule, numberOfTerminsToCreate);
-            }
-            else
-            {
-                AddTermin(schedule);
-            }
-        }
-    }
-
-    public void AddTermin(EventSchedule schedule)
-    {
-        var termin = Termin.Create(this, schedule.StartDate, schedule);
-
-        termin.AddPlayers(MemberUserIds);
-        _termins.Add(termin);
-    }
-
-    public void AddWeeklyRepeatableTermins(DateOnly startDate, EventSchedule schedule, int numberOfTerminsToCreate)
-    {
-        var nextTerminDate = startDate;
-
-        for (int i = 0; i < numberOfTerminsToCreate; i++)
-        {
-            var nextTermin = Termin.Create(this, nextTerminDate, schedule);
-            nextTermin.AddPlayers(MemberUserIds);
-            _termins.Add(nextTermin);
-
-            nextTerminDate = nextTerminDate.AddDays(7);
         }
     }
 }

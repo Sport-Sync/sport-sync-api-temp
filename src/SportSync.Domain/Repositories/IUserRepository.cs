@@ -1,6 +1,6 @@
 ﻿using SportSync.Domain.Core.Primitives.Maybe;
-using SportSync.Domain.DtoTypes;
 using SportSync.Domain.Entities;
+using SportSync.Domain.Types;
 
 namespace SportSync.Domain.Repositories;
 

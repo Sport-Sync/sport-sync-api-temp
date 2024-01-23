@@ -2,7 +2,6 @@
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
-using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Services;
 
@@ -65,8 +64,6 @@ public class User : AggregateRoot
     public Event CreateEvent(string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
     {
         var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, notes);
-
-        AddDomainEvent(new EventCreatedDomainEvent(@event));
 
         return @event;
     }

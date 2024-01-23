@@ -49,13 +49,13 @@ public class CreateAdditionalTerminsJob : IJob
 
             var ev = eventsMap[eventSchedule.Event.Id].First();
 
-            ev.AddWeeklyRepeatableTermins(
-                lastTermin.Date.AddDays(7),
-                schedule,
-                terminsToCreate);
+            //ev.AddWeeklyRepeatableTermins(
+            //    lastTermin.Date.AddDays(7),
+            //    schedule,
+            //    terminsToCreate);
         }
 
-        await _unitOfWork.SaveChangesAsync();
+        //await _unitOfWork.SaveChangesAsync();
         _logger.LogInformation("Job '{name}' completed successfully", nameof(CreateAdditionalTerminsJob));
     }
 }

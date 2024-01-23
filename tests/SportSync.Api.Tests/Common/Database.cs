@@ -19,7 +19,7 @@ public class Database
         return UnitOfWork.SaveChangesAsync();
     }
 
-    public static Database Create()
+    public static Database Create(IPublisher publisher)
     {
         var database = new Database();
         var options = new DbContextOptionsBuilder<SportSyncDbContext>()
@@ -28,7 +28,7 @@ public class Database
 
         var dateTimeMock = new Mock<IDateTime>();
 
-        var dbContext = new SportSyncDbContext(options, dateTimeMock.Object, new Mock<IMediator>().Object);
+        var dbContext = new SportSyncDbContext(options, dateTimeMock.Object, publisher);
         dbContext.Database.EnsureCreated();
 
         database.DbContext = dbContext;

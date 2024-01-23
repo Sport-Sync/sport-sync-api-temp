@@ -59,11 +59,11 @@ public class CreateEventTests : IntegrationTest
         eventFromDb.SportType.Should().Be(SportType.Football);
 
         var termins = Database.DbContext.Set<Termin>().Where(x => x.EventId == eventCreatedId);
-        termins.Count().Should().Be(14);
+        termins.Count().Should().Be(15);
 
         var players = Database.DbContext.Set<Player>().Where(x => termins.Select(t => t.Id).Contains(x.TerminId));
-        players.Count().Should().Be(28);
-        players.Where(x => x.UserId == member.Id).Count().Should().Be(14);
+        players.Count().Should().Be(30);
+        players.Where(x => x.UserId == member.Id).Count().Should().Be(15);
 
 
         var eventMembers = Database.DbContext.Set<EventMember>().Where(x => eventCreatedId == x.EventId);

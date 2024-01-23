@@ -1,8 +1,8 @@
-﻿using SportSync.Domain.Entities;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
 
-namespace SportSync.Domain.DtoTypes;
+namespace SportSync.Domain.Types;
 
 public class TerminType
 {

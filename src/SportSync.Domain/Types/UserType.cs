@@ -1,7 +1,7 @@
-﻿using SportSync.Domain.Entities;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using SportSync.Domain.Entities;
 
-namespace SportSync.Domain.DtoTypes;
+namespace SportSync.Domain.Types;
 
 public class UserType
 {

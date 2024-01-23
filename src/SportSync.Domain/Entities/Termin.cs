@@ -4,7 +4,7 @@ using SportSync.Domain.Enumerations;
 
 namespace SportSync.Domain.Entities;
 
-public class Termin : Entity
+public class Termin : AggregateRoot
 {
     private readonly HashSet<Player> _players = new();
 
