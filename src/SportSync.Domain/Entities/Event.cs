@@ -68,7 +68,7 @@ public class Event : AggregateRoot
         }
     }
 
-    public void AddSchedules(List<EventSchedule> schedules, int numberOfTerminsToCreate)
+    public void AddSchedules(List<EventSchedule> schedules)
     {
         foreach (var schedule in schedules)
         {

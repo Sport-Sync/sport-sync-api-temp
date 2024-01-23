@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using SportSync.Application.Core.Abstractions.Authentication;
+﻿using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
-using SportSync.Application.Core.Settings;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives.Maybe;
@@ -17,20 +15,17 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
     private readonly IUserRepository _userRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly EventSettings _eventSettings;
 
     public CreateEventInputHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IUserRepository userRepository,
         IEventRepository eventRepository,
-        IUnitOfWork unitOfWork, 
-        IOptions<EventSettings> eventSettings)
+        IUnitOfWork unitOfWork)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
-        _eventSettings = eventSettings.Value;
     }
 
     public async Task<Guid> Handle(CreateEventInput request, CancellationToken cancellationToken)
@@ -57,7 +52,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
             time.RepeatWeekly)).ToList();
 
         @event.AddMembers(request.MemberIds);
-        @event.AddSchedules(eventSchedules, _eventSettings.NumberOfTerminsToCreateInFuture);
+        @event.AddSchedules(eventSchedules);
 
         _eventRepository.Insert(@event);
 
