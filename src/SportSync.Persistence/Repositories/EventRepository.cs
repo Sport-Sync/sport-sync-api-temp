@@ -11,4 +11,3 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
     {
     }
 }
-

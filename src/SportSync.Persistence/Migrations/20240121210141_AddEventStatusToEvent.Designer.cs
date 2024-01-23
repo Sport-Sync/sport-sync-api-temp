@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240121210141_AddEventStatusToEvent")]
+    partial class AddEventStatusToEvent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -241,9 +244,6 @@ namespace SportSync.Persistence.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("ScheduleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("SportType")
                         .HasColumnType("int");
 
@@ -253,8 +253,6 @@ namespace SportSync.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("ScheduleId");
 
                     b.ToTable("Termins");
                 });
@@ -361,12 +359,6 @@ namespace SportSync.Persistence.Migrations
                     b.HasOne("SportSync.Domain.Entities.Event", null)
                         .WithMany("Termins")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.EventSchedule", null)
-                        .WithMany()
-                        .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });

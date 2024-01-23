@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
-using SportSync.Domain.DtoTypes;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.Types;
 
 namespace SportSync.Persistence.Repositories;
 

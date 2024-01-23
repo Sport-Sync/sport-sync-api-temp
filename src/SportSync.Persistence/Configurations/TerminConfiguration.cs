@@ -12,8 +12,14 @@ internal class TerminConfiguration : IEntityTypeConfiguration<Termin>
         builder.HasKey(termin => termin.Id);
 
         builder.HasOne<Event>()
-            .WithMany(x => x.Termins)
+            .WithMany()
             .HasForeignKey(termin => termin.EventId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasOne(x => x.Schedule)
+            .WithMany()
+            .HasForeignKey(termin => termin.ScheduleId)
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 

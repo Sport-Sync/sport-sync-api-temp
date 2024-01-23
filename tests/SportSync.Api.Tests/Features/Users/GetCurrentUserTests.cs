@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
-using SportSync.Domain.DtoTypes;
+using SportSync.Domain.Types;
 
 namespace SportSync.Api.Tests.Features.Users;
 

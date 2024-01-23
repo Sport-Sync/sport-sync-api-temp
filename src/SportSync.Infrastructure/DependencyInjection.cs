@@ -3,15 +3,17 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Cryptography;
+using SportSync.Application.Core.Settings;
 using SportSync.Domain.Services;
 using SportSync.Infrastructure.Authentication;
 using SportSync.Infrastructure.Authentication.Settings;
 using SportSync.Infrastructure.Common;
 using SportSync.Infrastructure.Cryptography;
-using SportSync.Infrastructure.Events.Settings;
+using SportSync.Infrastructure.Jobs.Setup;
 
 namespace SportSync.Infrastructure;
 
@@ -31,6 +33,11 @@ public static class DependencyInjection
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(configuration["Jwt:SecurityKey"]))
             });
+
+        services.AddQuartz();
+        services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+        services.ConfigureOptions<CreateAdditionalTerminsJobSetup>();
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SettingsKey));
         services.Configure<EventSettings>(configuration.GetSection(EventSettings.SettingsKey));

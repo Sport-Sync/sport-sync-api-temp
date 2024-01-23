@@ -15,7 +15,6 @@ namespace SportSync.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.RegisterRequestHandlers();
 
             return services;
@@ -23,6 +22,8 @@ namespace SportSync.Application
 
         public static IServiceCollection RegisterRequestHandlers(this IServiceCollection services)
         {
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
             var requestHandlerTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()
                 .Where(t => !t.IsAbstract &&

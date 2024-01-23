@@ -3,6 +3,7 @@ using AppAny.HotChocolate.FluentValidation;
 using FluentValidation;
 using HotChocolate;
 using HotChocolate.Execution;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using sport_sync.GraphQL;
@@ -11,6 +12,7 @@ using sport_sync.GraphQL.Types.Queries;
 using SportSync.Application;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Common;
+using SportSync.Application.Core.Settings;
 using SportSync.Application.Users.CreateUser;
 using SportSync.Infrastructure;
 using SportSync.Infrastructure.Authentication.Settings;
@@ -29,8 +31,6 @@ public class IntegrationTest : IDisposable
 
     public IntegrationTest()
     {
-        Database = Database.Create();
-
         UserIdentifierMock = new Mock<IUserIdentifierProvider>();
         DateTimeProviderMock = new Mock<IDateTime>();
         UserIdentifierMock.Setup(x => x.UserId).Returns(Guid.NewGuid);
@@ -69,9 +69,15 @@ public class IntegrationTest : IDisposable
                         x.SecurityKey = "12343tr34tt34t35t53";
                         x.TokenExpirationInDays = 1;
                     })
+                .Configure<EventSettings>(x =>
+                {
+                    x.NumberOfTerminsToCreateInFuture = 14;
+                })
                 .AddScoped(_ => UserIdentifierMock.Object)
                 .AddScoped(_ => DateTimeProviderMock.Object)
             .BuildServiceProvider();
+
+        Database = Database.Create(ServiceProvider.GetRequiredService<IPublisher>());
 
         _executor = ServiceProvider.GetRequiredService<RequestExecutorProxy>();
     }
@@ -90,7 +96,7 @@ public class IntegrationTest : IDisposable
 
         await using var result = await _executor.ExecuteAsync(request, cancellationToken);
 
-        Database = Database.Create();
+        Database = Database.Create(ServiceProvider.GetRequiredService<IPublisher>());
 
         return result.ToJson();
     }
