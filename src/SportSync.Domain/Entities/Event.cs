@@ -44,7 +44,6 @@ public class Event : AggregateRoot
 
     public IReadOnlyCollection<EventSchedule> Schedules => _schedules.ToList();
     public IReadOnlyCollection<EventMember> Members => _members.ToList();
-    public IReadOnlyCollection<Termin> Termins => _termins.ToList();
     public List<Guid> MemberUserIds => _members.Select(m => m.UserId).ToList();
 
     public static Event Create(

@@ -15,16 +15,34 @@ public class Termin : AggregateRoot
         Ensure.NotEmpty(@event.Id, "The event identifier is required.", $"{nameof(@event)}{nameof(@event.Id)}");
 
         EventId = @event.Id;
-        ScheduleId = @schedule.Id;
+        ScheduleId = schedule.Id;
         EventName = @event.Name;
         Address = @event.Address;
         SportType = @event.SportType;
         Price = @event.Price;
         NumberOfPlayersExpected = @event.NumberOfPlayers;
         Notes = @event.Notes;
-        Date = date;
         StartTimeUtc = schedule.StartTimeUtc;
         EndTimeUtc = schedule.EndTimeUtc;
+        Date = date;
+    }
+
+    private Termin(Termin termin, DateOnly date)
+        : base(Guid.NewGuid())
+    {
+        Ensure.NotNull(termin, "The termin is required.", nameof(termin));
+
+        EventId = termin.EventId;
+        ScheduleId = termin.ScheduleId;
+        EventName = termin.EventName;
+        Address = termin.Address;
+        SportType = termin.SportType;
+        Price = termin.Price;
+        NumberOfPlayersExpected = termin.NumberOfPlayersExpected;
+        Notes = termin.Notes;
+        StartTimeUtc = termin.StartTimeUtc;
+        EndTimeUtc = termin.EndTimeUtc;
+        Date = date;
     }
 
     private Termin()
@@ -44,11 +62,25 @@ public class Termin : AggregateRoot
     public int NumberOfPlayersExpected { get; set; }
     public string Notes { get; set; }
 
+    public EventSchedule Schedule { get; set; }
     public IReadOnlyCollection<Player> Players => _players.ToList();
 
     public static Termin Create(Event @event, DateOnly date, EventSchedule schedule)
     {
         return new Termin(@event, date, schedule);
+    }
+
+    public static Termin CreateCopy(Termin termin, DateOnly date)
+    {
+        Ensure.NotNull(termin.Schedule, "The schedule can not be empty for new termin.", $"{nameof(termin)}{nameof(termin.Schedule)}");
+
+        var newTermin = new Termin(termin, date);
+
+        var playerIds = termin.Players.Select(p => p.UserId).ToList();
+
+        newTermin.AddPlayers(playerIds);
+
+        return newTermin;
     }
 
     public void AddPlayers(List<Guid> userIds)

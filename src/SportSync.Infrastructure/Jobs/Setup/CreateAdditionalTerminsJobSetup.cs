@@ -9,20 +9,13 @@ internal class CreateAdditionalTerminsJobSetup : IConfigureOptions<QuartzOptions
     {
         var jobKey = JobKey.Create(nameof(CreateAdditionalTerminsJob));
 
-        //options.AddJob<CreateAdditionalTerminsJob>(jobBuilder => jobBuilder.WithIdentity(jobKey))
-        //    .AddTrigger(trigger =>
-        //        trigger
-        //            .ForJob(jobKey)
-        //            .WithDailyTimeIntervalSchedule(
-        //                s => s.WithIntervalInHours(24)
-        //                    .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(0, 0))
-        //                    .InTimeZone(TimeZoneInfo.Utc)));
-
         options.AddJob<CreateAdditionalTerminsJob>(jobBuilder => jobBuilder.WithIdentity(jobKey))
             .AddTrigger(trigger =>
                 trigger
                     .ForJob(jobKey)
-                    .StartNow()
-                    .WithSimpleSchedule(x => x.WithIntervalInHours(1)));
+                    .WithDailyTimeIntervalSchedule(
+                        s => s.WithIntervalInHours(24)
+                            .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(0, 0))
+                            .InTimeZone(TimeZoneInfo.Utc)));
     }
 }
