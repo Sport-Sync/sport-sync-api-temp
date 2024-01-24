@@ -14,8 +14,8 @@ internal sealed class EventCreatedDomainEventHandler : INotificationHandler<Even
 
     public EventCreatedDomainEventHandler(IOptions<EventSettings> eventSettings, ITerminRepository terminRepository)
     {
-        _terminRepository = terminRepository;
         _eventSettings = eventSettings.Value;
+        _terminRepository = terminRepository;
     }
 
     public Task Handle(EventCreatedDomainEvent notification, CancellationToken cancellationToken)
