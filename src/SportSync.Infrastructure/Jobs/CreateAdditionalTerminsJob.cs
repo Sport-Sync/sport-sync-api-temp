@@ -53,8 +53,11 @@ public class CreateAdditionalTerminsJob : IJob
             }
         }
 
-        _terminRepository.InsertRange(terminsToCreate);
-        await _unitOfWork.SaveChangesAsync();
+        if (terminsToCreate.Any())
+        {
+            _terminRepository.InsertRange(terminsToCreate);
+            await _unitOfWork.SaveChangesAsync();
+        }
 
         _logger.LogInformation("Job '{name}' completed successfully", nameof(CreateAdditionalTerminsJob));
     }
