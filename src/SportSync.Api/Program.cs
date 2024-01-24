@@ -43,7 +43,7 @@ public class Program
             }))
             .AddQueryType(q => q.Name("Query"))
             .AddType<UserQuery>()
-            .AddType<EventQuery>()
+            .AddType<TerminQuery>()
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<UserMutation>()
             .AddType<EventMutation>();

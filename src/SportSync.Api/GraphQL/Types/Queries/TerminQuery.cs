@@ -8,7 +8,7 @@ using SportSync.Domain.Types;
 namespace sport_sync.GraphQL.Types.Queries;
 
 [ExtendObjectType("Query")]
-public class EventQuery
+public class TerminQuery
 {
     public async Task<GetDatesByDayOfWeekResponse> GetDatesByDayOfWeek(
         [Service] GetDatesByDayOfWeekInputHandler inputHandler,
