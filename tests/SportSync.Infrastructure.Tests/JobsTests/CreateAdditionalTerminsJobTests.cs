@@ -34,6 +34,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
             await job.Execute(new Mock<IJobExecutionContext>().Object);
 
             _terminRepositoryMock.Verify(r => r.InsertRange(It.IsAny<List<Termin>>()), Times.Never);
+            _unitOfWorkMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
 
             _loggerMock.VerifyLog(LogLevel.Information, "Job 'CreateAdditionalTerminsJob' completed successfully", Times.Once());
         }
@@ -65,7 +66,6 @@ namespace SportSync.Infrastructure.Tests.JobsTests
             _terminRepositoryMock.Setup(r => r.GetLastRepeatableTermins())
                 .ReturnsAsync(returnedLastTermins);
 
-
             var job = new CreateAdditionalTerminsJob(
                 _terminRepositoryMock.Object,
                 _eventSettingsMock.Object,
@@ -75,7 +75,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
             await job.Execute(new Mock<IJobExecutionContext>().Object);
 
             _terminRepositoryMock.Verify(r => r.InsertRange(It.Is<List<Termin>>(x => x.Count == 5)), Times.Never);
-
+            _unitOfWorkMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             _loggerMock.VerifyLog(LogLevel.Information, "Job 'CreateAdditionalTerminsJob' completed successfully", Times.Once());
         }
 
@@ -116,7 +116,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
             await job.Execute(new Mock<IJobExecutionContext>().Object);
 
             _terminRepositoryMock.Verify(r => r.InsertRange(It.IsAny<List<Termin>>()), Times.Never);
-
+            _unitOfWorkMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
             _loggerMock.VerifyLog(LogLevel.Information, "Job 'CreateAdditionalTerminsJob' completed successfully", Times.Once());
         }
     }
