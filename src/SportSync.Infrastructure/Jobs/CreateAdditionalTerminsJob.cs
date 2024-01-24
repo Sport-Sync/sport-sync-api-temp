@@ -36,6 +36,11 @@ public class CreateAdditionalTerminsJob : IJob
 
         foreach (var terminMap in repeatableEventSchedules)
         {
+            if (!terminMap.LastTermin.Schedule.RepeatWeekly)
+            {
+                continue;
+            }
+
             var nextTerminDate = terminMap.LastTermin.Date.AddDays(7);
 
             var amountOfTerminsToCreate = _eventSettings.NumberOfTerminsToCreateInFuture - terminMap.PendingTerminsCount;
