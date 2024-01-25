@@ -1,4 +1,6 @@
-﻿using SportSync.Domain.Core.Primitives;
+﻿using SportSync.Domain.Core.Errors;
+using SportSync.Domain.Core.Exceptions;
+using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
 
@@ -89,5 +91,16 @@ public class Termin : AggregateRoot
         {
             _players.Add(Player.Create(userId, Id));
         }
+    }
+
+    public void SetPlayerAttendence(Guid userId, bool attending)
+    {
+        var player = _players.FirstOrDefault(p => p.UserId == userId);
+        if (player == null)
+        {
+            throw new DomainException(DomainErrors.Termin.PlayerNotFound);
+        }
+
+        player.Attending = attending;
     }
 }

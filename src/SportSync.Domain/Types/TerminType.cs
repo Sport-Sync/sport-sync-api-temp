@@ -39,11 +39,3 @@ public class TerminType
         })
     };
 }
-
-public class PlayerType
-{
-    public Guid UserId { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public bool IsAttending { get; set; }
-}

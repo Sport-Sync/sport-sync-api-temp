@@ -17,6 +17,12 @@ public static class DomainErrors
             "The password cannot be changed to the specified password.");
     }
 
+    public static class Termin
+    {
+        public static Error NotFound => new("Termin.NotFound", "The termin with the specified identifier was not found.");
+        public static Error PlayerNotFound => new("Termin.PlayerNotFound", "Identified player is not part of this termin.");
+    }
+
     public static class Password
     {
         public static Error NullOrEmpty => new ("Password.NullOrEmpty", "The password is required.");
