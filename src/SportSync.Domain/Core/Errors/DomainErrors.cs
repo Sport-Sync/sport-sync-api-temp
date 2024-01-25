@@ -1,4 +1,5 @@
 ﻿using SportSync.Domain.Core.Primitives;
+using SportSync.Domain.Enumerations;
 
 namespace SportSync.Domain.Core.Errors;
 
@@ -21,6 +22,8 @@ public static class DomainErrors
     {
         public static Error NotFound => new("Termin.NotFound", "The termin with the specified identifier was not found.");
         public static Error PlayerNotFound => new("Termin.PlayerNotFound", "Identified player is not part of this termin.");
+        public static Error NotOpen => new("Termin.NotOpen", $"The termin needs to be in '{TerminStatus.Open}' state in order to execute command.");
+        public static Error AlreadyFinished => new("Termin.AlreadyFinished", "The termin has already finished or is in progress.");
     }
 
     public static class Password
