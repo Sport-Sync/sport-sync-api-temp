@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,6 +45,11 @@ public static class DependencyInjection
         services.Configure<EventSettings>(configuration.GetSection(EventSettings.SettingsKey));
 
         services.RegisterInfrastructureServices();
+
+        //FirebaseApp.Create(new AppOptions()
+        //{
+        //    Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/firebase.json")),
+        //});
 
         return services;
     }
