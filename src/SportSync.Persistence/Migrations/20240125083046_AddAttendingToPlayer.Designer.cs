@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240125083046_AddAttendingToPlayer")]
+    partial class AddAttendingToPlayer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace SportSync.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Events", (string)null);
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.EventMember", b =>
@@ -112,7 +115,7 @@ namespace SportSync.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EventMembers", (string)null);
+                    b.ToTable("EventMembers");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.EventSchedule", b =>
@@ -157,7 +160,7 @@ namespace SportSync.Persistence.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("EventSchedule", (string)null);
+                    b.ToTable("EventSchedule");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.Player", b =>
@@ -197,7 +200,7 @@ namespace SportSync.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Players", (string)null);
+                    b.ToTable("Players");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.Termin", b =>
@@ -261,7 +264,7 @@ namespace SportSync.Persistence.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("Termins", (string)null);
+                    b.ToTable("Termins");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.User", b =>
@@ -317,7 +320,7 @@ namespace SportSync.Persistence.Migrations
                     b.HasIndex("Phone")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.EventMember", b =>

@@ -15,7 +15,7 @@ public class TerminType
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayersExpected { get; set; }
-    public int NumberOfPlayers { get; set; }
+    public IEnumerable<PlayerType> Players { get; set; }
     public string Notes { get; set; }
 
     public static Expression<Func<Termin, TerminType>> PropertySelector = x => new TerminType
@@ -30,6 +30,20 @@ public class TerminType
         Price = x.Price,
         Notes = x.Notes,
         EventName = x.EventName,
-        NumberOfPlayers = x.Players.Count
+        Players = x.Players.Select(p => new PlayerType
+        {
+            UserId = p.UserId,
+            FirstName = p.User.FirstName,
+            LastName = p.User.LastName,
+            IsAttending = p.Attending
+        })
     };
+}
+
+public class PlayerType
+{
+    public Guid UserId { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public bool IsAttending { get; set; }
 }
