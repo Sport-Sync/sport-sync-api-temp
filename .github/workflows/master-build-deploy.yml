@@ -40,14 +40,14 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release --no-build
         
-      - name: Publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      # - name: Publish
+      #   run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
       
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+      # - name: Upload artifact for deployment job
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: .net-app
+      #     path: ${{env.DOTNET_ROOT}}/myapp
 
   # deploy:
   #   permissions:
