@@ -46,10 +46,10 @@ public static class DependencyInjection
 
         services.RegisterInfrastructureServices();
 
-        FirebaseApp.Create(new AppOptions()
-        {
-            Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/firebase.json")),
-        });
+        //FirebaseApp.Create(new AppOptions()
+        //{
+        //    Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/firebase.json")),
+        //});
 
         return services;
     }
