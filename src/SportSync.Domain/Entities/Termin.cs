@@ -101,7 +101,13 @@ public class Termin : AggregateRoot
 
     public void SetPlayerAttendence(Guid userId, bool attending)
     {
-        if (Date <= DateOnly.FromDateTime(DateTime.Today) && StartTimeUtc >= TimeOnly.FromDateTime(DateTime.UtcNow))
+        if (Date < DateOnly.FromDateTime(DateTime.Today))
+        {
+            throw new DomainException(DomainErrors.Termin.AlreadyFinished);
+        }
+
+        if (Date == DateOnly.FromDateTime(DateTime.Today) && 
+            StartTimeUtc <= TimeOnly.FromDateTime(DateTime.UtcNow))
         {
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }
