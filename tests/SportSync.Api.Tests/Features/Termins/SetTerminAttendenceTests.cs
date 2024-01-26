@@ -104,7 +104,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     }
 
     [Fact]
-    public async Task CreateAttendence_ShouldSucced_WhenTerminIsLaterToday()
+    public async Task CreateAttendence_ShouldUpdateAttendence_WhenTerminIsLaterToday()
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
