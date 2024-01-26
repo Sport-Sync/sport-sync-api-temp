@@ -2,10 +2,10 @@
 
 namespace SportSync.Persistence.Converters;
 
-public class TimeOnlyConverter : ValueConverter<TimeOnly, TimeSpan>
+public class TimeOnlyConverter : ValueConverter<DateTime, TimeSpan>
 {
     public TimeOnlyConverter() : base(
-        timeOnly => timeOnly.ToTimeSpan(),
-        timeSpan => TimeOnly.FromTimeSpan(timeSpan))
+        dateTime => dateTime.TimeOfDay,
+        timeSpan => new DateTime() + timeSpan)
     { }
 }

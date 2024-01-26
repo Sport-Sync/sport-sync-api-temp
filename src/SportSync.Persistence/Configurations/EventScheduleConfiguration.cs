@@ -21,8 +21,14 @@ internal class EventScheduleConfiguration : IEntityTypeConfiguration<EventSchedu
         builder.Property(termin => termin.DayOfWeek).IsRequired();
 
         builder.Property(termin => termin.StartDate).IsRequired();
-        builder.Property(termin => termin.StartTimeUtc).IsRequired();
-        builder.Property(termin => termin.EndTimeUtc).IsRequired();
+
+        builder.Property(termin => termin.StartTimeUtc)
+            .HasConversion<TimeOnlyConverter>()
+            .IsRequired();
+
+        builder.Property(termin => termin.EndTimeUtc)
+            .HasConversion<TimeOnlyConverter>()
+            .IsRequired();
 
         builder.Property(termin => termin.CreatedOnUtc).IsRequired();
         builder.Property(termin => termin.ModifiedOnUtc);

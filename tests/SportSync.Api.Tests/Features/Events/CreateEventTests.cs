@@ -34,15 +34,15 @@ public class CreateEventTests : IntegrationTest
                     {{
                         dayOfWeek: {eventDateTimeTomorrow.DayOfWeek.ToString().ToUpper()},
                         startDate: ""{eventDateTimeTomorrow}"",
-                        startTime: ""2024-01-20 13:59:39.967"",
+                        startTime: ""2024-01-20 12:59:39.967"",
                         endTime: ""2024-01-20 13:59:39.967"",
                         repeatWeekly: false
                     }},
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
                         startDate: ""{eventDateTimeDayAfterTommorow}"",
-                        startTime: ""2024-01-22 19:00:00+02:00"",
-                        endTime: ""2024-01-20 20:00:00+02:00"",
+                        startTime: ""2024-01-22 19:00:00"",
+                        endTime: ""2024-01-20 20:00:00"",
                         repeatWeekly: true
                     }}
                   ] 

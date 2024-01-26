@@ -31,9 +31,13 @@ internal class TerminConfiguration : IEntityTypeConfiguration<Termin>
 
         builder.Property(termin => termin.Date).IsRequired();
 
-        builder.Property(termin => termin.StartTimeUtc).IsRequired();
+        builder.Property(termin => termin.StartTimeUtc)
+            .HasConversion<TimeOnlyConverter>()
+            .IsRequired();
 
-        builder.Property(termin => termin.EndTimeUtc).IsRequired();
+        builder.Property(termin => termin.EndTimeUtc)
+            .HasConversion<TimeOnlyConverter>()
+            .IsRequired();
 
         builder.Property(termin => termin.CreatedOnUtc).IsRequired();
 
