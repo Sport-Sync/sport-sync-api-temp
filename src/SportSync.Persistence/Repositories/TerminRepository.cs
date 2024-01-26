@@ -30,7 +30,7 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
 
     public async Task<List<(Termin LastTermin, int PendingTerminsCount)>> GetLastRepeatableTermins()
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = DateTime.Today;
 
         var lastTerminsByEvent = await DbContext.Set<Termin>()
             .Include(t => t.Schedule)

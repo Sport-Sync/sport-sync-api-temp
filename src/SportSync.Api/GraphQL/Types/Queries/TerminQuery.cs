@@ -20,8 +20,8 @@ public class TerminQuery
     public IQueryable<TerminType> GetTermins(
         [Service] ITerminRepository repository,
         [Service] IUserIdentifierProvider userIdentifierProvider,
-        DateTime date)
-        => repository.GetQueryable(x => x.Players.Any(c => c.UserId == userIdentifierProvider.UserId && DateOnly.FromDateTime(date) == x.Date));
+        DateTimeOffset date)
+        => repository.GetQueryable(x => x.Players.Any(c => c.UserId == userIdentifierProvider.UserId && date.Date == x.Date.Date));
 
     [Authorize]
     [UseFirstOrDefault]

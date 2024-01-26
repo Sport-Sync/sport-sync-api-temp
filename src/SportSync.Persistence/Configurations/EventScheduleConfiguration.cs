@@ -20,9 +20,7 @@ internal class EventScheduleConfiguration : IEntityTypeConfiguration<EventSchedu
         builder.Property(termin => termin.RepeatWeekly).IsRequired();
         builder.Property(termin => termin.DayOfWeek).IsRequired();
 
-        builder.Property(termin => termin.StartDate)
-            .HasConversion<DateOnlyConverter>()
-            .IsRequired();
+        builder.Property(termin => termin.StartDate).IsRequired();
 
         builder.Property(termin => termin.StartTimeUtc)
             .HasConversion<TimeOnlyConverter>()
