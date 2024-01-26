@@ -18,4 +18,18 @@ public static class DatabaseExtensions
 
         return user;
     }
+
+    public static User AddTermin(
+        this Database database,
+        string firstName = "FirstName",
+        string lastName = "LastName",
+        string email = "test@gmail.com",
+        string phone = "0986732423",
+        string passwordHash = "nuir4gh4598gh")
+    {
+        var user = User.termin(firstName, lastName, email, phone, passwordHash);
+        database.DbContext.Insert(user);
+
+        return user;
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json.Linq;
+using SportSync.Domain.Core.Primitives;
 
 namespace SportSync.Api.Tests.Extensions;
 
@@ -25,6 +26,14 @@ public static class ResponseExtensions
         {
             err.Should().Contain(x => x.Message == error);
         }
+    }
+
+    public static void ShouldHaveError(this string graphQlJson, Error error)
+    {
+        var jObject = JObject.Parse(graphQlJson);
+
+        var err = jObject.ToObject<ErrorResponse>().Errors;
+        err.Should().Contain(x => x.Message == error.Message);
     }
 }
 
