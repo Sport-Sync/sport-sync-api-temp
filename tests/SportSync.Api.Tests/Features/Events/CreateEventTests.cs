@@ -60,6 +60,7 @@ public class CreateEventTests : IntegrationTest
 
         var termins = Database.DbContext.Set<Termin>().Where(x => x.EventId == eventCreatedId);
         termins.Count().Should().Be(15);
+        termins.All(x => x.Status == TerminStatus.Open).Should().BeTrue();
 
         var players = Database.DbContext.Set<Player>().Where(x => termins.Select(t => t.Id).Contains(x.TerminId));
         players.Count().Should().Be(30);
