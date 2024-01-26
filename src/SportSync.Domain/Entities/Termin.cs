@@ -1,4 +1,6 @@
-﻿using SportSync.Domain.Core.Primitives;
+﻿using SportSync.Domain.Core.Errors;
+using SportSync.Domain.Core.Exceptions;
+using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
 
@@ -57,6 +59,7 @@ public class Termin : AggregateRoot
     public TimeOnly EndTimeUtc { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
+    public TerminStatus Status { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayersExpected { get; set; }
@@ -74,6 +77,11 @@ public class Termin : AggregateRoot
     {
         Ensure.NotNull(termin.Schedule, "The schedule can not be empty for new termin.", $"{nameof(termin)}{nameof(termin.Schedule)}");
 
+        if (termin.Status != TerminStatus.Open)
+        {
+            throw new DomainException(DomainErrors.Termin.NotOpen);
+        }
+
         var newTermin = new Termin(termin, date);
 
         var playerIds = termin.Players.Select(p => p.UserId).ToList();
@@ -89,5 +97,27 @@ public class Termin : AggregateRoot
         {
             _players.Add(Player.Create(userId, Id));
         }
+    }
+
+    public void SetPlayerAttendence(Guid userId, bool attending)
+    {
+        if (Date < DateOnly.FromDateTime(DateTime.Today))
+        {
+            throw new DomainException(DomainErrors.Termin.AlreadyFinished);
+        }
+
+        if (Date == DateOnly.FromDateTime(DateTime.Today) && 
+            StartTimeUtc <= TimeOnly.FromDateTime(DateTime.UtcNow))
+        {
+            throw new DomainException(DomainErrors.Termin.AlreadyFinished);
+        }
+
+        var player = _players.FirstOrDefault(p => p.UserId == userId);
+        if (player == null)
+        {
+            throw new DomainException(DomainErrors.Termin.PlayerNotFound);
+        }
+
+        player.Attending = attending;
     }
 }

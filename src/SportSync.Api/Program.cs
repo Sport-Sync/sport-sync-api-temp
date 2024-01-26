@@ -46,6 +46,7 @@ public class Program
             .AddType<TerminQuery>()
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<UserMutation>()
+            .AddType<TerminMutation>()
             .AddType<EventMutation>();
         //.AddSubscriptionType<Subscription>()
         //.RegisterService<CreateUserRequestHandler>();

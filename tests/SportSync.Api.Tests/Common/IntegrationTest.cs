@@ -49,6 +49,7 @@ public class IntegrationTest : IDisposable
             .AddType<UserQuery>()
             .AddType<TerminQuery>()
             .AddMutationType(q => q.Name("Mutation"))
+            .AddType<TerminMutation>()
             .AddType<UserMutation>()
             .AddType<EventMutation>()
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>

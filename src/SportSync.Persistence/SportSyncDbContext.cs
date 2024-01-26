@@ -34,7 +34,9 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.LogTo(Console.WriteLine);
+#if DEBUG
+        optionsBuilder.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name });
+#endif
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

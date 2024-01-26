@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Numerics;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SportSync.Domain.Entities;
 
@@ -10,7 +11,7 @@ internal class PlayerConfiguration : IEntityTypeConfiguration<Player>
     {
         builder.HasKey(player => player.Id);
 
-        builder.HasOne<User>()
+        builder.HasOne(x => x.User)
             .WithMany()
             .HasForeignKey(player => player.UserId)
             .IsRequired()
@@ -22,12 +23,11 @@ internal class PlayerConfiguration : IEntityTypeConfiguration<Player>
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.Property(player => player.Attending).IsRequired().HasDefaultValue(false);
+
         builder.Property(player => player.CreatedOnUtc).IsRequired();
-
         builder.Property(player => player.ModifiedOnUtc);
-
         builder.Property(player => player.DeletedOnUtc);
-
         builder.Property(player => player.Deleted).HasDefaultValue(false);
 
         builder.HasQueryFilter(player => !player.Deleted);

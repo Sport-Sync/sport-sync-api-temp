@@ -13,6 +13,13 @@ type Mutation {
   createEvent(input: CreateEventInput): UUID! @authorize
 }
 
+type PlayerType {
+  userId: UUID!
+  firstName: String
+  lastName: String
+  isAttending: Boolean!
+}
+
 type Query {
   me: UserType @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
@@ -30,7 +37,7 @@ type TerminType {
   address: String
   price: Decimal!
   numberOfPlayersExpected: Int!
-  numberOfPlayers: Int!
+  players: [PlayerType]
   notes: String
 }
 
