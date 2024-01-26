@@ -54,10 +54,10 @@ namespace SportSync.Infrastructure.Tests.JobsTests
                 12,
                 string.Empty);
 
-            var schedule = EventSchedule.Create(DayOfWeek.Wednesday, DateOnly.FromDateTime(DateTime.Now.AddDays(1)), TimeOnly.Parse("19:00"),
-                TimeOnly.Parse("20:00"), true);
+            var tomorrow = DateTime.Today.AddDays(1);
+            var schedule = EventSchedule.Create(DayOfWeek.Wednesday, tomorrow, tomorrow.AddHours(10), tomorrow.AddHours(11), true);
 
-            var termin = Termin.Create(@event, DateOnly.FromDateTime(DateTime.Now.AddDays(1)), schedule);
+            var termin = Termin.Create(@event, tomorrow, schedule);
             termin.Schedule = schedule;
             var returnedLastTermins = new List<(Termin, int)>()
             {
@@ -96,10 +96,10 @@ namespace SportSync.Infrastructure.Tests.JobsTests
                 12,
                 string.Empty);
 
-            var schedule = EventSchedule.Create(DayOfWeek.Wednesday, DateOnly.FromDateTime(DateTime.Now.AddDays(1)), TimeOnly.Parse("19:00"),
-                TimeOnly.Parse("20:00"), true);
+            var tomorrow = DateTime.Today.AddDays(1);
+            var schedule = EventSchedule.Create(DayOfWeek.Wednesday, tomorrow, tomorrow.AddHours(10), tomorrow.AddHours(11), true);
+            var termin = Termin.Create(@event, tomorrow, schedule);
 
-            var termin = Termin.Create(@event, DateOnly.FromDateTime(DateTime.Now.AddDays(1)), schedule);
             termin.Status = status;
             termin.Schedule = schedule;
             var returnedLastTermins = new List<(Termin, int)>()
@@ -137,11 +137,10 @@ namespace SportSync.Infrastructure.Tests.JobsTests
                 12M,
                 12,
                 string.Empty);
+            var tomorrow = DateTime.Today.AddDays(1);
+            var schedule = EventSchedule.Create(DayOfWeek.Wednesday, tomorrow, tomorrow.AddHours(10), tomorrow.AddHours(11), false);
+            var termin = Termin.Create(@event, tomorrow, schedule);
 
-            var schedule = EventSchedule.Create(DayOfWeek.Wednesday, DateOnly.FromDateTime(DateTime.Now.AddDays(1)), TimeOnly.Parse("19:00"),
-                TimeOnly.Parse("20:00"), false);
-
-            var termin = Termin.Create(@event, DateOnly.FromDateTime(DateTime.Now.AddDays(1)), schedule);
             termin.Schedule = schedule;
             var returnedLastTermins = new List<(Termin, int)>()
             {

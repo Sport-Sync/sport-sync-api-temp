@@ -21,7 +21,7 @@ public class TerminQuery
         [Service] ITerminRepository repository,
         [Service] IUserIdentifierProvider userIdentifierProvider,
         DateTime date)
-        => repository.GetQueryable(x => x.Players.Any(c => c.UserId == userIdentifierProvider.UserId && DateOnly.FromDateTime(date) == x.Date));
+        => repository.GetQueryable(x => x.Players.Any(c => c.UserId == userIdentifierProvider.UserId && date == x.Date));
 
     [Authorize]
     [UseFirstOrDefault]

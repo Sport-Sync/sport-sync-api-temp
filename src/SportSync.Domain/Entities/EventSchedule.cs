@@ -4,7 +4,7 @@ namespace SportSync.Domain.Entities;
 
 public class EventSchedule : Entity
 {
-    private EventSchedule(DayOfWeek dayOfWeek, DateOnly startDate, TimeOnly startTimeUtc, TimeOnly endTimeUtc, bool repeatWeekly)
+    private EventSchedule(DayOfWeek dayOfWeek, DateTime startDate, DateTime startTimeUtc, DateTime endTimeUtc, bool repeatWeekly)
         : base(Guid.NewGuid())
     {
         DayOfWeek = dayOfWeek;
@@ -20,13 +20,13 @@ public class EventSchedule : Entity
 
     public Guid EventId { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
-    public DateOnly StartDate { get; set; }
-    public TimeOnly StartTimeUtc { get; set; }
-    public TimeOnly EndTimeUtc { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime StartTimeUtc { get; set; }
+    public DateTime EndTimeUtc { get; set; }
     public bool RepeatWeekly { get; set; }
     public Event Event { get; set; }
 
-    public static EventSchedule Create(DayOfWeek dayOfWeek, DateOnly startDate, TimeOnly startTime, TimeOnly endTime, bool repeatWeekly)
+    public static EventSchedule Create(DayOfWeek dayOfWeek, DateTime startDate, DateTime startTime, DateTime endTime, bool repeatWeekly)
     {
         return new EventSchedule(dayOfWeek, startDate, startTime, endTime, repeatWeekly);
     }

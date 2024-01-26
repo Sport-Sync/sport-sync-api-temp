@@ -7,9 +7,9 @@ namespace SportSync.Domain.Types;
 public class TerminType
 {
     public Guid Id { get; set; }
-    public DateOnly Date { get; set; }
-    public TimeOnly StartTimeUtc { get; set; }
-    public TimeOnly EndTimeUtc { get; set; }
+    public DateTime Date { get; set; }
+    public DateTime StartTimeUtc { get; set; }
+    public DateTime EndTimeUtc { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
     public string Address { get; set; }

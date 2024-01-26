@@ -31,7 +31,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     {
         var user = Database.AddUser();
         var user2 = Database.AddUser("second", "user", "user@gmail.com", "034234329");
-        var termin = Database.AddTermin(user2, startDate: DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
+        var termin = Database.AddTermin(user2, startDate: DateTime.Today.AddDays(1));
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -54,7 +54,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     public async Task CreateAttendence_ShouldUpdateAttendence()
     {
         var user = Database.AddUser();
-        var termin = Database.AddTermin(user, startDate: DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
+        var termin = Database.AddTermin(user, startDate: DateTime.Today.AddDays(1));
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -108,8 +108,8 @@ public class SetTerminAttendenceTests : IntegrationTest
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
-            DayOfWeek.Wednesday, new DateOnly(2024, 1, 1), TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(1)), TimeOnly.MaxValue, true);
-        var termin = Database.AddTermin(user, startDate: DateOnly.FromDateTime(DateTime.Today), schedule: schedule);
+            DayOfWeek.Wednesday, new DateTime(2024, 1, 1), DateTime.UtcNow.AddHours(1), DateTime.MaxValue, true);
+        var termin = Database.AddTermin(user, startDate: DateTime.Today, schedule: schedule);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -143,8 +143,8 @@ public class SetTerminAttendenceTests : IntegrationTest
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
-            DayOfWeek.Wednesday, new DateOnly(2024, 1, 1), TimeOnly.FromDateTime(DateTime.UtcNow.AddHours(2)), TimeOnly.MaxValue, true);
-        var termin = Database.AddTermin(user, startDate: DateOnly.FromDateTime(DateTime.Today).AddDays(-1), schedule: schedule);
+            DayOfWeek.Wednesday, new DateTime(2024, 1, 1), DateTime.UtcNow.AddHours(2), DateTime.MaxValue, true);
+        var termin = Database.AddTermin(user, startDate: DateTime.Today.AddDays(-1), schedule: schedule);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -170,8 +170,8 @@ public class SetTerminAttendenceTests : IntegrationTest
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
-            DayOfWeek.Wednesday, new DateOnly(2024, 1, 1), TimeOnly.FromDateTime(DateTime.UtcNow.AddMinutes(-20)), TimeOnly.MaxValue, true);
-        var termin = Database.AddTermin(user, startDate: DateOnly.FromDateTime(DateTime.Today), schedule: schedule);
+            DayOfWeek.Wednesday, new DateTime(2024, 1, 1), DateTime.UtcNow.AddMinutes(-20), DateTime.MaxValue, true);
+        var termin = Database.AddTermin(user, startDate: DateTime.Today, schedule: schedule);
 
         await Database.UnitOfWork.SaveChangesAsync();
 

@@ -1,5 +1,4 @@
-﻿using HotChocolate;
-using SportSync.Application.Core.Abstractions.Common;
+﻿using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Domain.Enumerations;
 
 namespace SportSync.Application.Events.CreateEvent;
@@ -19,15 +18,8 @@ public class CreateEventInput : IInput<Guid>
 public class TimeInput
 {
     public DayOfWeek DayOfWeek { get; set; }
-    public DateTimeOffset StartDate { get; set; }
-    public DateTimeOffset StartTime { get; set; }
-    public DateTimeOffset EndTime { get; set; }
-
-    [GraphQLIgnore]
-    public TimeOnly StartTimeUtc => TimeOnly.FromDateTime(StartTime.UtcDateTime);
-
-    [GraphQLIgnore]
-    public TimeOnly EndTimeUtc => TimeOnly.FromDateTime(EndTime.UtcDateTime);
-
+    public DateTime StartDate { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
     public bool RepeatWeekly { get; set; }
 }

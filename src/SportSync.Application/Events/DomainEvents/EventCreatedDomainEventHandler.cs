@@ -52,7 +52,7 @@ internal sealed class EventCreatedDomainEventHandler : INotificationHandler<Even
         return termin;
     }
 
-    private IEnumerable<Termin> AddWeeklyRepeatableTermins(Event @event, EventSchedule schedule, DateOnly startDate)
+    private IEnumerable<Termin> AddWeeklyRepeatableTermins(Event @event, EventSchedule schedule, DateTime startDate)
     {
         var nextTerminDate = startDate;
 

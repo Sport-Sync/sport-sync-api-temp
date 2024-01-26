@@ -10,7 +10,7 @@ public class Termin : AggregateRoot
 {
     private readonly HashSet<Player> _players = new();
 
-    private Termin(Event @event, DateOnly date, EventSchedule schedule)
+    private Termin(Event @event, DateTime date, EventSchedule schedule)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(@event, "The event is required.", nameof(@event));
@@ -29,7 +29,7 @@ public class Termin : AggregateRoot
         Date = date;
     }
 
-    private Termin(Termin termin, DateOnly date)
+    private Termin(Termin termin, DateTime date)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(termin, "The termin is required.", nameof(termin));
@@ -54,9 +54,9 @@ public class Termin : AggregateRoot
 
     public Guid EventId { get; set; }
     public Guid ScheduleId { get; set; }
-    public DateOnly Date { get; set; }
-    public TimeOnly StartTimeUtc { get; set; }
-    public TimeOnly EndTimeUtc { get; set; }
+    public DateTime Date { get; set; }
+    public DateTime StartTimeUtc { get; set; }
+    public DateTime EndTimeUtc { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
     public TerminStatus Status { get; set; }
@@ -68,12 +68,12 @@ public class Termin : AggregateRoot
     public EventSchedule Schedule { get; set; }
     public IReadOnlyCollection<Player> Players => _players.ToList();
 
-    public static Termin Create(Event @event, DateOnly date, EventSchedule schedule)
+    public static Termin Create(Event @event, DateTime date, EventSchedule schedule)
     {
         return new Termin(@event, date, schedule);
     }
 
-    public static Termin CreateCopy(Termin termin, DateOnly date)
+    public static Termin CreateCopy(Termin termin, DateTime date)
     {
         Ensure.NotNull(termin.Schedule, "The schedule can not be empty for new termin.", $"{nameof(termin)}{nameof(termin.Schedule)}");
 
@@ -101,13 +101,12 @@ public class Termin : AggregateRoot
 
     public void SetPlayerAttendence(Guid userId, bool attending)
     {
-        if (Date < DateOnly.FromDateTime(DateTime.Today))
+        if (Date < DateTime.Today)
         {
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }
 
-        if (Date == DateOnly.FromDateTime(DateTime.Today) && 
-            StartTimeUtc <= TimeOnly.FromDateTime(DateTime.UtcNow))
+        if (Date == DateTime.Today && StartTimeUtc.TimeOfDay <= DateTime.UtcNow.TimeOfDay)
         {
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }

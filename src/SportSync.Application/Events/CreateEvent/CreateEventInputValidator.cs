@@ -6,10 +6,10 @@ public class CreateEventInputValidator : AbstractValidator<CreateEventInput>
 {
     public CreateEventInputValidator()
     {
-        RuleForEach(x => x.EventTime)
-            .Where(x => x.StartDate.Date == DateTime.Today)
-            .Must(x => x.StartTimeUtc > TimeOnly.FromDateTime(DateTime.UtcNow))
-            .WithMessage("The time is in past for today.");
+        //RuleForEach(x => x.EventTime)
+        //    .Where(x => x.StartDate.Date == DateTime.Today)
+        //    .Must(x => x.StartTime.TimeOfDay > DateTime.UtcNow.TimeOfDay)
+        //    .WithMessage("The time is in past for today.");
 
         RuleForEach(x => x.EventTime)
             .Must(x => x.StartDate.Date >= DateTime.Today)
