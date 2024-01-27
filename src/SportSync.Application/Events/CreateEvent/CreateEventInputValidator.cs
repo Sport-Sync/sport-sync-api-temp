@@ -9,7 +9,7 @@ public class CreateEventInputValidator : AbstractValidator<CreateEventInput>
         RuleForEach(x => x.EventTime)
             .Where(x => x.StartDate.Date == DateTime.Today)
             .Must(x => x.StartTime.TimeOfDay > DateTime.UtcNow.TimeOfDay)
-            .WithMessage("The time is in past for today.");
+            .WithMessage("The time for today is invalid.");
 
         RuleForEach(x => x.EventTime)
             .Must(x => x.StartDate.Date >= DateTime.Today)
@@ -17,7 +17,7 @@ public class CreateEventInputValidator : AbstractValidator<CreateEventInput>
             .Must(x => x.StartTime.TimeOfDay <= x.EndTime.TimeOfDay)
             .WithMessage("StartTime needs to be earlier than EndTime.")
             .Must(x => x.StartDate.DayOfWeek == x.DayOfWeek)
-            .WithMessage("StartDate should be on the same day as 'DayOfWeek' input");
+            .WithMessage("StartDate should be on the same day as 'DayOfWeek' input.");
 
         RuleFor(x => x.NumberOfPlayers)
             .Must(number => number > 0 && number < 100)
