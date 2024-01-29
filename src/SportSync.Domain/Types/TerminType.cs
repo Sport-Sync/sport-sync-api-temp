@@ -8,8 +8,8 @@ public class TerminType
 {
     public Guid Id { get; set; }
     public DateTime Date { get; set; }
-    public DateTime StartTimeUtc { get; set; }
-    public DateTime EndTimeUtc { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
     public string Address { get; set; }
@@ -23,8 +23,8 @@ public class TerminType
         Id = x.Id,
         Address = x.Address,
         Date = x.Date,
-        EndTimeUtc = x.EndTimeUtc,
-        StartTimeUtc = x.StartTimeUtc,
+        StartTime = x.Date.Date + x.StartTime.TimeOfDay,
+        EndTime = x.Date.Date + x.EndTime.TimeOfDay,
         SportType = x.SportType,
         NumberOfPlayersExpected = x.NumberOfPlayersExpected,
         Price = x.Price,

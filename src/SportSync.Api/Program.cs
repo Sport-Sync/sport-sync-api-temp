@@ -47,7 +47,9 @@ public class Program
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<UserMutation>()
             .AddType<TerminMutation>()
-            .AddType<EventMutation>();
+            .AddType<EventMutation>()
+            .AddTypeConverter<DateTime, DateTimeOffset>(t => t.Kind is DateTimeKind.Unspecified ? DateTime.SpecifyKind(t, DateTimeKind.Utc) : t);
+
         //.AddSubscriptionType<Subscription>()
         //.RegisterService<CreateUserRequestHandler>();
         //.AddGlobalObjectIdentification();
