@@ -24,8 +24,8 @@ public class Termin : AggregateRoot
         Price = @event.Price;
         NumberOfPlayersExpected = @event.NumberOfPlayers;
         Notes = @event.Notes;
-        StartTimeUtc = schedule.StartTimeUtc;
-        EndTimeUtc = schedule.EndTimeUtc;
+        StartTime = schedule.StartTime;
+        EndTime = schedule.EndTime;
         Date = date;
     }
 
@@ -42,8 +42,8 @@ public class Termin : AggregateRoot
         Price = termin.Price;
         NumberOfPlayersExpected = termin.NumberOfPlayersExpected;
         Notes = termin.Notes;
-        StartTimeUtc = termin.StartTimeUtc;
-        EndTimeUtc = termin.EndTimeUtc;
+        StartTime = termin.StartTime;
+        EndTime = termin.EndTime;
         Date = date;
     }
 
@@ -55,8 +55,8 @@ public class Termin : AggregateRoot
     public Guid EventId { get; set; }
     public Guid ScheduleId { get; set; }
     public DateTime Date { get; set; }
-    public DateTime StartTimeUtc { get; set; }
-    public DateTime EndTimeUtc { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
     public TerminStatus Status { get; set; }
@@ -106,7 +106,7 @@ public class Termin : AggregateRoot
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }
 
-        if (Date == DateTime.Today && StartTimeUtc.TimeOfDay <= DateTime.UtcNow.TimeOfDay)
+        if (Date == DateTime.Today && StartTime.TimeOfDay <= DateTime.UtcNow.TimeOfDay)
         {
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }
