@@ -18,7 +18,7 @@ public class Player : Entity
     public Guid TerminId { get; set; }
     public Guid UserId { get; set; }
     public User User { get; set; }
-    public bool Attending { get; set; }
+    public bool? Attending { get; set; }
 
     public static Player Create(Guid userId, Guid terminId)
     {

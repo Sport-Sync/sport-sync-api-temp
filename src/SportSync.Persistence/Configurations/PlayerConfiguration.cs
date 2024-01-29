@@ -23,7 +23,7 @@ internal class PlayerConfiguration : IEntityTypeConfiguration<Player>
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.Property(player => player.Attending).IsRequired().HasDefaultValue(false);
+        builder.Property(player => player.Attending);
 
         builder.Property(player => player.CreatedOnUtc).IsRequired();
         builder.Property(player => player.ModifiedOnUtc);

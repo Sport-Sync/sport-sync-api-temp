@@ -11,7 +11,7 @@ namespace SportSync.Api.Tests.Features.Termins;
 public class SetTerminAttendenceTests : IntegrationTest
 {
     [Fact]
-    public async Task CreateAttendence_ShouldFail_WhenTerminNotFound()
+    public async Task SetAttendence_ShouldFail_WhenTerminNotFound()
     {
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
@@ -27,7 +27,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     }
 
     [Fact]
-    public async Task CreateAttendence_ShouldFail_WhenUserIsNotAPlayer()
+    public async Task SetAttendence_ShouldFail_WhenUserIsNotAPlayer()
     {
         var user = Database.AddUser();
         var user2 = Database.AddUser("second", "user", "user@gmail.com", "034234329");
@@ -51,7 +51,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     }
 
     [Fact]
-    public async Task CreateAttendence_ShouldUpdateAttendence()
+    public async Task SetAttendence_ShouldUpdateAttendence()
     {
         var user = Database.AddUser();
         var termin = Database.AddTermin(user, startDate: DateTime.Today.AddDays(1));
@@ -104,7 +104,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     }
 
     [Fact]
-    public async Task CreateAttendence_ShouldUpdateAttendence_WhenTerminIsLaterToday()
+    public async Task SetAttendence_ShouldUpdateAttendence_WhenTerminIsLaterToday()
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
@@ -139,7 +139,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     }
 
     [Fact]
-    public async Task CreateAttendence_ShouldFail_WhenTerminStartDatePassed()
+    public async Task SetAttendence_ShouldFail_WhenTerminStartDatePassed()
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
@@ -162,11 +162,11 @@ public class SetTerminAttendenceTests : IntegrationTest
                 }}"));
         
         result.ShouldHaveError(DomainErrors.Termin.AlreadyFinished);
-        Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeFalse();
+        Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeNull();
     }
 
     [Fact]
-    public async Task CreateAttendence_ShouldFail_WhenTerminStartTimePassed()
+    public async Task SetAttendence_ShouldFail_WhenTerminStartTimePassed()
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
@@ -189,6 +189,6 @@ public class SetTerminAttendenceTests : IntegrationTest
                 }}"));
 
         result.ShouldHaveError(DomainErrors.Termin.AlreadyFinished);
-        Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeFalse();
+        Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeNull();
     }
 }

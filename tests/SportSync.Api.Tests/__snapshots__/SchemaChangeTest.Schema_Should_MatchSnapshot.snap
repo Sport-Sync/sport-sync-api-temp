@@ -17,7 +17,7 @@ type PlayerType {
   userId: UUID!
   firstName: String
   lastName: String
-  isAttending: Boolean!
+  isAttending: Boolean
 }
 
 type Query {

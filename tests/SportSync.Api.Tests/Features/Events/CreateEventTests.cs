@@ -65,7 +65,7 @@ public class CreateEventTests : IntegrationTest
         var players = Database.DbContext.Set<Player>().Where(x => termins.Select(t => t.Id).Contains(x.TerminId));
         players.Count().Should().Be(30);
         players.Where(x => x.UserId == member.Id).Count().Should().Be(15);
-
+        players.All(p => p.Attending == null).Should().BeTrue();
 
         var eventMembers = Database.DbContext.Set<EventMember>().Where(x => eventCreatedId == x.EventId);
         eventMembers.Count().Should().Be(2);
