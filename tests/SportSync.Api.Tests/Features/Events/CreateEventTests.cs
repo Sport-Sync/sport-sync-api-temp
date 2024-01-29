@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
-using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
 
@@ -34,16 +33,16 @@ public class CreateEventTests : IntegrationTest
                   eventTime:[
                     {{
                         dayOfWeek: {eventDateTimeTomorrow.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeTomorrow}"",
-                        startTime: ""2024-01-20 12:59:39.967"",
-                        endTime: ""2024-01-20 13:59:39.967"",
+                        startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
+                        startTime: ""2024-01-20T12:59:39.967Z"",
+                        endTime: ""2024-01-20T13:59:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeDayAfterTommorow}"",
-                        startTime: ""2024-01-22 19:00:00"",
-                        endTime: ""2024-01-20 20:00:00"",
+                        startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
+                        startTime: ""2024-01-22T19:00:00Z"",
+                        endTime: ""2024-01-20T20:00:00Z"",
                         repeatWeekly: true
                     }}
                   ] 
@@ -104,16 +103,16 @@ public class CreateEventTests : IntegrationTest
                   eventTime:[
                     {{
                         dayOfWeek: {eventDateTimeToday.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeToday}"",
-                        startTime: ""{DateTime.UtcNow.AddMinutes(-5)}"",
-                        endTime: ""2024-01-20 13:59:39.967"",
+                        startDate: ""{eventDateTimeToday.ToIsoString()}"",
+                        startTime: ""{DateTime.UtcNow.AddMinutes(-5).ToIsoString()}"",
+                        endTime: ""2024-01-20T13:59:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeDayAfterTommorow}"",
-                        startTime: ""2024-01-22 19:00:00"",
-                        endTime: ""2024-01-20 20:00:00"",
+                        startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
+                        startTime: ""2024-01-22T19:00:00Z"",
+                        endTime: ""2024-01-20T20:00:00Z"",
                         repeatWeekly: true
                     }}
                   ] 
@@ -121,7 +120,7 @@ public class CreateEventTests : IntegrationTest
             }}"));
 
         result.ShouldHaveError("The time for today is invalid.");
-        
+
         Database.DbContext.Set<Event>().Should().BeEmpty();
         Database.DbContext.Set<Termin>().Should().BeEmpty();
     }
@@ -150,16 +149,16 @@ public class CreateEventTests : IntegrationTest
                   eventTime:[
                     {{
                         dayOfWeek: {eventDateTimeYesterday.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeYesterday}"",
-                        startTime: ""2024-01-20 12:59:39.967"",
-                        endTime: ""2024-01-20 13:59:39.967"",
+                        startDate: ""{eventDateTimeYesterday.ToIsoString()}"",
+                        startTime: ""2024-01-20T12:59:39.967Z"",
+                        endTime: ""2024-01-20T13:59:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeDayAfterTommorow}"",
-                        startTime: ""2024-01-22 19:00:00"",
-                        endTime: ""2024-01-20 20:00:00"",
+                        startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
+                        startTime: ""2024-01-22T19:00:00Z"",
+                        endTime: ""2024-01-20T20:00:00Z"",
                         repeatWeekly: true
                     }}
                   ] 
@@ -196,16 +195,16 @@ public class CreateEventTests : IntegrationTest
                   eventTime:[
                     {{
                         dayOfWeek: {eventDateTimeTomorrow.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeTomorrow}"",
-                        startTime: ""2024-01-20 13:59:39.967"",
-                        endTime: ""2024-01-20 13:55:39.967"",
+                        startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
+                        startTime: ""2024-01-20T13:59:39.967Z"",
+                        endTime: ""2024-01-20T13:55:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeDayAfterTommorow}"",
-                        startTime: ""2024-01-22 19:00:00"",
-                        endTime: ""2024-01-20 20:00:00"",
+                        startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
+                        startTime: ""2024-01-22T19:00:00Z"",
+                        endTime: ""2024-01-20T20:00:00Z"",
                         repeatWeekly: true
                     }}
                   ] 
@@ -242,16 +241,16 @@ public class CreateEventTests : IntegrationTest
                   eventTime:[
                     {{
                         dayOfWeek: {eventDateTimeTomorrow.AddDays(1).DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeTomorrow}"",
-                        startTime: ""2024-01-20 13:59:39.967"",
-                        endTime: ""2024-01-20 14:55:39.967"",
+                        startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
+                        startTime: ""2024-01-20T13:59:39.967Z"",
+                        endTime: ""2024-01-20T14:55:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
-                        startDate: ""{eventDateTimeDayAfterTommorow}"",
-                        startTime: ""2024-01-22 19:00:00"",
-                        endTime: ""2024-01-20 20:00:00"",
+                        startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
+                        startTime: ""2024-01-22T19:00:00Z"",
+                        endTime: ""2024-01-20T20:00:00Z"",
                         repeatWeekly: true
                     }}
                   ] 

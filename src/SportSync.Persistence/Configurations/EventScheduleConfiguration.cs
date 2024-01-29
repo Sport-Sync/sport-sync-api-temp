@@ -22,11 +22,11 @@ internal class EventScheduleConfiguration : IEntityTypeConfiguration<EventSchedu
 
         builder.Property(termin => termin.StartDate).IsRequired();
 
-        builder.Property(termin => termin.StartTimeUtc)
+        builder.Property(termin => termin.StartTime)
             .HasConversion<TimeOnlyConverter>()
             .IsRequired();
 
-        builder.Property(termin => termin.EndTimeUtc)
+        builder.Property(termin => termin.EndTime)
             .HasConversion<TimeOnlyConverter>()
             .IsRequired();
 

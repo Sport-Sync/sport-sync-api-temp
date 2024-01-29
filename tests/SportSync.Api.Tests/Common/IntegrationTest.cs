@@ -53,7 +53,7 @@ public class IntegrationTest : IDisposable
             .AddType<UserMutation>()
             .AddType<EventMutation>()
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>
-            {
+{
                 errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
             }))
             .Services
@@ -76,6 +76,7 @@ public class IntegrationTest : IDisposable
                 })
                 .AddScoped(_ => UserIdentifierMock.Object)
                 .AddScoped(_ => DateTimeProviderMock.Object)
+            .AddTypeConverter<DateTime, DateTimeOffset>(t => DateTime.SpecifyKind(t, DateTimeKind.Utc))
             .BuildServiceProvider();
 
         Database = Database.Create(ServiceProvider.GetRequiredService<IPublisher>());
