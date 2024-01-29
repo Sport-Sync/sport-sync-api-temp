@@ -30,8 +30,8 @@ type Query {
 type TerminType {
   id: UUID!
   date: DateTime!
-  startTimeUtc: DateTime!
-  endTimeUtc: DateTime!
+  startTime: DateTime!
+  endTime: DateTime!
   eventName: String
   sportType: SportType!
   address: String
