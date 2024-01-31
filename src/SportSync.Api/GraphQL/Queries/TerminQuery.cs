@@ -5,7 +5,7 @@ using SportSync.Application.Events.GetDatesByDayOfWeek;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
-namespace sport_sync.GraphQL.Types.Queries;
+namespace sport_sync.GraphQL.Queries;
 
 [ExtendObjectType("Query")]
 public class TerminQuery

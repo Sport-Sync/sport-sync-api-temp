@@ -12,6 +12,7 @@ public class TerminType
     public DateTime EndTime { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
+    public TerminStatus Status { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayersExpected { get; set; }
@@ -30,6 +31,7 @@ public class TerminType
         Price = x.Price,
         Notes = x.Notes,
         EventName = x.EventName,
+        Status = x.Status,
         Players = x.Players.Select(p => new PlayerType
         {
             UserId = p.UserId,
@@ -38,4 +40,9 @@ public class TerminType
             IsAttending = p.Attending
         })
     };
+
+    public static TerminType FromTermin(Termin termin)
+    {
+        return PropertySelector.Compile()(termin);
+    }
 }

@@ -4,6 +4,7 @@ using SportSync.Api.Tests.Extensions;
 using SportSync.Application.Termins.SetTerminAttendence;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Entities;
+using SportSync.Domain.Enumerations;
 
 namespace SportSync.Api.Tests.Features.Termins;
 
@@ -160,7 +161,7 @@ public class SetTerminAttendenceTests : IntegrationTest
                         }}
                     }}
                 }}"));
-        
+
         result.ShouldHaveError(DomainErrors.Termin.AlreadyFinished);
         Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeNull();
     }
@@ -190,5 +191,50 @@ public class SetTerminAttendenceTests : IntegrationTest
 
         result.ShouldHaveError(DomainErrors.Termin.AlreadyFinished);
         Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData(TerminStatus.Finished, false)]
+    [InlineData(TerminStatus.Canceled, false)]
+    [InlineData(TerminStatus.AnnouncedInternally, true)]
+    [InlineData(TerminStatus.AnnouncedPublicly, true)]
+    [InlineData(TerminStatus.Pending, true)]
+    public async Task SetAttendence_ShouldFail_WhenTerminHasDoneStatuses(TerminStatus status, bool shouldSucceed)
+    {
+        var user = Database.AddUser();
+        var termin = Database.AddTermin(user, startDate: DateTime.Today.AddDays(1), status: status);
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
+
+        // Set to true
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    setTerminAttendence(input: {{terminId: ""{termin.Id}"", attending: true}}){{
+                        players{{
+                            firstName, isAttending, userId
+                        }}
+                    }}
+                }}"));
+
+        if (shouldSucceed)
+        {
+            var response = result.ToObject<SetTerminAttendenceResponse>("setTerminAttendence");
+
+            response.Players.Count.Should().Be(1);
+
+            response.Players.Single().UserId.Should().Be(user.Id);
+            response.Players.Single().FirstName.Should().Be(user.FirstName);
+            response.Players.Single().IsAttending.Should().BeTrue();
+
+            Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeTrue();
+        }
+        else
+        {
+            result.ShouldHaveError(DomainErrors.Termin.AlreadyFinished);
+            Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.TerminId == termin.Id).Attending.Should().BeNull();
+        }
     }
 }

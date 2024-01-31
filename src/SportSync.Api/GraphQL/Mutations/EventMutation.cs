@@ -2,7 +2,7 @@
 using HotChocolate.Authorization;
 using SportSync.Application.Events.CreateEvent;
 
-namespace sport_sync.GraphQL.Types.Mutations;
+namespace sport_sync.GraphQL.Mutations;
 
 [ExtendObjectType("Mutation")]
 public class EventMutation

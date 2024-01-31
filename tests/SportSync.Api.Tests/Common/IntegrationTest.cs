@@ -3,12 +3,13 @@ using AppAny.HotChocolate.FluentValidation;
 using FluentValidation;
 using HotChocolate;
 using HotChocolate.Execution;
+using HotChocolate.Types.Descriptors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using sport_sync.GraphQL;
-using sport_sync.GraphQL.Types.Mutations;
-using sport_sync.GraphQL.Types.Queries;
+using sport_sync.GraphQL.Mutations;
+using sport_sync.GraphQL.Queries;
 using SportSync.Application;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Common;
@@ -52,6 +53,7 @@ public class IntegrationTest : IDisposable
             .AddType<TerminMutation>()
             .AddType<UserMutation>()
             .AddType<EventMutation>()
+            .AddConvention<INamingConventions>(new EnumNamingConvention())
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>
 {
                 errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);

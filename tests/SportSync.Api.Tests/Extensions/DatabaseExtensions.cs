@@ -26,14 +26,18 @@ public static class DatabaseExtensions
         string eventName = "event",
         SportType sportType = SportType.Football,
         EventSchedule schedule = null,
-        DateTime startDate = default)
+        DateTime startDate = default, 
+        TerminStatus status = TerminStatus.Pending)
     {
         var tomorrow = DateTime.Today.AddDays(1);
         schedule ??= EventSchedule.Create(DayOfWeek.Wednesday, tomorrow, tomorrow.AddHours(10), tomorrow.AddHours(11), false);
 
         var ev = Event.Create(user, eventName, sportType, "address", 2, 10, null);
         var termin = Termin.Create(ev, startDate, schedule);
+        termin.Status = status;
 
+        database.DbContext.Set<EventSchedule>().Add(schedule);
+        database.DbContext.Set<Event>().Add(ev);
         database.DbContext.Set<Termin>().Add(termin);
 
         var player = Player.Create(user.Id, termin.Id);

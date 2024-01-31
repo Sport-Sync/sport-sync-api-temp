@@ -25,7 +25,7 @@ public class SetTerminAttendenceInputHandler : IInputHandler<SetTerminAttendence
     {
         var userId = _userIdentifierProvider.UserId;
 
-        var maybeTermin = await _terminRepository.GetByIdAsync(request.TerminId);
+        var maybeTermin = await _terminRepository.GetByIdAsync(request.TerminId, cancellationToken);
 
         if (maybeTermin.HasNoValue)
         {

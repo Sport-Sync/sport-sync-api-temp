@@ -85,7 +85,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
         [Theory]
         [InlineData(TerminStatus.Canceled)]
         [InlineData(TerminStatus.Finished)]
-        public async Task Job_ShouldFail_WhenTerminIsNotOpen(TerminStatus status)
+        public async Task Job_ShouldFail_WhenTerminIsDone(TerminStatus status)
         {
             var @event = Event.Create(
                 User.Create("Ante", "Kadic", "ante@gmail.com", "093472836", "jd394fz4398"),
@@ -119,7 +119,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
                 _unitOfWorkMock.Object);
 
             var exception = await Assert.ThrowsAsync<DomainException>(() => job.Execute(new Mock<IJobExecutionContext>().Object));
-            exception.Error.Message.Should().Be(DomainErrors.Termin.NotOpen.Message);
+            exception.Error.Message.Should().Be(DomainErrors.Termin.AlreadyFinished.Message);
 
             _terminRepositoryMock.Verify(r => r.InsertRange(It.IsAny<List<Termin>>()), Times.Never);
             _unitOfWorkMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);

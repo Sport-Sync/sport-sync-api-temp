@@ -2,7 +2,9 @@
 
 public enum TerminStatus
 {
-    Open,
+    Pending,
     Finished,
-    Canceled
+    Canceled,
+    AnnouncedInternally,
+    AnnouncedPublicly
 }

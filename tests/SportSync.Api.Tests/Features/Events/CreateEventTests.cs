@@ -29,17 +29,17 @@ public class CreateEventTests : IntegrationTest
                   numberOfPlayers: 12,
                   notes: """",
                   price: 5,
-                  sportType:FOOTBALL,
+                  sportType:Football,
                   eventTime:[
                     {{
-                        dayOfWeek: {eventDateTimeTomorrow.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeTomorrow.DayOfWeek},
                         startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
                         startTime: ""2024-01-20T12:59:39.967Z"",
                         endTime: ""2024-01-20T13:59:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
-                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek},
                         startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
                         startTime: ""2024-01-22T19:00:00Z"",
                         endTime: ""2024-01-20T20:00:00Z"",
@@ -60,7 +60,7 @@ public class CreateEventTests : IntegrationTest
 
         var termins = Database.DbContext.Set<Termin>().Where(x => x.EventId == eventCreatedId);
         termins.Count().Should().Be(15);
-        termins.All(x => x.Status == TerminStatus.Open).Should().BeTrue();
+        termins.All(x => x.Status == TerminStatus.Pending).Should().BeTrue();
 
         var players = Database.DbContext.Set<Player>().Where(x => termins.Select(t => t.Id).Contains(x.TerminId));
         players.Count().Should().Be(30);
@@ -99,17 +99,17 @@ public class CreateEventTests : IntegrationTest
                   numberOfPlayers: 12,
                   notes: """",
                   price: 5,
-                  sportType:FOOTBALL,
+                  sportType:Football,
                   eventTime:[
                     {{
-                        dayOfWeek: {eventDateTimeToday.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeToday.DayOfWeek},
                         startDate: ""{eventDateTimeToday.ToIsoString()}"",
                         startTime: ""{DateTime.UtcNow.AddMinutes(-5).ToIsoString()}"",
                         endTime: ""2024-01-20T13:59:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
-                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek},
                         startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
                         startTime: ""2024-01-22T19:00:00Z"",
                         endTime: ""2024-01-20T20:00:00Z"",
@@ -145,17 +145,17 @@ public class CreateEventTests : IntegrationTest
                   numberOfPlayers: 12,
                   notes: """",
                   price: 5,
-                  sportType:FOOTBALL,
+                  sportType:Football,
                   eventTime:[
                     {{
-                        dayOfWeek: {eventDateTimeYesterday.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeYesterday.DayOfWeek},
                         startDate: ""{eventDateTimeYesterday.ToIsoString()}"",
                         startTime: ""2024-01-20T12:59:39.967Z"",
                         endTime: ""2024-01-20T13:59:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
-                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek},
                         startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
                         startTime: ""2024-01-22T19:00:00Z"",
                         endTime: ""2024-01-20T20:00:00Z"",
@@ -191,17 +191,17 @@ public class CreateEventTests : IntegrationTest
                   numberOfPlayers: 12,
                   notes: """",
                   price: 5,
-                  sportType:FOOTBALL,
+                  sportType:Football,
                   eventTime:[
                     {{
-                        dayOfWeek: {eventDateTimeTomorrow.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeTomorrow.DayOfWeek},
                         startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
                         startTime: ""2024-01-20T13:59:39.967Z"",
                         endTime: ""2024-01-20T13:55:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
-                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek},
                         startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
                         startTime: ""2024-01-22T19:00:00Z"",
                         endTime: ""2024-01-20T20:00:00Z"",
@@ -237,17 +237,17 @@ public class CreateEventTests : IntegrationTest
                   numberOfPlayers: 12,
                   notes: """",
                   price: 5,
-                  sportType:FOOTBALL,
+                  sportType:Football,
                   eventTime:[
                     {{
-                        dayOfWeek: {eventDateTimeTomorrow.AddDays(1).DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeTomorrow.AddDays(1).DayOfWeek},
                         startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
                         startTime: ""2024-01-20T13:59:39.967Z"",
                         endTime: ""2024-01-20T14:55:39.967Z"",
                         repeatWeekly: false
                     }},
                     {{
-                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek.ToString().ToUpper()},
+                        dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek},
                         startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
                         startTime: ""2024-01-22T19:00:00Z"",
                         endTime: ""2024-01-20T20:00:00Z"",

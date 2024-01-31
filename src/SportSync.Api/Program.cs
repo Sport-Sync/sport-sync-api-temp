@@ -1,9 +1,9 @@
 using AppAny.HotChocolate.FluentValidation;
+using HotChocolate.Types.Descriptors;
 using Microsoft.EntityFrameworkCore;
-using sport_sync.Formatters;
 using sport_sync.GraphQL;
-using sport_sync.GraphQL.Types.Mutations;
-using sport_sync.GraphQL.Types.Queries;
+using sport_sync.GraphQL.Mutations;
+using sport_sync.GraphQL.Queries;
 using sport_sync.Setup;
 using SportSync.Application;
 using SportSync.Infrastructure;
@@ -48,7 +48,8 @@ public class Program
             .AddType<UserMutation>()
             .AddType<TerminMutation>()
             .AddType<EventMutation>()
-            .AddTypeConverter<DateTime, DateTimeOffset>(t => t.Kind is DateTimeKind.Unspecified ? DateTime.SpecifyKind(t, DateTimeKind.Utc) : t);
+            .AddTypeConverter<DateTime, DateTimeOffset>(t => t.Kind is DateTimeKind.Unspecified ? DateTime.SpecifyKind(t, DateTimeKind.Utc) : t)
+            .AddConvention<INamingConventions>(new EnumNamingConvention());
 
         //.AddSubscriptionType<Subscription>()
         //.RegisterService<CreateUserRequestHandler>();
