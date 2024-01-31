@@ -3,6 +3,7 @@ using AppAny.HotChocolate.FluentValidation;
 using FluentValidation;
 using HotChocolate;
 using HotChocolate.Execution;
+using HotChocolate.Types.Descriptors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -52,6 +53,7 @@ public class IntegrationTest : IDisposable
             .AddType<TerminMutation>()
             .AddType<UserMutation>()
             .AddType<EventMutation>()
+            .AddConvention<INamingConventions>(new EnumNamingConvention())
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>
 {
                 errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);

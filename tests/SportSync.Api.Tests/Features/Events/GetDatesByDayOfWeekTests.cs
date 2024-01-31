@@ -17,7 +17,7 @@ public class GetDatesByDayOfWeekTests : IntegrationTest
             q => q.SetQuery(@"
             query{
                 datesByDayOfWeek(input: {
-                    dayOfWeek: WEDNESDAY,
+                    dayOfWeek: Wednesday,
                     numberOfDates: 2
                 }){
                     dates
@@ -41,7 +41,7 @@ public class GetDatesByDayOfWeekTests : IntegrationTest
             q => q.SetQuery(@"
             query{
                 datesByDayOfWeek(input: {
-                    dayOfWeek: WEDNESDAY,
+                    dayOfWeek: Wednesday,
                     numberOfDates: 2
                 }){
                     dates

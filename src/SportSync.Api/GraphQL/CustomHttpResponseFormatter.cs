@@ -3,7 +3,7 @@ using HotChocolate.AspNetCore.Serialization;
 using HotChocolate.Execution;
 using SportSync.Domain.Core.Exceptions;
 
-namespace sport_sync.Formatters;
+namespace sport_sync.GraphQL;
 
 public class CustomHttpResponseFormatter : DefaultHttpResponseFormatter
 {
@@ -18,12 +18,12 @@ public class CustomHttpResponseFormatter : DefaultHttpResponseFormatter
             return (possibleError.Exception as DomainException)!.Error.Code.StartsWith("Authentication") ?
                 HttpStatusCode.Unauthorized : HttpStatusCode.BadRequest;
         }
-        
+
         if (result.Errors?.Count > 0)
         {
             return HttpStatusCode.BadRequest;
         }
-        
+
         return base.OnDetermineStatusCode(result, format, proposedStatusCode);
     }
 }

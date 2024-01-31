@@ -27,6 +27,7 @@ public class Termin : AggregateRoot
         StartTime = schedule.StartTime;
         EndTime = schedule.EndTime;
         Date = date;
+        Status = TerminStatus.Pending;
     }
 
     private Termin(Termin termin, DateTime date)

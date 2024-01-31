@@ -34,6 +34,7 @@ type TerminType {
   endTime: DateTime!
   eventName: String
   sportType: SportType!
+  status: TerminStatus!
   address: String
   price: Decimal!
   numberOfPlayersExpected: Int!
@@ -111,6 +112,14 @@ enum SportType {
   HANDBALL
   BASKETBALL
   TENNIS
+}
+
+enum TerminStatus {
+  PENDING
+  FINISHED
+  CANCELED
+  ANNOUNCED_INTERNALLY
+  ANNOUNCED_PUBLICLY
 }
 
 directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION

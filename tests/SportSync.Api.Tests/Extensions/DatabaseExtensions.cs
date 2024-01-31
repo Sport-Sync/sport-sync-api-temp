@@ -35,6 +35,9 @@ public static class DatabaseExtensions
         var ev = Event.Create(user, eventName, sportType, "address", 2, 10, null);
         var termin = Termin.Create(ev, startDate, schedule);
         termin.Status = status;
+
+        database.DbContext.Set<EventSchedule>().Add(schedule);
+        database.DbContext.Set<Event>().Add(ev);
         database.DbContext.Set<Termin>().Add(termin);
 
         var player = Player.Create(user.Id, termin.Id);
