@@ -20,9 +20,10 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
             .Where(x => x.Id == eventId)
             .SelectMany(x => x.Members)
             .Where(m => m.IsAdmin)
-            .FirstOrDefaultAsync(m => m.UserId == userId, cancellationToken);
+            .Select(m => m.UserId)
+            .FirstOrDefaultAsync(id => id == userId, cancellationToken);
 
-        if (user is null)
+        if (user == Guid.Empty)
         {
             throw new DomainException(DomainErrors.User.Forbidden);
         }
