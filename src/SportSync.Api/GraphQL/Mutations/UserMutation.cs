@@ -3,7 +3,7 @@ using SportSync.Application.Authentication;
 using SportSync.Application.Authentication.Login;
 using SportSync.Application.Users.CreateUser;
 
-namespace sport_sync.GraphQL.Types.Mutations;
+namespace sport_sync.GraphQL.Mutations;
 
 [ExtendObjectType("Mutation")]
 public class UserMutation

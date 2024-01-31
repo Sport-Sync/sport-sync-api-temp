@@ -75,12 +75,10 @@ public class Termin : AggregateRoot
 
     public static Termin CreateCopy(Termin termin, DateTime date)
     {
-        Ensure.NotNull(termin.Schedule, "The schedule can not be empty for new termin.", $"{nameof(termin)}{nameof(termin.Schedule)}");
+        Ensure.NotNull(termin.Schedule, "The schedule can not be empty for new termin.",
+            $"{nameof(termin)}{nameof(termin.Schedule)}");
 
-        if (termin.Status != TerminStatus.Open)
-        {
-            throw new DomainException(DomainErrors.Termin.NotOpen);
-        }
+        termin.EnsureItIsNotDone();
 
         var newTermin = new Termin(termin, date);
 
@@ -101,6 +99,38 @@ public class Termin : AggregateRoot
 
     public void SetPlayerAttendence(Guid userId, bool attending)
     {
+        EnsureItIsNotDone();
+
+        var player = _players.FirstOrDefault(p => p.UserId == userId);
+        if (player == null)
+        {
+            throw new DomainException(DomainErrors.Termin.PlayerNotFound);
+        }
+
+        player.Attending = attending;
+    }
+
+    public void Announce(bool publicly)
+    {
+        EnsureItIsNotDone();
+
+        Status = publicly ? TerminStatus.AnnouncedPublicly : TerminStatus.AnnouncedInternally;
+    }
+
+    public void EnsureItIsNotDone()
+    {
+        bool finishedStatus = Status switch
+        {
+            TerminStatus.Finished => true,
+            TerminStatus.Canceled => true,
+            _ => false
+        };
+
+        if (finishedStatus)
+        {
+            throw new DomainException(DomainErrors.Termin.AlreadyFinished);
+        }
+
         if (Date < DateTime.Today)
         {
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
@@ -110,13 +140,5 @@ public class Termin : AggregateRoot
         {
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }
-
-        var player = _players.FirstOrDefault(p => p.UserId == userId);
-        if (player == null)
-        {
-            throw new DomainException(DomainErrors.Termin.PlayerNotFound);
-        }
-
-        player.Attending = attending;
     }
 }

@@ -6,7 +6,7 @@ namespace SportSync.Domain.Repositories;
 
 public interface ITerminRepository : IQueryableRepository<Termin, TerminType>
 {
-    Task<Maybe<Termin>> GetByIdAsync(Guid id);
+    Task<Maybe<Termin>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<Player>> GetPlayers(Guid id, CancellationToken cancellationToken);
     Task<List<(Termin LastTermin, int PendingTerminsCount)>> GetLastRepeatableTermins();
     void InsertRange(IReadOnlyCollection<Termin> termins);
