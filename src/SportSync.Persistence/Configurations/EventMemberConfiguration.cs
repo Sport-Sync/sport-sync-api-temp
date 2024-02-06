@@ -34,5 +34,7 @@ internal class EventMemberConfiguration : IEntityTypeConfiguration<EventMember>
         builder.Property(member => member.Deleted).HasDefaultValue(false);
 
         builder.HasQueryFilter(member => !member.Deleted);
+
+        builder.ToTable("EventMembers");
     }
 }

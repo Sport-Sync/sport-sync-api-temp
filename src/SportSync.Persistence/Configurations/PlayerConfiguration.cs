@@ -31,5 +31,7 @@ internal class PlayerConfiguration : IEntityTypeConfiguration<Player>
         builder.Property(player => player.Deleted).HasDefaultValue(false);
 
         builder.HasQueryFilter(player => !player.Deleted);
+
+        builder.ToTable("Players");
     }
 }

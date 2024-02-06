@@ -1,8 +1,9 @@
-﻿using SportSync.Domain.Core.Primitives;
+﻿using SportSync.Domain.Core.Abstractions;
+using SportSync.Domain.Core.Primitives;
 
 namespace SportSync.Domain.Entities;
 
-public class EventSchedule : Entity
+public class EventSchedule : Entity, ISoftDeletableEntity
 {
     private EventSchedule(DayOfWeek dayOfWeek, DateTime startDate, DateTime startTime, DateTime endTime, bool repeatWeekly)
         : base(Guid.NewGuid())
@@ -25,6 +26,9 @@ public class EventSchedule : Entity
     public DateTime EndTime { get; set; }
     public bool RepeatWeekly { get; set; }
     public Event Event { get; set; }
+
+    public DateTime? DeletedOnUtc { get; set; }
+    public bool Deleted { get; }
 
     public static EventSchedule Create(DayOfWeek dayOfWeek, DateTime startDate, DateTime startTime, DateTime endTime, bool repeatWeekly)
     {

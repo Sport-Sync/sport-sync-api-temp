@@ -17,8 +17,8 @@
     <ProjectReference Include="..\SportSync.Domain\SportSync.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FriendshipRequests\SendFriendshipRequest\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Using Include="SportSync.Application.Core.Abstractions.Common" />
+	</ItemGroup>
 
 </Project>

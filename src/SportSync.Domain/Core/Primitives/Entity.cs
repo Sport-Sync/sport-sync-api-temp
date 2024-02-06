@@ -6,7 +6,7 @@ namespace SportSync.Domain.Core.Primitives;
 /// <summary>
 /// Represents the base class that all entities derive from.
 /// </summary>
-public abstract class Entity : IEquatable<Entity>, IAuditableEntity, ISoftDeletableEntity
+public abstract class Entity : IEquatable<Entity>, IAuditableEntity
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Entity"/> class.
@@ -38,10 +38,6 @@ public abstract class Entity : IEquatable<Entity>, IAuditableEntity, ISoftDeleta
     public DateTime CreatedOnUtc { get; set; }
 
     public DateTime? ModifiedOnUtc { get; set; }
-
-    public DateTime? DeletedOnUtc { get; set; }
-
-    public bool Deleted { get; }
 
     public static bool operator ==(Entity a, Entity b)
     {

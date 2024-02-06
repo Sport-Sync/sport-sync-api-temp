@@ -25,5 +25,7 @@ internal class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.Property(ev => ev.Deleted).HasDefaultValue(false);
 
         builder.HasQueryFilter(ev => !ev.Deleted);
+
+        builder.ToTable("Events");
     }
 }

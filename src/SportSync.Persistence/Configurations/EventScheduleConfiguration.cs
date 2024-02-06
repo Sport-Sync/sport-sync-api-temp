@@ -36,5 +36,7 @@ internal class EventScheduleConfiguration : IEntityTypeConfiguration<EventSchedu
         builder.Property(termin => termin.Deleted).HasDefaultValue(false);
         
         builder.HasQueryFilter(termin => !termin.Deleted);
+
+        builder.ToTable("EventSchedules");
     }
 }
