@@ -29,7 +29,7 @@ namespace SportSync.Application
                 .Where(t => !t.IsAbstract &&
                             !t.IsInterface &&
                             t.GetInterfaces().Any(i => i.IsGenericType &&
-                                                       i.GetGenericTypeDefinition() == typeof(IInputHandler<,>)));
+                                                       i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)));
 
             foreach (var handlerType in requestHandlerTypes)
             {

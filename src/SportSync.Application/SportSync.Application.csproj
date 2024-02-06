@@ -17,4 +17,8 @@
     <ProjectReference Include="..\SportSync.Domain\SportSync.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="FriendshipRequests\SendFriendshipRequest\" />
+  </ItemGroup>
+
 </Project>

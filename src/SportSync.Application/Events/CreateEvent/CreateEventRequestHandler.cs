@@ -9,14 +9,14 @@ using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Events.CreateEvent;
 
-public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
+public class CreateEventRequestHandler : IRequestHandler<CreateEventInput, Guid>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateEventInputHandler(
+    public CreateEventRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IUserRepository userRepository,
         IEventRepository eventRepository,
@@ -28,7 +28,7 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Guid> Handle(CreateEventInput request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateEventInput input, CancellationToken cancellationToken)
     {
         var creatorId = _userIdentifierProvider.UserId;
 
@@ -42,16 +42,16 @@ public class CreateEventInputHandler : IInputHandler<CreateEventInput, Guid>
         var user = maybeUser.Value;
 
         var @event = user.CreateEvent(
-            request.Name, request.SportType, request.Address, request.Price, request.NumberOfPlayers, request.Notes);
+            input.Name, input.SportType, input.Address, input.Price, input.NumberOfPlayers, input.Notes);
 
-        var eventSchedules = request.EventTime.Select(time => EventSchedule.Create(
+        var eventSchedules = input.EventTime.Select(time => EventSchedule.Create(
             time.DayOfWeek,
             time.StartDate,
             time.StartTime,
             time.EndTime,
             time.RepeatWeekly)).ToList();
 
-        @event.AddMembers(request.MemberIds);
+        @event.AddMembers(input.MemberIds);
         @event.AddSchedules(eventSchedules);
 
         _eventRepository.Insert(@event);

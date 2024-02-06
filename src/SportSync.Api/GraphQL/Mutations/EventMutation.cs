@@ -9,7 +9,7 @@ public class EventMutation
 {
     [Authorize]
     public async Task<Guid> CreateEvent(
-        [Service] CreateEventInputHandler inputHandler,
+        [Service] CreateEventRequestHandler requestHandler,
         [UseFluentValidation] CreateEventInput input,
-        CancellationToken cancellationToken) => await inputHandler.Handle(input, cancellationToken);
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

@@ -9,12 +9,12 @@ namespace sport_sync.GraphQL.Mutations;
 public class UserMutation
 {
     public async Task<TokenResponse> CreateUser(
-        [Service] CreateUserInputHandler inputHandler,
+        [Service] CreateUserRequestHandler requestHandler,
         [UseFluentValidation] CreateUserInput input,
-        CancellationToken cancellationToken) => await inputHandler.Handle(input, cancellationToken);
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     public async Task<TokenResponse> Login(
-        [Service] LoginInputHandler inputHandler,
+        [Service] LoginRequestHandler requestHandler,
         [UseFluentValidation] LoginInput input,
-        CancellationToken cancellationToken) => await inputHandler.Handle(input, cancellationToken);
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

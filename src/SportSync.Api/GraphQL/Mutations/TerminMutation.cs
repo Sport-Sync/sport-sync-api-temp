@@ -10,13 +10,13 @@ public class TerminMutation
 {
     [Authorize]
     public async Task<SetTerminAttendenceResponse> SetTerminAttendence(
-        [Service] SetTerminAttendenceInputHandler inputHandler,
+        [Service] SetTerminAttendenceRequestHandler requestHandler,
         SetTerminAttendenceInput input,
-        CancellationToken cancellationToken) => await inputHandler.Handle(input, cancellationToken);
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
     public async Task<TerminType> AnnounceTermin(
-        [Service] AnnounceTerminInputHandler inputHandler,
+        [Service] AnnounceTerminRequestHandler requestHandler,
         AnnounceTerminInput input,
-        CancellationToken cancellationToken) => await inputHandler.Handle(input, cancellationToken);
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

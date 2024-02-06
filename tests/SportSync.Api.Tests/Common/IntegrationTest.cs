@@ -37,7 +37,7 @@ public class IntegrationTest : IDisposable
         UserIdentifierMock.Setup(x => x.UserId).Returns(Guid.NewGuid);
 
         ServiceProvider = new ServiceCollection()
-            .AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(CreateUserInputValidator)))
+            .AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(CreateUserRequestValidator)))
             .RegisterRequestHandlers()
             .RegisterInfrastructureServices()
             .AddRepositories()

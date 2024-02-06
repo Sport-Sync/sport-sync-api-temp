@@ -3,7 +3,7 @@ using SportSync.Domain.Enumerations;
 
 namespace SportSync.Application.Events.CreateEvent;
 
-public class CreateEventInput : IInput<Guid>
+public class CreateEventInput : IRequest<Guid>
 {
     public List<Guid> MemberIds { get; set; }
     public string Name { get; set; }

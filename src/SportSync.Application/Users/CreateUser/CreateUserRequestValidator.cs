@@ -3,9 +3,9 @@ using SportSync.Domain.Core.Utility;
 
 namespace SportSync.Application.Users.CreateUser;
 
-public class CreateUserInputValidator : AbstractValidator<CreateUserInput>
+public class CreateUserRequestValidator : AbstractValidator<CreateUserInput>
 {
-    public CreateUserInputValidator()
+    public CreateUserRequestValidator()
     {
         RuleFor(x => x.FirstName)
             .MinimumLength(3)

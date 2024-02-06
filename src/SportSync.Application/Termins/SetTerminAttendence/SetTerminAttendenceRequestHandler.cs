@@ -8,24 +8,24 @@ using SportSync.Domain.Types;
 
 namespace SportSync.Application.Termins.SetTerminAttendence;
 
-public class SetTerminAttendenceInputHandler : IInputHandler<SetTerminAttendenceInput, SetTerminAttendenceResponse>
+public class SetTerminAttendenceRequestHandler : IRequestHandler<SetTerminAttendenceInput, SetTerminAttendenceResponse>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly ITerminRepository _terminRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public SetTerminAttendenceInputHandler(IUserIdentifierProvider userIdentifierProvider, ITerminRepository terminRepository, IUnitOfWork unitOfWork)
+    public SetTerminAttendenceRequestHandler(IUserIdentifierProvider userIdentifierProvider, ITerminRepository terminRepository, IUnitOfWork unitOfWork)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _terminRepository = terminRepository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<SetTerminAttendenceResponse> Handle(SetTerminAttendenceInput request, CancellationToken cancellationToken)
+    public async Task<SetTerminAttendenceResponse> Handle(SetTerminAttendenceInput input, CancellationToken cancellationToken)
     {
         var userId = _userIdentifierProvider.UserId;
 
-        var maybeTermin = await _terminRepository.GetByIdAsync(request.TerminId, cancellationToken);
+        var maybeTermin = await _terminRepository.GetByIdAsync(input.TerminId, cancellationToken);
 
         if (maybeTermin.HasNoValue)
         {
@@ -33,12 +33,12 @@ public class SetTerminAttendenceInputHandler : IInputHandler<SetTerminAttendence
         }
 
         var termin = maybeTermin.Value;
-        termin.SetPlayerAttendence(userId, request.Attending);
+        termin.SetPlayerAttendence(userId, input.Attending);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var players = await _terminRepository
-            .GetPlayers(request.TerminId, cancellationToken);
+            .GetPlayers(input.TerminId, cancellationToken);
 
         return new SetTerminAttendenceResponse
         {

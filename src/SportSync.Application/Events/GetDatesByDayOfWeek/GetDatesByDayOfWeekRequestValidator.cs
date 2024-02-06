@@ -2,9 +2,9 @@
 
 namespace SportSync.Application.Events.GetDatesByDayOfWeek;
 
-public class GetDatesByDayOfWeekInputValidator : AbstractValidator<GetDatesByDayOfWeekInput>
+public class GetDatesByDayOfWeekRequestValidator : AbstractValidator<GetDatesByDayOfWeekInput>
 {
-    public GetDatesByDayOfWeekInputValidator()
+    public GetDatesByDayOfWeekRequestValidator()
     {
         RuleFor(x => x.NumberOfDates)
             .Must(x => x > 0 && x <= 50)
