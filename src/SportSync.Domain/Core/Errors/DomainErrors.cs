@@ -9,6 +9,8 @@ public static class DomainErrors
     {
         public static Error NotFound => new ("User.NotFound", "The user with the specified identifier was not found.");
 
+        public static Error IdUnavailable => new("User.IdUnavailable", "User id is unavailable.");
+
         public static Error DuplicateEmail => new ("User.DuplicateEmail", "The specified email is already in use.");
 
         public static Error DuplicatePhone => new("User.DuplicatePhone", "The specified phone number is already in use.");
@@ -55,6 +57,10 @@ public static class DomainErrors
         public static Error AlreadyRejected => new Error(
             "FriendshipRequest.AlreadyRejected",
             "The friendship request has already been rejected.");
+
+        public static Error InvalidSameUserId => new Error(
+            "FriendshipRequest.InvalidRequest",
+            "The user cannot make friendship with himself.");
 
         public static Error AlreadyFriends => new Error(
             "FriendshipRequest.AlreadyFriends",

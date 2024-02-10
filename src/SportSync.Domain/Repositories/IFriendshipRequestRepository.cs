@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SportSync.Domain.Entities;
 
 namespace SportSync.Domain.Repositories;
 
 public interface IFriendshipRequestRepository
 {
+    Task<bool> CheckForPendingFriendshipRequestAsync(User user, User friend);
+    void Insert(FriendshipRequest friendshipRequest);
 }

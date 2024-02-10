@@ -1,5 +1,4 @@
-﻿using SportSync.Application.Core.Abstractions.Common;
-using SportSync.Domain.Enumerations;
+﻿using SportSync.Domain.Enumerations;
 
 namespace SportSync.Application.Events.CreateEvent;
 

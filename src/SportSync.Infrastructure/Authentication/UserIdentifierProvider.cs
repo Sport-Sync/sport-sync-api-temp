@@ -15,7 +15,7 @@ internal sealed class UserIdentifierProvider : IUserIdentifierProvider
 
         if (!Guid.TryParse(userIdClaim, out var userId))
         {
-            throw new DomainException(DomainErrors.User.NotFound);
+            throw new DomainException(DomainErrors.User.IdUnavailable);
         }
 
         UserId = userId;

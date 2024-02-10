@@ -1,5 +1,4 @@
 ﻿using SportSync.Application.Authentication;
-using SportSync.Application.Core.Abstractions.Common;
 
 namespace SportSync.Application.Users.CreateUser;
 

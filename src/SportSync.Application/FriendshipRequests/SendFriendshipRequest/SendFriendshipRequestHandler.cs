@@ -1,4 +1,5 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
+using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Core.Primitives.Result;
@@ -11,11 +12,19 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
+    private readonly IFriendshipRequestRepository _friendshipRequestRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public SendFriendshipRequestHandler(IUserIdentifierProvider userIdentifierProvider, IUserRepository userRepository)
+    public SendFriendshipRequestHandler(
+        IUserIdentifierProvider userIdentifierProvider,
+        IUserRepository userRepository,
+        IFriendshipRequestRepository friendshipRequestRepository,
+        IUnitOfWork unitOfWork)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
+        _friendshipRequestRepository = friendshipRequestRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result> Handle(SendFriendshipRequestInput request, CancellationToken cancellationToken)
@@ -38,6 +47,19 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
         {
             return Result.Failure(DomainErrors.User.NotFound);
         }
+
+        var user = maybeUser.Value;
+
+        var friendshipRequestResult = await user.SendFriendshipRequest(_userRepository, _friendshipRequestRepository, maybeFriend.Value);
+
+        if (friendshipRequestResult.IsFailure)
+        {
+            return Result.Failure(friendshipRequestResult.Error);
+        }
+        
+        _friendshipRequestRepository.Insert(friendshipRequestResult.Value);
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

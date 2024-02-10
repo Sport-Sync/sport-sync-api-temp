@@ -1,10 +1,9 @@
-﻿using SportSync.Application.Core.Abstractions.Common;
-using SportSync.Domain.Core.Primitives.Result;
+﻿using SportSync.Domain.Core.Primitives.Result;
 
 namespace SportSync.Application.FriendshipRequests.SendFriendshipRequest;
 
 public class SendFriendshipRequestInput : IRequest<Result>
 {
-    public Guid UserId { get; }
-    public Guid FriendId { get; }
+    public Guid UserId { get; set; }
+    public Guid FriendId { get; set; }
 }

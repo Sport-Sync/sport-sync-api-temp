@@ -1,6 +1,4 @@
-﻿using SportSync.Application.Core.Abstractions.Common;
-
-namespace SportSync.Application.Authentication.Login;
+﻿namespace SportSync.Application.Authentication.Login;
 
 public class LoginInput : IRequest<TokenResponse>
 {
