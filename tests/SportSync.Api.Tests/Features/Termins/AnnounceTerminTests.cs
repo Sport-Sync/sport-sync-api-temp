@@ -70,7 +70,7 @@ public class AnnounceTerminTests : IntegrationTest
 
         if (shouldSucceed)
         {
-            var terminResponse = result.ToObject<TerminType>("announceTermin");
+            var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
             terminResponse.Status.Should().Be(TerminStatus.AnnouncedPublicly);
             Database.DbContext.Set<Termin>().Find(termin.Id).Status.Should().Be(TerminStatus.AnnouncedPublicly);
         }
@@ -101,7 +101,7 @@ public class AnnounceTerminTests : IntegrationTest
                 }}"));
 
 
-        var terminResponse = result.ToObject<TerminType>("announceTermin");
+        var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
         terminResponse.Status.Should().Be(expectedStatus);
         Database.DbContext.Set<Termin>().Find(termin.Id).Status.Should().Be(expectedStatus);
 

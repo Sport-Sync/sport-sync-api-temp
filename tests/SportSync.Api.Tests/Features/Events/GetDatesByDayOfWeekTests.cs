@@ -24,7 +24,7 @@ public class GetDatesByDayOfWeekTests : IntegrationTest
                 }
             }"));
 
-        var response = result.ToObject<GetDatesByDayOfWeekResponse>("datesByDayOfWeek");
+        var response = result.ToResponseObject<GetDatesByDayOfWeekResponse>("datesByDayOfWeek");
 
         response.Dates.Count.Should().Be(2);
         response.Dates.All(x => x.DayOfWeek == DayOfWeek.Wednesday).Should().BeTrue();
@@ -48,7 +48,7 @@ public class GetDatesByDayOfWeekTests : IntegrationTest
                 }
             }"));
 
-        var response = result.ToObject<GetDatesByDayOfWeekResponse>("datesByDayOfWeek");
+        var response = result.ToResponseObject<GetDatesByDayOfWeekResponse>("datesByDayOfWeek");
 
         response.Dates.Count.Should().Be(2);
         response.Dates.All(x => x.DayOfWeek == DayOfWeek.Wednesday).Should().BeTrue();
