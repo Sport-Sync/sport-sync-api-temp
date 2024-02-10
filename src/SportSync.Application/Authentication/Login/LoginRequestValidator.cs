@@ -3,9 +3,9 @@ using SportSync.Domain.Core.Utility;
 
 namespace SportSync.Application.Authentication.Login;
 
-public class LoginInputValidator : AbstractValidator<LoginInput>
+public class LoginRequestValidator : AbstractValidator<LoginInput>
 {
-    public LoginInputValidator()
+    public LoginRequestValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty()

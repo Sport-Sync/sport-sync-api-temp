@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240206203237_CreateFriendshipRequestTable")]
+    partial class CreateFriendshipRequestTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,27 +162,6 @@ namespace SportSync.Persistence.Migrations
                     b.HasIndex("EventId");
 
                     b.ToTable("EventSchedules", (string)null);
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.Friendship", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FriendId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("UserId", "FriendId");
-
-                    b.HasIndex("FriendId");
-
-                    b.ToTable("Friendships", (string)null);
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.FriendshipRequest", b =>
@@ -416,21 +398,6 @@ namespace SportSync.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Event");
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.Friendship", b =>
-                {
-                    b.HasOne("SportSync.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.FriendshipRequest", b =>

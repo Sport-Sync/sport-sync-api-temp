@@ -9,22 +9,22 @@ using SportSync.Domain.Services;
 
 namespace SportSync.Application.Authentication.Login;
 
-public class LoginInputHandler : IInputHandler<LoginInput, TokenResponse>
+public class LoginRequestHandler : IRequestHandler<LoginInput, TokenResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHashChecker _passwordHashChecker;
     private readonly IJwtProvider _jwtProvider;
 
-    public LoginInputHandler(IUserRepository userRepository, IPasswordHashChecker passwordHashChecker, IJwtProvider jwtProvider)
+    public LoginRequestHandler(IUserRepository userRepository, IPasswordHashChecker passwordHashChecker, IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
         _passwordHashChecker = passwordHashChecker;
         _jwtProvider = jwtProvider;
     }
 
-    public async Task<TokenResponse> Handle(LoginInput request, CancellationToken cancellationToken)
+    public async Task<TokenResponse> Handle(LoginInput input, CancellationToken cancellationToken)
     {
-        Maybe<User> maybeUser = await _userRepository.GetByEmailAsync(request.Email);
+        Maybe<User> maybeUser = await _userRepository.GetByEmailAsync(input.Email);
 
         if (maybeUser.HasNoValue)
         {
@@ -33,7 +33,7 @@ public class LoginInputHandler : IInputHandler<LoginInput, TokenResponse>
 
         var user = maybeUser.Value;
 
-        var passwordValid = user.VerifyPasswordHash(request.Password, _passwordHashChecker);
+        var passwordValid = user.VerifyPasswordHash(input.Password, _passwordHashChecker);
 
         if (!passwordValid)
         {

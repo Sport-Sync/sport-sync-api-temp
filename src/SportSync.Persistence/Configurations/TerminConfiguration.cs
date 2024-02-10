@@ -48,5 +48,7 @@ internal class TerminConfiguration : IEntityTypeConfiguration<Termin>
         builder.Property(termin => termin.Deleted).HasDefaultValue(false);
 
         builder.HasQueryFilter(termin => !termin.Deleted);
+
+        builder.ToTable("Termins");
     }
 }

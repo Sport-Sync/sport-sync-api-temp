@@ -3,6 +3,7 @@ using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
+using SportSync.Domain.Repositories;
 using SportSync.Domain.Services;
 
 namespace SportSync.Domain.Entities;
@@ -66,5 +67,29 @@ public class User : AggregateRoot
         var @event = Event.Create(this, name, sportType, address, price, numberOfPlayers, notes);
 
         return @event;
+    }
+
+    public async Task<Result<FriendshipRequest>> SendFriendshipRequest(IUserRepository userRepository, IFriendshipRequestRepository friendshipRequestRepository, User friend)
+    {
+        if (Id == friend.Id)
+        {
+            return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.InvalidSameUserId);
+        }
+
+        if (await userRepository.CheckIfFriendsAsync(this, friend))
+        {
+            return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.AlreadyFriends);
+        }
+
+        if (await friendshipRequestRepository.CheckForPendingFriendshipRequestAsync(this, friend))
+        {
+            return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.PendingFriendshipRequest);
+        }
+
+        var friendshipRequest = new FriendshipRequest(this, friend);
+
+        //RaiseDomainEvent(new FriendshipRequestSentDomainEvent(friendshipRequest));
+
+        return friendshipRequest;
     }
 }

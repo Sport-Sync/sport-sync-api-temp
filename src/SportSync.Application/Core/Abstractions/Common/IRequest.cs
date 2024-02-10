@@ -1,6 +1,6 @@
 ﻿namespace SportSync.Application.Core.Abstractions.Common
 {
-    public interface IInput<out TResponse>
+    public interface IRequest<out TResponse>
     {
     }
 }

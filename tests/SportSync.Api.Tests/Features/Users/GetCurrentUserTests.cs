@@ -22,7 +22,7 @@ public class GetCurrentUserTests : IntegrationTest
                 }
             }"));
 
-        var userResponse = result.ToObject<UserType>("me");
+        var userResponse = result.ToResponseObject<UserType>("me");
 
         userResponse.FirstName.Should().Be("Ante");
     }
@@ -39,7 +39,7 @@ public class GetCurrentUserTests : IntegrationTest
                 }
             }"));
 
-        var userResponse = result.ToObject<UserType>("me");
+        var userResponse = result.ToResponseObject<UserType>("me");
 
         userResponse.Should().BeNull();
     }

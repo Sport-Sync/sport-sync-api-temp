@@ -1,9 +1,8 @@
-﻿using SportSync.Application.Core.Abstractions.Common;
-using SportSync.Domain.Enumerations;
+﻿using SportSync.Domain.Enumerations;
 
 namespace SportSync.Application.Events.CreateEvent;
 
-public class CreateEventInput : IInput<Guid>
+public class CreateEventInput : IRequest<Guid>
 {
     public List<Guid> MemberIds { get; set; }
     public string Name { get; set; }

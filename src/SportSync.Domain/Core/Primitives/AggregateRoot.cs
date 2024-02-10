@@ -1,11 +1,12 @@
-﻿using SportSync.Domain.Core.Events;
+﻿using SportSync.Domain.Core.Abstractions;
+using SportSync.Domain.Core.Events;
 
 namespace SportSync.Domain.Core.Primitives;
 
 /// <summary>
 /// Represents the aggregate root.
 /// </summary>
-public abstract class AggregateRoot : Entity
+public abstract class AggregateRoot : Entity, ISoftDeletableEntity
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AggregateRoot"/> class.
@@ -25,6 +26,11 @@ public abstract class AggregateRoot : Entity
     protected AggregateRoot()
     {
     }
+
+    public DateTime? DeletedOnUtc { get; set; }
+
+    public bool Deleted { get; }
+
 
     private readonly List<IDomainEvent> _domainEvents = new();
 

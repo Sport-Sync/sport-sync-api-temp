@@ -72,7 +72,7 @@ public class SetTerminAttendenceTests : IntegrationTest
                     }}
                 }}"));
 
-        var response = result.ToObject<SetTerminAttendenceResponse>("setTerminAttendence");
+        var response = result.ToResponseObject<SetTerminAttendenceResponse>("setTerminAttendence");
 
         response.Players.Count.Should().Be(1);
 
@@ -93,7 +93,7 @@ public class SetTerminAttendenceTests : IntegrationTest
                     }}
                 }}"));
 
-        var secondResponse = secondResult.ToObject<SetTerminAttendenceResponse>("setTerminAttendence");
+        var secondResponse = secondResult.ToResponseObject<SetTerminAttendenceResponse>("setTerminAttendence");
 
         secondResponse.Players.Count.Should().Be(1);
 
@@ -128,7 +128,7 @@ public class SetTerminAttendenceTests : IntegrationTest
                 }}"));
 
 
-        var response = result.ToObject<SetTerminAttendenceResponse>("setTerminAttendence");
+        var response = result.ToResponseObject<SetTerminAttendenceResponse>("setTerminAttendence");
 
         response.Players.Count.Should().Be(1);
 
@@ -221,7 +221,7 @@ public class SetTerminAttendenceTests : IntegrationTest
 
         if (shouldSucceed)
         {
-            var response = result.ToObject<SetTerminAttendenceResponse>("setTerminAttendence");
+            var response = result.ToResponseObject<SetTerminAttendenceResponse>("setTerminAttendence");
 
             response.Players.Count.Should().Be(1);
 

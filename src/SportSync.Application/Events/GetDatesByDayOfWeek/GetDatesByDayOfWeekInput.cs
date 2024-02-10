@@ -2,7 +2,7 @@
 
 namespace SportSync.Application.Events.GetDatesByDayOfWeek;
 
-public class GetDatesByDayOfWeekInput : IInput<GetDatesByDayOfWeekResponse>
+public class GetDatesByDayOfWeekInput : IRequest<GetDatesByDayOfWeekResponse>
 {
     public DayOfWeek DayOfWeek { get; set; }
     public int NumberOfDates { get; set; }

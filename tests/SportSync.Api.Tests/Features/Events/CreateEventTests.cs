@@ -49,7 +49,7 @@ public class CreateEventTests : IntegrationTest
                 }})
             }}"));
 
-        var eventCreatedId = result.ToObject<Guid>("createEvent");
+        var eventCreatedId = result.ToResponseObject<Guid>("createEvent");
         eventCreatedId.Should().NotBeEmpty();
 
         var eventFromDb = Database.DbContext.Set<Event>().FirstOrDefault(x => x.Id == eventCreatedId);

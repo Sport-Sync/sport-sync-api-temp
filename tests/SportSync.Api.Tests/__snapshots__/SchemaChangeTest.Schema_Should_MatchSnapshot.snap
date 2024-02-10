@@ -3,6 +3,11 @@
   mutation: Mutation
 }
 
+type Error {
+  code: String
+  message: String
+}
+
 type GetDatesByDayOfWeekResponse {
   dates: [DateTime!]!
 }
@@ -10,6 +15,7 @@ type GetDatesByDayOfWeekResponse {
 type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
+  sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
 }
 
@@ -25,6 +31,12 @@ type Query {
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
   terminById(id: UUID!): TerminType @authorize
+}
+
+type Result {
+  isSuccess: Boolean!
+  isFailure: Boolean!
+  error: Error
 }
 
 type TerminType {
@@ -81,6 +93,11 @@ input GetDatesByDayOfWeekInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input SendFriendshipRequestInput {
+  userId: UUID!
+  friendId: UUID!
 }
 
 input TimeInput {

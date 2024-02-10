@@ -8,14 +8,14 @@ using SportSync.Domain.Types;
 
 namespace SportSync.Application.Termins.AnnounceTermin;
 
-public class AnnounceTerminInputHandler : IInputHandler<AnnounceTerminInput, TerminType>
+public class AnnounceTerminRequestHandler : IRequestHandler<AnnounceTerminInput, TerminType>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly ITerminRepository _terminRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AnnounceTerminInputHandler(
+    public AnnounceTerminRequestHandler(
         ITerminRepository terminRepository,
         IUserIdentifierProvider userIdentifierProvider,
         IEventRepository eventRepository,
@@ -27,9 +27,9 @@ public class AnnounceTerminInputHandler : IInputHandler<AnnounceTerminInput, Ter
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<TerminType> Handle(AnnounceTerminInput request, CancellationToken cancellationToken)
+    public async Task<TerminType> Handle(AnnounceTerminInput input, CancellationToken cancellationToken)
     {
-        var maybeTermin = await _terminRepository.GetByIdAsync(request.TerminId, cancellationToken);
+        var maybeTermin = await _terminRepository.GetByIdAsync(input.TerminId, cancellationToken);
 
         if (maybeTermin.HasNoValue)
         {
@@ -41,7 +41,7 @@ public class AnnounceTerminInputHandler : IInputHandler<AnnounceTerminInput, Ter
 
         await _eventRepository.EnsureUserIsAdminOnEvent(termin.EventId, currentUserId, cancellationToken);
 
-        termin.Announce(request.PublicAnnouncement);
+        termin.Announce(input.PublicAnnouncement);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -9,11 +9,13 @@ public static class DomainErrors
     {
         public static Error NotFound => new ("User.NotFound", "The user with the specified identifier was not found.");
 
+        public static Error IdUnavailable => new("User.IdUnavailable", "User id is unavailable.");
+
         public static Error DuplicateEmail => new ("User.DuplicateEmail", "The specified email is already in use.");
 
         public static Error DuplicatePhone => new("User.DuplicatePhone", "The specified phone number is already in use.");
 
-        public static Error Forbidden => new("User.Forbidden", "Current user does not have permission to access this resource.");
+        public static Error Forbidden => new("User.Forbidden", "The current user does not have the permissions to perform that operation.");
 
         public static Error CannotChangePassword => new (
             "User.CannotChangePassword",
@@ -44,6 +46,29 @@ public static class DomainErrors
         public static Error MissingDigit => new (
             "Password.MissingDigit",
             "The password requires at least one digit.");
+    }
+
+    public static class FriendshipRequest
+    {
+        public static Error AlreadyAccepted => new Error(
+            "FriendshipRequest.AlreadyAccepted",
+            "The friendship request has already been accepted.");
+
+        public static Error AlreadyRejected => new Error(
+            "FriendshipRequest.AlreadyRejected",
+            "The friendship request has already been rejected.");
+
+        public static Error InvalidSameUserId => new Error(
+            "FriendshipRequest.InvalidRequest",
+            "The user cannot make friendship with himself.");
+
+        public static Error AlreadyFriends => new Error(
+            "FriendshipRequest.AlreadyFriends",
+            "The friendship request can not be sent because the users are already friends.");
+
+        public static Error PendingFriendshipRequest => new Error(
+            "FriendshipRequest.PendingFriendshipRequest",
+            "The friendship request can not be sent because there is a pending friendship request.");
     }
 
     public static class Email

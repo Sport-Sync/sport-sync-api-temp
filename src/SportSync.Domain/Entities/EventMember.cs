@@ -1,8 +1,9 @@
-﻿using SportSync.Domain.Core.Primitives;
+﻿using SportSync.Domain.Core.Abstractions;
+using SportSync.Domain.Core.Primitives;
 
 namespace SportSync.Domain.Entities;
 
-public class EventMember : Entity
+public class EventMember : Entity, ISoftDeletableEntity
 {
     private EventMember(Guid userId, Guid eventId, bool isCreator = false)
         : base(Guid.NewGuid())
@@ -21,6 +22,9 @@ public class EventMember : Entity
     public Guid UserId { get; set; }
     public bool IsAdmin { get; set; }
     public bool IsCreator { get; set; }
+
+    public DateTime? DeletedOnUtc { get; set; }
+    public bool Deleted { get; }
 
     public static EventMember Create(Guid userId, Guid eventId, bool isCreator = false)
     {

@@ -20,6 +20,28 @@ public static class DatabaseExtensions
         return user;
     }
 
+    public static FriendshipRequest AddFriendshipRequest(
+        this Database database,
+        User user,
+        User friend)
+    {
+        var friendshipRequest = new FriendshipRequest(user, friend);
+        database.DbContext.Insert(friendshipRequest);
+
+        return friendshipRequest;
+    }
+
+    public static Friendship AddFriendship(
+        this Database database,
+        User user,
+        User friend)
+    {
+        var friendship = new Friendship(user, friend);
+        database.DbContext.Insert(friendship);
+
+        return friendship;
+    }
+
     public static Termin AddTermin(
         this Database database,
         User user,

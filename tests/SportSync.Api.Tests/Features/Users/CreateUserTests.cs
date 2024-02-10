@@ -22,7 +22,7 @@ public class CreateUserTests : IntegrationTest
                     }
                 }"));
 
-        var tokenResponse = result.ToObject<TokenResponse>("createUser");
+        var tokenResponse = result.ToResponseObject<TokenResponse>("createUser");
         tokenResponse.Token.Should().NotBeNullOrEmpty();
 
         var handler = new JwtSecurityTokenHandler();
@@ -90,7 +90,7 @@ public class CreateUserTests : IntegrationTest
                     }}
                 }}"));
 
-        var tokenResponse = result.ToObject<TokenResponse>("createUser");
+        var tokenResponse = result.ToResponseObject<TokenResponse>("createUser");
 
         tokenResponse.Token.Should().NotBeNullOrEmpty();
 
@@ -128,7 +128,7 @@ public class CreateUserTests : IntegrationTest
 
         if (isValid)
         {
-            var tokenResponse = result.ToObject<TokenResponse>("createUser");
+            var tokenResponse = result.ToResponseObject<TokenResponse>("createUser");
             tokenResponse.Token.Should().NotBeNullOrEmpty();
         }
         else
@@ -196,7 +196,7 @@ public class CreateUserTests : IntegrationTest
 
         if (isValid)
         {
-            var tokenResponse = result.ToObject<TokenResponse>("createUser");
+            var tokenResponse = result.ToResponseObject<TokenResponse>("createUser");
             tokenResponse.Token.Should().NotBeNullOrEmpty();
         }
         else

@@ -2,11 +2,11 @@
 
 namespace SportSync.Application.Events.GetDatesByDayOfWeek;
 
-public class GetDatesByDayOfWeekInputHandler : IInputHandler<GetDatesByDayOfWeekInput, GetDatesByDayOfWeekResponse>
+public class GetDatesByDayOfWeekRequestHandler : IRequestHandler<GetDatesByDayOfWeekInput, GetDatesByDayOfWeekResponse>
 {
     private readonly IDateTime _dateTime;
 
-    public GetDatesByDayOfWeekInputHandler(IDateTime dateTime)
+    public GetDatesByDayOfWeekRequestHandler(IDateTime dateTime)
     {
         _dateTime = dateTime;
     }

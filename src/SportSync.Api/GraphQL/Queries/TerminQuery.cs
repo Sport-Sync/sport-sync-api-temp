@@ -11,9 +11,9 @@ namespace sport_sync.GraphQL.Queries;
 public class TerminQuery
 {
     public async Task<GetDatesByDayOfWeekResponse> GetDatesByDayOfWeek(
-        [Service] GetDatesByDayOfWeekInputHandler inputHandler,
+        [Service] GetDatesByDayOfWeekRequestHandler requestHandler,
         [UseFluentValidation] GetDatesByDayOfWeekInput input,
-        CancellationToken cancellationToken) => await inputHandler.Handle(input, cancellationToken);
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
     [UseProjection]

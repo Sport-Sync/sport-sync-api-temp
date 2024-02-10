@@ -2,9 +2,9 @@
 
 namespace SportSync.Application.Events.CreateEvent;
 
-public class CreateEventInputValidator : AbstractValidator<CreateEventInput>
+public class CreateEventRequestValidator : AbstractValidator<CreateEventInput>
 {
-    public CreateEventInputValidator()
+    public CreateEventRequestValidator()
     {
         RuleForEach(x => x.EventTime)
             .Where(x => x.StartDate.Date == DateTime.Today)
