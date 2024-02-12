@@ -106,6 +106,57 @@ public class AnnounceTerminTests : IntegrationTest
         var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
         announcement.UserId.Should().Be(admin.Id);
         announcement.AnnouncementType.Should().Be(expectedType);
+    }
 
+    [Fact]
+    public async Task Announce_ShouldFailWhenPrivatelyAnnouncing_ButAlreadyIsPubliclyAnnounced()
+    {
+        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceTermin(input: {{terminId: ""{termin.Id}"", publicAnnouncement: {publicly.ToString().ToLower()}}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+
+        var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
+        terminResponse.Should().NotBeNull();
+
+        var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
+        announcement.UserId.Should().Be(admin.Id);
+        announcement.AnnouncementType.Should().Be(expectedType);
+    }
+
+    [Fact]
+    public async Task Announce_ShouldRemovePrivateAnnouncement_WhenAnnouncingPublicly()
+    {
+        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceTermin(input: {{terminId: ""{termin.Id}"", publicAnnouncement: {publicly.ToString().ToLower()}}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+
+        var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
+        terminResponse.Should().NotBeNull();
+
+        var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
+        announcement.UserId.Should().Be(admin.Id);
+        announcement.AnnouncementType.Should().Be(expectedType);
     }
 }

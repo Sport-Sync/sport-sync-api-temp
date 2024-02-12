@@ -72,6 +72,9 @@ public class Termin : AggregateRoot
     public IReadOnlyCollection<Player> Players => _players.ToList();
     public IReadOnlyCollection<TerminAnnouncement> Announcements => _announcements.ToList();
 
+    public bool Announced => _announcements.Any();
+    public bool PubliclyAnnounced => _announcements.Any(x => x.AnnouncementType == TerminAnnouncementType.Public);
+
     public static Termin Create(Event @event, DateTime date, EventSchedule schedule)
     {
         return new Termin(@event, date, schedule);
@@ -118,6 +121,16 @@ public class Termin : AggregateRoot
     {
         EnsureItIsNotDone();
 
+        if (!publicly && PubliclyAnnounced)
+        {
+            throw new DomainException(DomainErrors.TerminAnnouncement.PubliclyAnnounced);
+        }
+
+        if (publicly)
+        {
+            _announcements.RemoveWhere(x => x.AnnouncementType == TerminAnnouncementType.FriendList);
+        }
+
         var type = publicly ? TerminAnnouncementType.Public : TerminAnnouncementType.FriendList;
         var announcement = new TerminAnnouncement(this, userId, type);
 
@@ -158,10 +171,15 @@ public class Termin : AggregateRoot
             return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.AlreadyPlayer);
         }
 
-        //if (!Announced)
-        //{
-        //    return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.NotAnnounced);
-        //}
+        if (!Announced)
+        {
+            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.NotAnnounced);
+        }
+
+        if (NotFriendOfAnyPrivateAnnouncers) // move to TerminApplicationService
+        {
+            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.NotOnFriendList);
+        }
 
         var terminApplication = new TerminApplication(user, this);
 
@@ -172,5 +190,4 @@ public class Termin : AggregateRoot
     {
         return _players.Any(x => x.UserId == user.Id);
     }
-
 }

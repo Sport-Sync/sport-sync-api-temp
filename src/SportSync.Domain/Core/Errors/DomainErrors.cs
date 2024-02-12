@@ -101,9 +101,21 @@ public static class DomainErrors
             "TerminApplication.NotAnnounced",
             "The termin is not announced. Unable to perform the operation.");
 
+        public static Error NotOnFriendList => new Error(
+            "TerminApplication.NotOnFriendList",
+            "The termin is announced only for friends. The user is not on the friend list.");
+
+
         public static Error PendingTerminApplication => new Error(
             "TerminApplication.PendingTerminApplication",
             "The application can not be sent because there is a pending one already.");
+    }
+
+    public static class TerminAnnouncement
+    {
+        public static Error PubliclyAnnounced => new Error(
+            "TerminAnnouncement.PubliclyAnnounced",
+            "The termin is already publicly announced.");
     }
 
     public static class Email
