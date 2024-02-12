@@ -3,6 +3,7 @@ using HotChocolate.Authorization;
 using SportSync.Application.Authentication;
 using SportSync.Application.Authentication.Login;
 using SportSync.Application.FriendshipRequests.AcceptFriendshipRequest;
+using SportSync.Application.FriendshipRequests.RejectFriendshipRequest;
 using SportSync.Application.FriendshipRequests.SendFriendshipRequest;
 using SportSync.Application.Users.CreateUser;
 using SportSync.Domain.Core.Primitives.Result;
@@ -32,5 +33,11 @@ public class UserMutation
     public async Task<Result> AcceptFriendshipRequest(
         [Service] AcceptFriendshipRequestHandler requestHandler,
         AcceptFriendshipRequestInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
+
+    [Authorize]
+    public async Task<Result> RejectFriendshipRequest(
+        [Service] RejectFriendshipRequestHandler requestHandler,
+        RejectFriendshipRequestInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

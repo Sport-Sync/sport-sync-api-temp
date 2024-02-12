@@ -17,6 +17,7 @@ type Mutation {
   login(input: LoginInput): TokenResponse
   sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
   acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
+  rejectFriendshipRequest(input: RejectFriendshipRequestInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
 }
 
@@ -98,6 +99,10 @@ input GetDatesByDayOfWeekInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input RejectFriendshipRequestInput {
+  friendshipRequestId: UUID!
 }
 
 input SendFriendshipRequestInput {

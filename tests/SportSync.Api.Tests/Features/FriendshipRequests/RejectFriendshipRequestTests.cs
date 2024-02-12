@@ -7,10 +7,10 @@ using SportSync.Domain.Entities;
 namespace SportSync.Api.Tests.Features.FriendshipRequests;
 
 [Collection("IntegrationTests")]
-public class AcceptFriendshipRequestTests : IntegrationTest
+public class RejectFriendshipRequestTests : IntegrationTest
 {
     [Fact]
-    public async Task AcceptFriendshipRequest_ShouldFail_WhenFriendshipRequestNotFound()
+    public async Task RejectFriendshipRequest_ShouldFail_WhenFriendshipRequestNotFound()
     {
         var user = Database.AddUser();
         await Database.SaveChangesAsync();
@@ -20,16 +20,16 @@ public class AcceptFriendshipRequestTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                     mutation {{
-                    acceptFriendshipRequest(input: {{ 
+                    rejectFriendshipRequest(input: {{ 
                         friendshipRequestId: ""{Guid.NewGuid()}"" }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
-        result.ShouldBeFailureResult("acceptFriendshipRequest", DomainErrors.FriendshipRequest.NotFound);
+        result.ShouldBeFailureResult("rejectFriendshipRequest", DomainErrors.FriendshipRequest.NotFound);
     }
 
     [Fact]
-    public async Task AcceptFriendshipRequest_ShouldFail_WhenCurrentUserIsNotInvitedFriend()
+    public async Task RejectFriendshipRequest_ShouldFail_WhenCurrentUserIsNotInvitedFriend()
     {
         var user = Database.AddUser();
         var friend = Database.AddUser("Friend", "Friendman");
@@ -40,29 +40,25 @@ public class AcceptFriendshipRequestTests : IntegrationTest
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
 
+
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                     mutation {{
-                    acceptFriendshipRequest(input: {{ 
+                    rejectFriendshipRequest(input: {{ 
                         friendshipRequestId: ""{friendshipRequest.Id}"" }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
-        result.ShouldBeFailureResult("acceptFriendshipRequest", DomainErrors.User.Forbidden);
+        result.ShouldBeFailureResult("rejectFriendshipRequest", DomainErrors.User.Forbidden);
 
         var friendshipRequestDb = Database.DbContext.Set<FriendshipRequest>().First(x => x.UserId == user.Id && x.FriendId == friend.Id);
         friendshipRequestDb.Accepted.Should().BeFalse();
         friendshipRequestDb.Rejected.Should().BeFalse();
         friendshipRequestDb.CompletedOnUtc.Should().BeNull();
-
-
-        Database.DbContext.Set<Friendship>()
-            .FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id)
-            .Should().BeNull();
     }
 
     [Fact]
-    public async Task AcceptFriendshipRequest_ShouldFail_WhenIsAlreadyAccepted()
+    public async Task RejectFriendshipRequest_ShouldFail_WhenIsAlreadyAccepted()
     {
         var user = Database.AddUser();
         var friend = Database.AddUser("Friend", "Friendman");
@@ -77,12 +73,12 @@ public class AcceptFriendshipRequestTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                     mutation {{
-                    acceptFriendshipRequest(input: {{ 
+                    rejectFriendshipRequest(input: {{ 
                         friendshipRequestId: ""{friendshipRequest.Id}"" }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
-        result.ShouldBeFailureResult("acceptFriendshipRequest", DomainErrors.FriendshipRequest.AlreadyAccepted);
+        result.ShouldBeFailureResult("rejectFriendshipRequest", DomainErrors.FriendshipRequest.AlreadyAccepted);
 
         var friendshipRequestDb = Database.DbContext.Set<FriendshipRequest>().First(x => x.UserId == user.Id && x.FriendId == friend.Id);
         friendshipRequestDb.Accepted.Should().BeTrue();
@@ -91,7 +87,7 @@ public class AcceptFriendshipRequestTests : IntegrationTest
     }
 
     [Fact]
-    public async Task AcceptFriendshipRequest_ShouldFail_WhenIsAlreadyRejected()
+    public async Task RejectFriendshipRequest_ShouldFail_WhenIsAlreadyRejected()
     {
         var user = Database.AddUser();
         var friend = Database.AddUser("Friend", "Friendman");
@@ -106,25 +102,21 @@ public class AcceptFriendshipRequestTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                     mutation {{
-                    acceptFriendshipRequest(input: {{ 
+                    rejectFriendshipRequest(input: {{ 
                         friendshipRequestId: ""{friendshipRequest.Id}"" }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
-        result.ShouldBeFailureResult("acceptFriendshipRequest", DomainErrors.FriendshipRequest.AlreadyRejected);
+        result.ShouldBeFailureResult("rejectFriendshipRequest", DomainErrors.FriendshipRequest.AlreadyRejected);
 
         var friendshipRequestDb = Database.DbContext.Set<FriendshipRequest>().First(x => x.UserId == user.Id && x.FriendId == friend.Id);
         friendshipRequestDb.Accepted.Should().BeFalse();
         friendshipRequestDb.Rejected.Should().BeTrue();
         friendshipRequestDb.CompletedOnUtc.Should().NotBeNull();
-
-        Database.DbContext.Set<Friendship>()
-            .FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id)
-            .Should().BeNull();
     }
 
     [Fact]
-    public async Task AcceptFriendshipRequest_ShouldSucceed_AndCreateFriendship()
+    public async Task RejectFriendshipRequest_ShouldSucceed_AndNotCreateFriendship()
     {
         var user = Database.AddUser();
         var friend = Database.AddUser("Friend", "Friendman");
@@ -138,20 +130,20 @@ public class AcceptFriendshipRequestTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                     mutation {{
-                    acceptFriendshipRequest(input: {{ 
+                    rejectFriendshipRequest(input: {{ 
                         friendshipRequestId: ""{friendshipRequest.Id}"" }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
-        result.ShouldBeSuccessResult("acceptFriendshipRequest");
+        result.ShouldBeSuccessResult("rejectFriendshipRequest");
 
         var friendshipRequestDb = Database.DbContext.Set<FriendshipRequest>().First(x => x.UserId == user.Id && x.FriendId == friend.Id);
-        friendshipRequestDb.Accepted.Should().BeTrue();
-        friendshipRequestDb.Rejected.Should().BeFalse();
+        friendshipRequestDb.Accepted.Should().BeFalse();
+        friendshipRequestDb.Rejected.Should().BeTrue();
         friendshipRequestDb.CompletedOnUtc.Should().NotBeNull();
 
         Database.DbContext.Set<Friendship>()
             .FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id)
-            .Should().NotBeNull();
+            .Should().BeNull();
     }
 }
