@@ -6,10 +6,9 @@ namespace SportSync.Domain.Repositories;
 
 public interface IUserRepository : IQueryableRepository<User, UserType>
 {
-    Task<Maybe<User>> GetByIdAsync(Guid userId);
+    Task<Maybe<User>> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<Maybe<User>> GetByEmailAsync(string email);
     Task<bool> IsEmailUniqueAsync(string email);
     Task<bool> IsPhoneUniqueAsync(string phone);
-    Task<bool> CheckIfFriendsAsync(User user, User friend);
     void Insert(User user);
 }

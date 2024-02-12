@@ -15,7 +15,7 @@ public static class DomainErrors
 
         public static Error DuplicatePhone => new("User.DuplicatePhone", "The specified phone number is already in use.");
 
-        public static Error Forbidden => new("User.Forbidden", "The current user does not have the permissions to perform that operation.");
+        public static Error Forbidden => new("User.Forbidden", "The current user does not have the permissions to perform this operation.");
 
         public static Error CannotChangePassword => new (
             "User.CannotChangePassword",
@@ -50,6 +50,14 @@ public static class DomainErrors
 
     public static class FriendshipRequest
     {
+        public static Error NotFound => new Error(
+            "FriendshipRequest.NotFound",
+            "The friendship request with the specified identifier was not found.");
+
+        public static Error FriendNotFound => new Error(
+            "FriendshipRequest.FriendNotFound",
+            "The friend with the specified identifier was not found.");
+
         public static Error AlreadyAccepted => new Error(
             "FriendshipRequest.AlreadyAccepted",
             "The friendship request has already been accepted.");

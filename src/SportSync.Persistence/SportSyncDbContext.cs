@@ -48,11 +48,11 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         where TEntity : Entity
         => base.Set<TEntity>();
 
-    public async Task<Maybe<TEntity>> GetByIdAsync<TEntity>(Guid id)
+    public async Task<Maybe<TEntity>> GetByIdAsync<TEntity>(Guid id, CancellationToken cancellationToken)
         where TEntity : Entity
         => id == Guid.Empty ?
             Maybe<TEntity>.None :
-            Maybe<TEntity>.From(await Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id));
+            Maybe<TEntity>.From(await Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id, cancellationToken));
 
     public void Insert<TEntity>(TEntity entity)
         where TEntity : Entity

@@ -23,9 +23,22 @@ public static class DatabaseExtensions
     public static FriendshipRequest AddFriendshipRequest(
         this Database database,
         User user,
-        User friend)
+        User friend,
+        bool accepted = false,
+        bool rejected = false)
     {
         var friendshipRequest = new FriendshipRequest(user, friend);
+
+        if (accepted)
+        {
+            friendshipRequest.Accept(DateTime.UtcNow);
+        }
+
+        if (rejected)
+        {
+            friendshipRequest.Reject(DateTime.UtcNow);
+        }
+
         database.DbContext.Insert(friendshipRequest);
 
         return friendshipRequest;
@@ -48,7 +61,7 @@ public static class DatabaseExtensions
         string eventName = "event",
         SportType sportType = SportType.Football,
         EventSchedule schedule = null,
-        DateTime startDate = default, 
+        DateTime startDate = default,
         TerminStatus status = TerminStatus.Pending)
     {
         var tomorrow = DateTime.Today.AddDays(1);

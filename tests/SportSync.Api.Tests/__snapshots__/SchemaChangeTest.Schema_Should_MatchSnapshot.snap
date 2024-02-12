@@ -16,6 +16,7 @@ type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
   sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
+  acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
 }
 
@@ -64,6 +65,10 @@ type UserType {
   lastName: String
   email: String
   phone: String
+}
+
+input AcceptFriendshipRequestInput {
+  friendshipRequestId: UUID!
 }
 
 input CreateEventInput {
