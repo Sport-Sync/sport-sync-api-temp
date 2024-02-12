@@ -79,6 +79,29 @@ public static class DomainErrors
             "The friendship request can not be sent because there is a pending friendship request.");
     }
 
+    public static class TerminApplication
+    {
+        public static Error NotFound => new Error(
+            "TerminApplication.NotFound",
+            "The termin application with the specified identifier was not found.");
+
+        public static Error AlreadyAccepted => new Error(
+            "TerminApplication.AlreadyAccepted",
+            "The application has already been accepted.");
+
+        public static Error AlreadyRejected => new Error(
+            "TerminApplication.AlreadyRejected",
+            "The application has already been rejected.");
+
+        public static Error AlreadyPlayer => new Error(
+            "TerminApplication.AlreadyPlayer",
+            "The user is already a player in this termin.");
+
+        public static Error PendingTerminApplication => new Error(
+            "TerminApplication.PendingTerminApplication",
+            "The application can not be sent because there is a pending one already.");
+    }
+
     public static class Email
     {
         public static Error NullOrEmpty => new Error("Email.NullOrEmpty", "The email is required.");
