@@ -11,8 +11,8 @@ namespace SportSync.Domain.Entities;
 public class User : AggregateRoot
 {
     private string _passwordHash;
-    private readonly HashSet<Friendship> _inviters = new();
-    private readonly HashSet<Friendship> _invitees = new();
+    private readonly HashSet<Friendship> _friendInviters = new();
+    private readonly HashSet<Friendship> _friendInvitees = new();
 
     private User(string firstName, string lastName, string email, string phone, string passwordHash)
         : base(Guid.NewGuid())
@@ -47,13 +47,13 @@ public class User : AggregateRoot
     /// <summary>
     /// List of users who initiated the "friendship"
     /// </summary>
-    public IReadOnlyCollection<Friendship> FriendInvitees => _invitees.ToList();
+    public IReadOnlyCollection<Friendship> FriendInvitees => _friendInvitees.ToList();
 
     /// <summary>
     /// List of users who where invited to the "friendship"
     /// </summary>
-    public IReadOnlyCollection<Friendship> FriendInviters => _inviters.ToList();
-    public IEnumerable<Guid> Friends => _invitees.Select(x => x.UserId).Concat(_inviters.Select(x => x.FriendId));
+    public IReadOnlyCollection<Friendship> FriendInviters => _friendInviters.ToList();
+    public IEnumerable<Guid> Friends => _friendInvitees.Select(x => x.UserId).Concat(_friendInviters.Select(x => x.FriendId));
 
     public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
     {
@@ -115,7 +115,7 @@ public class User : AggregateRoot
 
         var friendship = new Friendship(this, friend);
 
-        _inviters.Add(friendship);
+        _friendInviters.Add(friendship);
 
         return friendship;
     }

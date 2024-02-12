@@ -117,7 +117,7 @@ public class AcceptFriendshipRequestTests : IntegrationTest
         friendshipRequestDb.Accepted.Should().BeFalse();
         friendshipRequestDb.Rejected.Should().BeTrue();
         friendshipRequestDb.CompletedOnUtc.Should().NotBeNull();
-     
+
         Database.DbContext.Set<Friendship>()
             .FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id)
             .Should().BeNull();
@@ -128,7 +128,7 @@ public class AcceptFriendshipRequestTests : IntegrationTest
     {
         var user = Database.AddUser();
         var friend = Database.AddUser("Friend", "Friendman");
-        
+
         var friendshipRequest = Database.AddFriendshipRequest(user, friend);
 
         await Database.SaveChangesAsync();
