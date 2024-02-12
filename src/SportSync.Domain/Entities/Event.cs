@@ -8,7 +8,6 @@ namespace SportSync.Domain.Entities;
 public class Event : AggregateRoot
 {
     private readonly HashSet<EventMember> _members = new();
-    private readonly HashSet<Termin> _termins = new();
     private readonly HashSet<EventSchedule> _schedules = new();
 
     private Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)

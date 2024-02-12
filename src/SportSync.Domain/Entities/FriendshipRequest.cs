@@ -2,6 +2,7 @@
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.DomainEvents;
 
 namespace SportSync.Domain.Entities;
 
@@ -49,7 +50,7 @@ public class FriendshipRequest : AggregateRoot
 
         CompletedOnUtc = utcNow;
 
-        //RaiseDomainEvent(new FriendshipRequestAcceptedDomainEvent(this));
+        RaiseDomainEvent(new FriendshipRequestAcceptedDomainEvent(this));
 
         return Result.Success();
     }

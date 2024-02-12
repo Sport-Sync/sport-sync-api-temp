@@ -10,7 +10,7 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserInput>
         RuleFor(x => x.FirstName)
             .MinimumLength(3)
             .WithMessage("First name minimum length is 3.")
-            .MaximumLength(10)
+            .MaximumLength(100)
             .WithMessage("First name maximum length is 100.")
             .NotEmpty()
             .WithMessage("First name is required.");
@@ -18,7 +18,7 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserInput>
         RuleFor(x => x.LastName)
             .MinimumLength(3)
             .WithMessage("Last name minimum length is 3.")
-            .MaximumLength(10)
+            .MaximumLength(100)
             .WithMessage("Last name maximum length is 100.")
             .NotEmpty()
             .WithMessage("Last name is required.");

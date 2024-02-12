@@ -20,7 +20,7 @@ public interface IDbContext
     /// <typeparam name="TEntity">The entity type.</typeparam>
     /// <param name="id">The entity identifier.</param>
     /// <returns>The <typeparamref name="TEntity"/> with the specified identifier if it exists, otherwise null.</returns>
-    Task<Maybe<TEntity>> GetByIdAsync<TEntity>(Guid id)
+    Task<Maybe<TEntity>> GetByIdAsync<TEntity>(Guid id, CancellationToken cancellationToken)
         where TEntity : Entity;
 
     /// <summary>

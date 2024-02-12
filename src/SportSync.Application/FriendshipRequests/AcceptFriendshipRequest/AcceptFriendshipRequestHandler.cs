@@ -32,7 +32,7 @@ public class AcceptFriendshipRequestHandler : IRequestHandler<AcceptFriendshipRe
 
     public async Task<Result> Handle(AcceptFriendshipRequestInput request, CancellationToken cancellationToken)
     {
-        Maybe<FriendshipRequest> maybeFriendshipRequest = await _friendshipRequestRepository.GetByIdAsync(request.FriendshipRequestId);
+        Maybe<FriendshipRequest> maybeFriendshipRequest = await _friendshipRequestRepository.GetByIdAsync(request.FriendshipRequestId, cancellationToken);
 
         if (maybeFriendshipRequest.HasNoValue)
         {
@@ -46,14 +46,14 @@ public class AcceptFriendshipRequestHandler : IRequestHandler<AcceptFriendshipRe
             return Result.Failure(DomainErrors.User.Forbidden);
         }
 
-        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(friendshipRequest.UserId);
+        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(friendshipRequest.UserId, cancellationToken);
 
         if (maybeUser.HasNoValue)
         {
             return Result.Failure(DomainErrors.User.NotFound);
         }
 
-        Maybe<User> maybeFriend = await _userRepository.GetByIdAsync(friendshipRequest.FriendId);
+        Maybe<User> maybeFriend = await _userRepository.GetByIdAsync(friendshipRequest.FriendId, cancellationToken);
 
         if (maybeFriend.HasNoValue)
         {

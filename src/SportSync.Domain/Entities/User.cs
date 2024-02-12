@@ -11,6 +11,8 @@ namespace SportSync.Domain.Entities;
 public class User : AggregateRoot
 {
     private string _passwordHash;
+    private readonly HashSet<Friendship> _inviters = new();
+    private readonly HashSet<Friendship> _invitees = new();
 
     private User(string firstName, string lastName, string email, string phone, string passwordHash)
         : base(Guid.NewGuid())
@@ -42,6 +44,17 @@ public class User : AggregateRoot
 
     public string Phone { get; set; }
 
+    /// <summary>
+    /// List of users who initiated the "friendship"
+    /// </summary>
+    public IReadOnlyCollection<Friendship> Invitees => _invitees.ToList();
+
+    /// <summary>
+    /// List of users who where invited to the "friendship"
+    /// </summary>
+    public IReadOnlyCollection<Friendship> Inviters => _inviters.ToList();
+    public IEnumerable<Guid> Friends => _invitees.Select(x => x.UserId).Concat(_inviters.Select(x => x.FriendId));
+
     public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
     {
         return new User(firstName, lastName, email, phone, passwordHash);
@@ -69,14 +82,14 @@ public class User : AggregateRoot
         return @event;
     }
 
-    public async Task<Result<FriendshipRequest>> SendFriendshipRequest(IUserRepository userRepository, IFriendshipRequestRepository friendshipRequestRepository, User friend)
+    public async Task<Result<FriendshipRequest>> SendFriendshipRequest(IFriendshipRequestRepository friendshipRequestRepository, User friend)
     {
         if (Id == friend.Id)
         {
             return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.InvalidSameUserId);
         }
 
-        if (await userRepository.CheckIfFriendsAsync(this, friend))
+        if (CheckIfFriends(friend))
         {
             return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.AlreadyFriends);
         }
@@ -91,5 +104,24 @@ public class User : AggregateRoot
         //RaiseDomainEvent(new FriendshipRequestSentDomainEvent(friendshipRequest));
 
         return friendshipRequest;
+    }
+
+    public Result<Friendship> AddFriend(User friend)
+    {
+        if (CheckIfFriends(friend))
+        {
+            return Result.Failure<Friendship>(DomainErrors.FriendshipRequest.AlreadyFriends);
+        }
+
+        var friendship = new Friendship(this, friend);
+
+        _inviters.Add(friendship);
+
+        return friendship;
+    }
+
+    private bool CheckIfFriends(User friend)
+    {
+        return Friends.Any(id => id == friend.Id);
     }
 }

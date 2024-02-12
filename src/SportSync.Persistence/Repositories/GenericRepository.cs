@@ -29,7 +29,7 @@ public abstract class GenericRepository<TEntity>
     /// </summary>
     /// <param name="id">The entity identifier.</param>
     /// <returns>The maybe instance that may contain the entity with the specified identifier.</returns>
-    public async Task<Maybe<TEntity>> GetByIdAsync(Guid id) => await DbContext.GetByIdAsync<TEntity>(id);
+    public virtual async Task<Maybe<TEntity>> GetByIdAsync(Guid id, CancellationToken cancellationToken) => await DbContext.GetByIdAsync<TEntity>(id, cancellationToken);
 
     /// <summary>
     /// Inserts the specified entity into the database.

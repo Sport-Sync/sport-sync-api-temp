@@ -14,17 +14,23 @@ internal sealed class UserRepository : QueryableGenericRepository<User, UserType
     {
     }
 
-    public async Task<bool> IsEmailUniqueAsync(string email) => !await AnyAsync(x => x.Email == email);
-    
-    public async Task<bool> IsPhoneUniqueAsync(string phone) => !await AnyAsync(x => x.Phone == phone);
-    
-    public async Task<Maybe<User>> GetByEmailAsync(string email) => await FirstOrDefaultAsync(x => x.Email == email);
-
-    public async Task<bool> CheckIfFriendsAsync(User user, User friend)
+    public override async Task<Maybe<User>> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
-        return await DbContext.Set<Friendship>()
-            .AnyAsync(f =>
-                (f.UserId == user.Id && f.FriendId == friend.Id) ||
-                (f.FriendId == user.Id && f.UserId == friend.Id));
+        var test = await DbContext.Set<User>()
+            .Include(x => x.Inviters)
+            .Include(x => x.Invitees)
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+        return Maybe<User>.From(await DbContext.Set<User>()
+            .Include(x => x.Inviters)
+            .Include(x => x.Invitees)
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken));
+
     }
+
+    public async Task<bool> IsEmailUniqueAsync(string email) => !await AnyAsync(x => x.Email == email);
+
+    public async Task<bool> IsPhoneUniqueAsync(string phone) => !await AnyAsync(x => x.Phone == phone);
+
+    public async Task<Maybe<User>> GetByEmailAsync(string email) => await FirstOrDefaultAsync(x => x.Email == email);
 }

@@ -13,11 +13,11 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
     {
     }
 
-    public new async Task<Maybe<Termin>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public override async Task<Maybe<Termin>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await DbContext.Set<Termin>()
+        return Maybe<Termin>.From(await DbContext.Set<Termin>()
             .Include(t => t.Players)
-            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 
     public async Task<List<Player>> GetPlayers(Guid id, CancellationToken cancellationToken)

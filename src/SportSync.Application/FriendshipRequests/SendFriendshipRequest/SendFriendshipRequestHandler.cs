@@ -34,14 +34,14 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
             return Result.Failure(DomainErrors.User.Forbidden);
         }
 
-        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(request.UserId);
+        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
 
         if (maybeUser.HasNoValue)
         {
             return Result.Failure(DomainErrors.User.NotFound);
         }
 
-        Maybe<User> maybeFriend = await _userRepository.GetByIdAsync(request.FriendId);
+        Maybe<User> maybeFriend = await _userRepository.GetByIdAsync(request.FriendId, cancellationToken);
 
         if (maybeFriend.HasNoValue)
         {
@@ -50,7 +50,7 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
 
         var user = maybeUser.Value;
 
-        var friendshipRequestResult = await user.SendFriendshipRequest(_userRepository, _friendshipRequestRepository, maybeFriend.Value);
+        var friendshipRequestResult = await user.SendFriendshipRequest(_friendshipRequestRepository, maybeFriend.Value);
 
         if (friendshipRequestResult.IsFailure)
         {
