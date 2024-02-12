@@ -47,12 +47,12 @@ public class User : AggregateRoot
     /// <summary>
     /// List of users who initiated the "friendship"
     /// </summary>
-    public IReadOnlyCollection<Friendship> Invitees => _invitees.ToList();
+    public IReadOnlyCollection<Friendship> FriendInvitees => _invitees.ToList();
 
     /// <summary>
     /// List of users who where invited to the "friendship"
     /// </summary>
-    public IReadOnlyCollection<Friendship> Inviters => _inviters.ToList();
+    public IReadOnlyCollection<Friendship> FriendInviters => _inviters.ToList();
     public IEnumerable<Guid> Friends => _invitees.Select(x => x.UserId).Concat(_inviters.Select(x => x.FriendId));
 
     public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)

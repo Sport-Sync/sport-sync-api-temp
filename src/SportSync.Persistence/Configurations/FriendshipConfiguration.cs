@@ -15,26 +15,14 @@ internal class FriendshipConfiguration : IEntityTypeConfiguration<Friendship>
             friendship.FriendId
         });
 
-        //builder.HasOne<User>()
-        //    .WithMany()
-        //    .HasForeignKey(friendship => friendship.UserId)
-        //    .IsRequired()
-        //    .OnDelete(DeleteBehavior.NoAction);
-
-        //builder.HasOne<User>()
-        //    .WithMany()
-        //    .HasForeignKey(friendship => friendship.FriendId)
-        //    .IsRequired()
-        //    .OnDelete(DeleteBehavior.NoAction);
-
         builder.HasOne<User>()
-            .WithMany(x => x.Inviters)
+            .WithMany(x => x.FriendInviters)
             .HasForeignKey(friendship => friendship.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<User>()
-            .WithMany(x => x.Invitees)
+            .WithMany(x => x.FriendInvitees)
             .HasForeignKey(friendship => friendship.FriendId)
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);

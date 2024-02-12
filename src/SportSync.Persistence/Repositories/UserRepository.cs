@@ -16,14 +16,9 @@ internal sealed class UserRepository : QueryableGenericRepository<User, UserType
 
     public override async Task<Maybe<User>> GetByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var test = await DbContext.Set<User>()
-            .Include(x => x.Inviters)
-            .Include(x => x.Invitees)
-            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-
         return Maybe<User>.From(await DbContext.Set<User>()
-            .Include(x => x.Inviters)
-            .Include(x => x.Invitees)
+            .Include(x => x.FriendInviters)
+            .Include(x => x.FriendInvitees)
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken));
 
     }
