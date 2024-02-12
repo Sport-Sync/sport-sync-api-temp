@@ -1,0 +1,158 @@
+﻿schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Error {
+  code: String
+  message: String
+}
+
+type GetDatesByDayOfWeekResponse {
+  dates: [DateTime!]!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput): TokenResponse
+  login(input: LoginInput): TokenResponse
+  sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
+  acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
+  rejectFriendshipRequest(input: RejectFriendshipRequestInput): Result @authorize
+  createEvent(input: CreateEventInput): UUID! @authorize
+}
+
+type PlayerType {
+  userId: UUID!
+  firstName: String
+  lastName: String
+  isAttending: Boolean
+}
+
+type Query {
+  me: UserType @authorize
+  datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
+  termins(date: DateTime!): [TerminType] @authorize
+  terminById(id: UUID!): TerminType @authorize
+}
+
+type Result {
+  isSuccess: Boolean!
+  isFailure: Boolean!
+  error: Error
+}
+
+type TerminType {
+  id: UUID!
+  date: DateTime!
+  startTime: DateTime!
+  endTime: DateTime!
+  eventName: String
+  sportType: SportType!
+  status: TerminStatus!
+  address: String
+  price: Decimal!
+  numberOfPlayersExpected: Int!
+  players: [PlayerType]
+  notes: String
+}
+
+type TokenResponse {
+  token: String!
+}
+
+type UserType {
+  id: UUID!
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+}
+
+input AcceptFriendshipRequestInput {
+  friendshipRequestId: UUID!
+}
+
+input CreateEventInput {
+  memberIds: [UUID!]!
+  name: String!
+  sportType: SportType!
+  address: String!
+  price: Decimal!
+  numberOfPlayers: Int!
+  notes: String
+  eventTime: [TimeInput!]!
+}
+
+input CreateUserInput {
+  firstName: String!
+  lastName: String!
+  email: String!
+  phone: String!
+  password: String!
+}
+
+input GetDatesByDayOfWeekInput {
+  dayOfWeek: DayOfWeek!
+  numberOfDates: Int!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input RejectFriendshipRequestInput {
+  friendshipRequestId: UUID!
+}
+
+input SendFriendshipRequestInput {
+  userId: UUID!
+  friendId: UUID!
+}
+
+input TimeInput {
+  dayOfWeek: DayOfWeek!
+  startDate: DateTime!
+  startTime: DateTime!
+  endTime: DateTime!
+  repeatWeekly: Boolean!
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+  VALIDATION
+}
+
+enum DayOfWeek {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+enum SportType {
+  FOOTBALL
+  HANDBALL
+  BASKETBALL
+  TENNIS
+}
+
+enum TerminStatus {
+  PENDING
+  FINISHED
+  CANCELED
+}
+
+directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
+
+"The `DateTime` scalar represents an ISO-8601 compliant date time type."
+scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time")
+
+"The built-in `Decimal` scalar type."
+scalar Decimal
+
+scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")

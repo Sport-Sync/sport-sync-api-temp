@@ -49,8 +49,6 @@ public class AnnounceTerminTests : IntegrationTest
     [Theory]
     [InlineData(TerminStatus.Finished, false)]
     [InlineData(TerminStatus.Canceled, false)]
-    [InlineData(TerminStatus.AnnouncedInternally, true)]
-    [InlineData(TerminStatus.AnnouncedPublicly, true)]
     [InlineData(TerminStatus.Pending, true)]
     public async Task Announce_ShouldFail_WhenHasDoneStatus(TerminStatus status, bool shouldSucceed)
     {
@@ -70,9 +68,10 @@ public class AnnounceTerminTests : IntegrationTest
 
         if (shouldSucceed)
         {
-            var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
-            terminResponse.Status.Should().Be(TerminStatus.AnnouncedPublicly);
-            Database.DbContext.Set<Termin>().Find(termin.Id).Status.Should().Be(TerminStatus.AnnouncedPublicly);
+            result.ToResponseObject<TerminType>("announceTermin");
+            var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
+            announcement.UserId.Should().Be(admin.Id);
+            announcement.AnnouncementType.Should().Be(TerminAnnouncementType.Public);
         }
         else
         {
@@ -82,9 +81,9 @@ public class AnnounceTerminTests : IntegrationTest
     }
 
     [Theory]
-    [InlineData(true, TerminStatus.AnnouncedPublicly)]
-    [InlineData(false, TerminStatus.AnnouncedInternally)]
-    public async Task Announce_ShouldSucceed_AndSetProperStatus(bool publicly, TerminStatus expectedStatus)
+    [InlineData(true, TerminAnnouncementType.Public)]
+    [InlineData(false, TerminAnnouncementType.FriendList)]
+    public async Task Announce_ShouldSucceed_AndSetProperStatus(bool publicly, TerminAnnouncementType expectedType)
     {
         var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
@@ -102,8 +101,11 @@ public class AnnounceTerminTests : IntegrationTest
 
 
         var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
-        terminResponse.Status.Should().Be(expectedStatus);
-        Database.DbContext.Set<Termin>().Find(termin.Id).Status.Should().Be(expectedStatus);
+        terminResponse.Should().NotBeNull();
+
+        var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
+        announcement.UserId.Should().Be(admin.Id);
+        announcement.AnnouncementType.Should().Be(expectedType);
 
     }
 }

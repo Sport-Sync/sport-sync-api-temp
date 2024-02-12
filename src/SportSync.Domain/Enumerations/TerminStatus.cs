@@ -4,7 +4,5 @@ public enum TerminStatus
 {
     Pending,
     Finished,
-    Canceled,
-    AnnouncedInternally,
-    AnnouncedPublicly
+    Canceled
 }

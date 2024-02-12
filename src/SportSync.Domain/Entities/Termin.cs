@@ -1,6 +1,7 @@
 ﻿using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives;
+using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
 
@@ -9,6 +10,7 @@ namespace SportSync.Domain.Entities;
 public class Termin : AggregateRoot
 {
     private readonly HashSet<Player> _players = new();
+    private readonly HashSet<TerminAnnouncement> _announcements = new();
 
     private Termin(Event @event, DateTime date, EventSchedule schedule)
         : base(Guid.NewGuid())
@@ -68,6 +70,7 @@ public class Termin : AggregateRoot
 
     public EventSchedule Schedule { get; set; }
     public IReadOnlyCollection<Player> Players => _players.ToList();
+    public IReadOnlyCollection<TerminAnnouncement> Announcements => _announcements.ToList();
 
     public static Termin Create(Event @event, DateTime date, EventSchedule schedule)
     {
@@ -111,11 +114,16 @@ public class Termin : AggregateRoot
         player.Attending = attending;
     }
 
-    public void Announce(bool publicly)
+    public TerminAnnouncement Announce(Guid userId, bool publicly)
     {
         EnsureItIsNotDone();
 
-        Status = publicly ? TerminStatus.AnnouncedPublicly : TerminStatus.AnnouncedInternally;
+        var type = publicly ? TerminAnnouncementType.Public : TerminAnnouncementType.FriendList;
+        var announcement = new TerminAnnouncement(this, userId, type);
+
+        _announcements.Add(announcement);
+
+        return announcement;
     }
 
     public void EnsureItIsNotDone()
@@ -142,4 +150,27 @@ public class Termin : AggregateRoot
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }
     }
+
+    public Result<TerminApplication> ApplyForPlaying(User user)
+    {
+        if (IsPlayer(user))
+        {
+            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.AlreadyPlayer);
+        }
+
+        //if (!Announced)
+        //{
+        //    return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.NotAnnounced);
+        //}
+
+        var terminApplication = new TerminApplication(user, this);
+
+        return terminApplication;
+    }
+
+    public bool IsPlayer(User user)
+    {
+        return _players.Any(x => x.UserId == user.Id);
+    }
+
 }

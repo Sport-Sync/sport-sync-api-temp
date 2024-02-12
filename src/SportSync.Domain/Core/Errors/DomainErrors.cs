@@ -97,6 +97,10 @@ public static class DomainErrors
             "TerminApplication.AlreadyPlayer",
             "The user is already a player in this termin.");
 
+        public static Error NotAnnounced => new Error(
+            "TerminApplication.NotAnnounced",
+            "The termin is not announced. Unable to perform the operation.");
+
         public static Error PendingTerminApplication => new Error(
             "TerminApplication.PendingTerminApplication",
             "The application can not be sent because there is a pending one already.");

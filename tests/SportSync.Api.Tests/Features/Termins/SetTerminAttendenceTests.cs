@@ -196,8 +196,6 @@ public class SetTerminAttendenceTests : IntegrationTest
     [Theory]
     [InlineData(TerminStatus.Finished, false)]
     [InlineData(TerminStatus.Canceled, false)]
-    [InlineData(TerminStatus.AnnouncedInternally, true)]
-    [InlineData(TerminStatus.AnnouncedPublicly, true)]
     [InlineData(TerminStatus.Pending, true)]
     public async Task SetAttendence_ShouldFail_WhenTerminHasDoneStatuses(TerminStatus status, bool shouldSucceed)
     {
