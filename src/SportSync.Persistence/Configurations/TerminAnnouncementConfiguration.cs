@@ -21,7 +21,7 @@ internal class TerminAnnouncementConfiguration : IEntityTypeConfiguration<Termin
             .WithMany(x => x.Announcements)
             .HasForeignKey(announcement => announcement.TerminId)
             .IsRequired()
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(announcement => announcement.AnnouncementType);
 

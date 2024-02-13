@@ -121,14 +121,19 @@ public class Termin : AggregateRoot
     {
         EnsureItIsNotDone();
 
-        if (!publicly && PubliclyAnnounced)
+        if (PubliclyAnnounced)
         {
-            throw new DomainException(DomainErrors.TerminAnnouncement.PubliclyAnnounced);
+            throw new DomainException(DomainErrors.TerminAnnouncement.AlreadyPubliclyAnnounced);
         }
 
         if (publicly)
         {
             _announcements.RemoveWhere(x => x.AnnouncementType == TerminAnnouncementType.FriendList);
+        }
+
+        if (!publicly && _announcements.Any(x => x.UserId == userId))
+        {
+            throw new DomainException(DomainErrors.TerminAnnouncement.AlreadyAnnouncedBySameUser);
         }
 
         var type = publicly ? TerminAnnouncementType.Public : TerminAnnouncementType.FriendList;
@@ -166,19 +171,11 @@ public class Termin : AggregateRoot
 
     public Result<TerminApplication> ApplyForPlaying(User user)
     {
-        if (IsPlayer(user))
-        {
-            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.AlreadyPlayer);
-        }
+        var canApply = IsValidApplicant(user);
 
-        if (!Announced)
+        if (canApply.IsFailure)
         {
-            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.NotAnnounced);
-        }
-
-        if (NotFriendOfAnyPrivateAnnouncers) // move to TerminApplicationService
-        {
-            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.NotOnFriendList);
+            return Result.Failure<TerminApplication>(canApply.Error);
         }
 
         var terminApplication = new TerminApplication(user, this);
@@ -186,8 +183,40 @@ public class Termin : AggregateRoot
         return terminApplication;
     }
 
-    public bool IsPlayer(User user)
+    private bool IsPlayer(User user)
     {
         return _players.Any(x => x.UserId == user.Id);
+    }
+
+    private Result IsValidApplicant(User user)
+    {
+        if (IsPlayer(user))
+        {
+            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.AlreadyPlayer);
+        }
+
+        if (!Announced)
+        {
+            return Result.Failure(DomainErrors.TerminApplication.NotAnnounced);
+        }
+
+        if (PubliclyAnnounced)
+        {
+            return Result.Success();
+        }
+
+        var privateAnnouncements =
+            Announcements
+            .Where(a => a.AnnouncementType == TerminAnnouncementType.FriendList)
+            .ToList();
+
+        var announcerIds = privateAnnouncements.Select(x => x.UserId);
+
+        if (!user.Friends.Any(friendId => announcerIds.Contains(friendId)))
+        {
+            return Result.Failure(DomainErrors.TerminApplication.NotOnFriendList);
+        }
+
+        return Result.Success();
     }
 }

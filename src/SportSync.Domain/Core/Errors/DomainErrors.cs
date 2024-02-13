@@ -113,9 +113,13 @@ public static class DomainErrors
 
     public static class TerminAnnouncement
     {
-        public static Error PubliclyAnnounced => new Error(
-            "TerminAnnouncement.PubliclyAnnounced",
+        public static Error AlreadyPubliclyAnnounced => new Error(
+            "TerminAnnouncement.AlreadyPubliclyAnnounced",
             "The termin is already publicly announced.");
+
+        public static Error AlreadyAnnouncedBySameUser => new Error(
+            "TerminAnnouncement.AlreadyAnnouncedBySameUser",
+            "The termin is already announced by same user.");
     }
 
     public static class Email

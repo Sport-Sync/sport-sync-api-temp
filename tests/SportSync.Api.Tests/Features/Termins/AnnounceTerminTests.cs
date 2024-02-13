@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System.Reflection.Metadata;
+using System.Security.Cryptography.X509Certificates;
+using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
@@ -108,11 +110,14 @@ public class AnnounceTerminTests : IntegrationTest
         announcement.AnnouncementType.Should().Be(expectedType);
     }
 
-    [Fact]
-    public async Task Announce_ShouldFailWhenPrivatelyAnnouncing_ButAlreadyIsPubliclyAnnounced()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Announce_ShouldFail_WhenAlreadyIsPubliclyAnnounced(bool publicly)
     {
-        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var admin = Database.AddUser();
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
+        Database.AddTerminAnnouncement(admin, termin, TerminAnnouncementType.Public);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -126,19 +131,20 @@ public class AnnounceTerminTests : IntegrationTest
                 }}"));
 
 
-        var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
-        terminResponse.Should().NotBeNull();
+        result.ShouldHaveError(DomainErrors.TerminAnnouncement.AlreadyPubliclyAnnounced);
 
         var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
         announcement.UserId.Should().Be(admin.Id);
-        announcement.AnnouncementType.Should().Be(expectedType);
     }
 
     [Fact]
     public async Task Announce_ShouldRemovePrivateAnnouncement_WhenAnnouncingPublicly()
     {
-        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var admin = Database.AddUser();
+        var user = Database.AddUser("second", "user", "user@gmail.com", "034234329");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
+        Database.AddTerminAnnouncement(admin, termin, TerminAnnouncementType.FriendList);
+        Database.AddTerminAnnouncement(user, termin, TerminAnnouncementType.FriendList);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -146,7 +152,7 @@ public class AnnounceTerminTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceTermin(input: {{terminId: ""{termin.Id}"", publicAnnouncement: {publicly.ToString().ToLower()}}}){{
+                    announceTermin(input: {{terminId: ""{termin.Id}"", publicAnnouncement: true}}){{
                         eventName, status
                     }}
                 }}"));
@@ -155,8 +161,63 @@ public class AnnounceTerminTests : IntegrationTest
         var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
         terminResponse.Should().NotBeNull();
 
+        var announcements = Database.DbContext.Set<TerminAnnouncement>().Where(x => x.TerminId == termin.Id);
+        announcements.Count().Should().Be(1);
+        announcements.Single().AnnouncementType.Should().Be(TerminAnnouncementType.Public);
+    }
+
+    [Fact]
+    public async Task Announce_ShouldFail_WhenAlreadyAnnouncedBySameUser()
+    {
+        var admin = Database.AddUser();
+        var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
+        Database.AddTerminAnnouncement(admin, termin, TerminAnnouncementType.FriendList);
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceTermin(input: {{terminId: ""{termin.Id}"", publicAnnouncement: false}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+
+        result.ShouldHaveError(DomainErrors.TerminAnnouncement.AlreadyAnnouncedBySameUser);
+
         var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
         announcement.UserId.Should().Be(admin.Id);
-        announcement.AnnouncementType.Should().Be(expectedType);
+    }
+
+    [Fact]
+    public async Task Announce_ShouldSucceed_WhenAlreadyAnnouncedByDifferentUser()
+    {
+        var admin = Database.AddUser();
+        var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
+        var user = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        Database.AddTerminAnnouncement(user, termin, TerminAnnouncementType.FriendList);
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceTermin(input: {{terminId: ""{termin.Id}"", publicAnnouncement: false}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+
+        var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
+        terminResponse.Should().NotBeNull();
+
+        var announcements = Database.DbContext.Set<TerminAnnouncement>().Where(x => x.TerminId == termin.Id);
+        announcements.Count().Should().Be(2);
+
+        announcements.Single(x => x.UserId == user.Id).AnnouncementType.Should().Be(TerminAnnouncementType.FriendList);
+        announcements.Single(x => x.UserId == admin.Id).AnnouncementType.Should().Be(TerminAnnouncementType.FriendList);
     }
 }

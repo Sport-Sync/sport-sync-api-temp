@@ -42,15 +42,7 @@ public class AnnounceTerminRequestHandler : IRequestHandler<AnnounceTerminInput,
 
         termin.Announce(currentUserId, input.PublicAnnouncement);
 
-        try
-        {
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return TerminType.FromTermin(termin);
     }

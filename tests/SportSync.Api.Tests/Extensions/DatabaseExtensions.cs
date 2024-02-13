@@ -81,4 +81,17 @@ public static class DatabaseExtensions
 
         return termin;
     }
+
+    public static TerminAnnouncement AddTerminAnnouncement(
+        this Database database,
+        User user,
+        Termin termin,
+        TerminAnnouncementType announcementType = TerminAnnouncementType.Public)
+    {
+        var announcement = new TerminAnnouncement(termin, user.Id, announcementType);
+
+        database.DbContext.Set<TerminAnnouncement>().Add(announcement);
+
+        return announcement;
+    }
 }
