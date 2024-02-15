@@ -79,6 +79,49 @@ public static class DomainErrors
             "The friendship request can not be sent because there is a pending friendship request.");
     }
 
+    public static class TerminApplication
+    {
+        public static Error NotFound => new Error(
+            "TerminApplication.NotFound",
+            "The termin application with the specified identifier was not found.");
+
+        public static Error AlreadyAccepted => new Error(
+            "TerminApplication.AlreadyAccepted",
+            "The application has already been accepted.");
+
+        public static Error AlreadyRejected => new Error(
+            "TerminApplication.AlreadyRejected",
+            "The application has already been rejected.");
+
+        public static Error AlreadyPlayer => new Error(
+            "TerminApplication.AlreadyPlayer",
+            "The user is already a player in this termin.");
+
+        public static Error NotAnnounced => new Error(
+            "TerminApplication.NotAnnounced",
+            "The termin is not announced. Unable to perform the operation.");
+
+        public static Error NotOnFriendList => new Error(
+            "TerminApplication.NotOnFriendList",
+            "The termin is announced only for friends. The user is not on the friend list.");
+
+
+        public static Error PendingTerminApplication => new Error(
+            "TerminApplication.PendingTerminApplication",
+            "The application can not be sent because there is a pending one already.");
+    }
+
+    public static class TerminAnnouncement
+    {
+        public static Error AlreadyPubliclyAnnounced => new Error(
+            "TerminAnnouncement.AlreadyPubliclyAnnounced",
+            "The termin is already publicly announced.");
+
+        public static Error AlreadyAnnouncedBySameUser => new Error(
+            "TerminAnnouncement.AlreadyAnnouncedBySameUser",
+            "The termin is already announced by same user.");
+    }
+
     public static class Email
     {
         public static Error NullOrEmpty => new Error("Email.NullOrEmpty", "The email is required.");

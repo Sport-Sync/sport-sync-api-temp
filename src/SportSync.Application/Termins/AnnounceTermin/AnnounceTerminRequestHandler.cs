@@ -1,5 +1,4 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
@@ -41,7 +40,7 @@ public class AnnounceTerminRequestHandler : IRequestHandler<AnnounceTerminInput,
 
         await _eventRepository.EnsureUserIsAdminOnEvent(termin.EventId, currentUserId, cancellationToken);
 
-        termin.Announce(input.PublicAnnouncement);
+        termin.Announce(currentUserId, input.PublicAnnouncement);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

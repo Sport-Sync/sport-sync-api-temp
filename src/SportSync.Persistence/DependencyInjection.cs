@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<ITerminRepository, TerminRepository>();
         services.AddScoped<IFriendshipRequestRepository, FriendshipRequestRepository>();
+        services.AddScoped<ITerminApplicationRepository, TerminApplicationRepository>();
 
         return services;
     }

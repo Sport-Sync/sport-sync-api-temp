@@ -1,6 +1,7 @@
 ﻿using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives;
+using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
 
@@ -9,6 +10,7 @@ namespace SportSync.Domain.Entities;
 public class Termin : AggregateRoot
 {
     private readonly HashSet<Player> _players = new();
+    private readonly HashSet<TerminAnnouncement> _announcements = new();
 
     private Termin(Event @event, DateTime date, EventSchedule schedule)
         : base(Guid.NewGuid())
@@ -68,6 +70,10 @@ public class Termin : AggregateRoot
 
     public EventSchedule Schedule { get; set; }
     public IReadOnlyCollection<Player> Players => _players.ToList();
+    public IReadOnlyCollection<TerminAnnouncement> Announcements => _announcements.ToList();
+
+    public bool Announced => _announcements.Any();
+    public bool PubliclyAnnounced => _announcements.Any(x => x.AnnouncementType == TerminAnnouncementType.Public);
 
     public static Termin Create(Event @event, DateTime date, EventSchedule schedule)
     {
@@ -111,11 +117,31 @@ public class Termin : AggregateRoot
         player.Attending = attending;
     }
 
-    public void Announce(bool publicly)
+    public TerminAnnouncement Announce(Guid userId, bool publicly)
     {
         EnsureItIsNotDone();
 
-        Status = publicly ? TerminStatus.AnnouncedPublicly : TerminStatus.AnnouncedInternally;
+        if (PubliclyAnnounced)
+        {
+            throw new DomainException(DomainErrors.TerminAnnouncement.AlreadyPubliclyAnnounced);
+        }
+
+        if (publicly)
+        {
+            _announcements.RemoveWhere(x => x.AnnouncementType == TerminAnnouncementType.FriendList);
+        }
+
+        if (!publicly && _announcements.Any(x => x.UserId == userId))
+        {
+            throw new DomainException(DomainErrors.TerminAnnouncement.AlreadyAnnouncedBySameUser);
+        }
+
+        var type = publicly ? TerminAnnouncementType.Public : TerminAnnouncementType.FriendList;
+        var announcement = new TerminAnnouncement(this, userId, type);
+
+        _announcements.Add(announcement);
+
+        return announcement;
     }
 
     public void EnsureItIsNotDone()
@@ -141,5 +167,56 @@ public class Termin : AggregateRoot
         {
             throw new DomainException(DomainErrors.Termin.AlreadyFinished);
         }
+    }
+
+    public Result<TerminApplication> ApplyForPlaying(User user)
+    {
+        var canApply = IsValidApplicant(user);
+
+        if (canApply.IsFailure)
+        {
+            return Result.Failure<TerminApplication>(canApply.Error);
+        }
+
+        var terminApplication = new TerminApplication(user, this);
+
+        return terminApplication;
+    }
+
+    private bool IsPlayer(User user)
+    {
+        return _players.Any(x => x.UserId == user.Id);
+    }
+
+    private Result IsValidApplicant(User user)
+    {
+        if (IsPlayer(user))
+        {
+            return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.AlreadyPlayer);
+        }
+
+        if (!Announced)
+        {
+            return Result.Failure(DomainErrors.TerminApplication.NotAnnounced);
+        }
+
+        if (PubliclyAnnounced)
+        {
+            return Result.Success();
+        }
+
+        var privateAnnouncements =
+            Announcements
+            .Where(a => a.AnnouncementType == TerminAnnouncementType.FriendList)
+            .ToList();
+
+        var announcerIds = privateAnnouncements.Select(x => x.UserId);
+
+        if (!user.Friends.Any(friendId => announcerIds.Contains(friendId)))
+        {
+            return Result.Failure(DomainErrors.TerminApplication.NotOnFriendList);
+        }
+
+        return Result.Success();
     }
 }

@@ -8,7 +8,6 @@ using SportSync.Domain.Core.Abstractions;
 using SportSync.Domain.Core.Events;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Maybe;
-using SportSync.Domain.Entities;
 using SportSync.Persistence.Configurations;
 
 namespace SportSync.Persistence;
@@ -42,6 +41,8 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new EventScheduleConfiguration());
         modelBuilder.ApplyConfiguration(new FriendshipRequestConfiguration());
         modelBuilder.ApplyConfiguration(new FriendshipConfiguration());
+        modelBuilder.ApplyConfiguration(new TerminApplicationConfiguration());
+        modelBuilder.ApplyConfiguration(new TerminAnnouncementConfiguration());
     }
 
     public new DbSet<TEntity> Set<TEntity>()

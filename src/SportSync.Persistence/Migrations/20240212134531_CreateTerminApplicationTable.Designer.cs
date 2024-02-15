@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240212134531_CreateTerminApplicationTable")]
+    partial class CreateTerminApplicationTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,36 +339,6 @@ namespace SportSync.Persistence.Migrations
                     b.ToTable("Termins", (string)null);
                 });
 
-            modelBuilder.Entity("SportSync.Domain.Entities.TerminAnnouncement", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AnnouncementType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TerminId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TerminId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TerminAnnouncements", (string)null);
-                });
-
             modelBuilder.Entity("SportSync.Domain.Entities.TerminApplication", b =>
                 {
                     b.Property<Guid>("Id")
@@ -560,21 +533,6 @@ namespace SportSync.Persistence.Migrations
                     b.Navigation("Schedule");
                 });
 
-            modelBuilder.Entity("SportSync.Domain.Entities.TerminAnnouncement", b =>
-                {
-                    b.HasOne("SportSync.Domain.Entities.Termin", null)
-                        .WithMany("Announcements")
-                        .HasForeignKey("TerminId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SportSync.Domain.Entities.TerminApplication", b =>
                 {
                     b.HasOne("SportSync.Domain.Entities.Termin", null)
@@ -599,8 +557,6 @@ namespace SportSync.Persistence.Migrations
 
             modelBuilder.Entity("SportSync.Domain.Entities.Termin", b =>
                 {
-                    b.Navigation("Announcements");
-
                     b.Navigation("Players");
                 });
 

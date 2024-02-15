@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240212143703_CreateTerminAnnouncementTable")]
+    partial class CreateTerminAnnouncementTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -361,9 +364,7 @@ namespace SportSync.Persistence.Migrations
 
                     b.HasIndex("TerminId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TerminAnnouncements", (string)null);
+                    b.ToTable("TerminAnnouncement");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.TerminApplication", b =>
@@ -565,13 +566,7 @@ namespace SportSync.Persistence.Migrations
                     b.HasOne("SportSync.Domain.Entities.Termin", null)
                         .WithMany("Announcements")
                         .HasForeignKey("TerminId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
