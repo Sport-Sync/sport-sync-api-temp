@@ -2,6 +2,7 @@
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
+using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -41,5 +42,15 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
             .ToListAsync();
 
         return lastTerminsByEvent.Select(x => (x.LastTermin, x.Count)).ToList();
+    }
+
+    public async Task<List<Termin>> GetAnnouncedTermins(DateTime date, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<Termin>()
+            .Include(t => t.Announcements)
+            .Include(t => t.Players)
+                .ThenInclude(p => p.User)
+            .Where(t => t.Date.Date == date.Date && t.Announcements.Any())
+            .ToListAsync(cancellationToken);
     }
 }

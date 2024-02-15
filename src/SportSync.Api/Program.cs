@@ -49,6 +49,7 @@ public class Program
             .AddType<TerminMutation>()
             .AddType<EventMutation>()
             .AddTypeConverter<DateTime, DateTimeOffset>(t => t.Kind is DateTimeKind.Unspecified ? DateTime.SpecifyKind(t, DateTimeKind.Utc) : t)
+            .AddTypeConverter<DateTimeOffset, DateTime>(d => d.DateTime)
             .AddConvention<INamingConventions>(new EnumNamingConvention());
 
         //.AddSubscriptionType<Subscription>()

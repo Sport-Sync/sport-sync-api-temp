@@ -22,7 +22,6 @@ public class TerminMutation
         AnnounceTerminInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
-
     [Authorize]
     public async Task<Result> SendTerminApplication(
         [Service] SendTerminApplicationRequestHandler requestHandler,
