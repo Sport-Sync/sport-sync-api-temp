@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
-using FluentAssertions;
+﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
