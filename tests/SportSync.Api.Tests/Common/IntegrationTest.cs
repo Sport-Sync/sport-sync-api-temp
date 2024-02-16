@@ -79,6 +79,7 @@ public class IntegrationTest : IDisposable
                 .AddScoped(_ => UserIdentifierMock.Object)
                 .AddScoped(_ => DateTimeProviderMock.Object)
             .AddTypeConverter<DateTime, DateTimeOffset>(t => DateTime.SpecifyKind(t, DateTimeKind.Utc))
+            .AddTypeConverter<DateTimeOffset, DateTime>(d => d.DateTime)
             .BuildServiceProvider();
 
         Database = Database.Create(ServiceProvider.GetRequiredService<IPublisher>());
