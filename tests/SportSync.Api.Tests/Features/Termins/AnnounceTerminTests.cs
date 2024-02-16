@@ -114,7 +114,7 @@ public class AnnounceTerminTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
-        Database.AddTerminAnnouncement(admin, termin);
+        termin.Announce(admin.Id, true);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -139,9 +139,9 @@ public class AnnounceTerminTests : IntegrationTest
         var admin = Database.AddUser();
         var user = Database.AddUser("second", "user", "user@gmail.com", "034234329");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
-        Database.AddTerminAnnouncement(admin, termin, TerminAnnouncementType.FriendList);
-        Database.AddTerminAnnouncement(user, termin, TerminAnnouncementType.FriendList);
-
+        termin.Announce(admin.Id, false);
+        termin.Announce(user.Id, false);
+        
         await Database.UnitOfWork.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
@@ -166,7 +166,7 @@ public class AnnounceTerminTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
-        Database.AddTerminAnnouncement(admin, termin, TerminAnnouncementType.FriendList);
+        termin.Announce(admin.Id, false);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -191,7 +191,7 @@ public class AnnounceTerminTests : IntegrationTest
         var admin = Database.AddUser();
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         var user = Database.AddUser("second", "user", "user@gmail.com", "034234329");
-        Database.AddTerminAnnouncement(user, termin, TerminAnnouncementType.FriendList);
+        termin.Announce(user.Id, false);
 
         await Database.UnitOfWork.SaveChangesAsync();
 

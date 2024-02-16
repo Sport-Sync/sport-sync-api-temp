@@ -2,7 +2,6 @@
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
-using static SportSync.Domain.Core.Errors.DomainErrors;
 
 namespace SportSync.Domain.Entities;
 
@@ -16,7 +15,7 @@ public class TerminApplication : AggregateRoot
         Ensure.NotNull(termin, "The termin is required.", nameof(termin));
         Ensure.NotEmpty(termin.Id, "The termin identifier is required.", $"{nameof(termin)}{nameof(termin.Id)}");
 
-        UserId = user.Id;
+        AppliedByUserId = user.Id;
         TerminId = termin.Id;
     }
 
@@ -24,15 +23,19 @@ public class TerminApplication : AggregateRoot
     {
     }
 
-    public Guid UserId { get; set; }
+    public Guid AppliedByUserId { get; set; }
+    
+    public Guid? CompletedByUserId { get; set; }
+
+    public User AppliedByUser { get; set; }
+
+    public User CompletedByUser { get; set; }
 
     public Guid TerminId { get; set; }
 
     public bool Accepted { get; private set; }
 
     public bool Rejected { get; private set; }
-
-    public Guid CompletedByUserId { get; set; }
 
     public DateTime? CompletedOnUtc { get; private set; }
 
