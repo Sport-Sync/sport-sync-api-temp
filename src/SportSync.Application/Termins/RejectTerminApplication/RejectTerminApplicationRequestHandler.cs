@@ -1,15 +1,14 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
-using SportSync.Application.Termins.AcceptTerminApplication;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 
-namespace SportSync.Application.Termins;
+namespace SportSync.Application.Termins.AcceptTerminApplication;
 
-public class AcceptTerminApplicationRequestHandler : IRequestHandler<AcceptTerminApplicationInput, Result>
+public class RejectTerminApplicationRequestHandler : IRequestHandler<RejectTerminApplicationInput, Result>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly ITerminApplicationRepository _terminApplicationRepository;
@@ -19,7 +18,7 @@ public class AcceptTerminApplicationRequestHandler : IRequestHandler<AcceptTermi
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDateTime _dateTime;
 
-    public AcceptTerminApplicationRequestHandler(
+    public RejectTerminApplicationRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         ITerminApplicationRepository terminApplicationRepository,
         ITerminRepository terminRepository,
@@ -37,7 +36,7 @@ public class AcceptTerminApplicationRequestHandler : IRequestHandler<AcceptTermi
         _dateTime = dateTime;
     }
 
-    public async Task<Result> Handle(AcceptTerminApplicationInput request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RejectTerminApplicationInput request, CancellationToken cancellationToken)
     {
         Maybe<User> maybeUser = await _userRepository.GetByIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 
@@ -66,7 +65,7 @@ public class AcceptTerminApplicationRequestHandler : IRequestHandler<AcceptTermi
 
         await _eventRepository.EnsureUserIsAdminOnEvent(termin.EventId, user.Id, cancellationToken);
 
-        var acceptResult = terminApplication.Accept(user, _dateTime.UtcNow);
+        var acceptResult = terminApplication.Reject(user, _dateTime.UtcNow);
 
         if (acceptResult.IsFailure)
         {

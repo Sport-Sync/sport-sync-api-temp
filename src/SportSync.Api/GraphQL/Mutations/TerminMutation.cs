@@ -1,5 +1,4 @@
 ﻿using HotChocolate.Authorization;
-using SportSync.Application.Termins;
 using SportSync.Application.Termins.AcceptTerminApplication;
 using SportSync.Application.Termins.AnnounceTermin;
 using SportSync.Application.Termins.SendTerminApplication;
@@ -34,5 +33,11 @@ public class TerminMutation
     public async Task<Result> AcceptTerminApplication(
         [Service] AcceptTerminApplicationRequestHandler requestHandler,
         AcceptTerminApplicationInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
+
+    [Authorize]
+    public async Task<Result> RejectTerminApplication(
+        [Service] RejectTerminApplicationRequestHandler requestHandler,
+        RejectTerminApplicationInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

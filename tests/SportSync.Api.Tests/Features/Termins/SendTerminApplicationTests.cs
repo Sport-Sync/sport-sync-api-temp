@@ -16,7 +16,7 @@ public class SendTerminApplicationTests : IntegrationTest
         var admin = Database.AddUser();
         var player = Database.AddUser("Player");
 
-        var termin = Database.AddTermin(admin);
+        var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         termin.AddPlayers(new List<Guid>() { player.Id });
         termin.Announce(admin.Id, true);
 
