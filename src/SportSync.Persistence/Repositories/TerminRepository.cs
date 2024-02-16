@@ -17,6 +17,7 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
     {
         return Maybe<Termin>.From(await DbContext.Set<Termin>()
             .Include(t => t.Players)
+                .ThenInclude(p => p.User)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 
@@ -41,5 +42,15 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
             .ToListAsync();
 
         return lastTerminsByEvent.Select(x => (x.LastTermin, x.Count)).ToList();
+    }
+
+    public async Task<List<Termin>> GetAnnouncedTermins(DateTime date, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<Termin>()
+            .Include(t => t.Announcements)
+            .Include(t => t.Players)
+                .ThenInclude(p => p.User)
+            .Where(t => t.Date.Date == date.Date && t.Announcements.Any())
+            .ToListAsync(cancellationToken);
     }
 }

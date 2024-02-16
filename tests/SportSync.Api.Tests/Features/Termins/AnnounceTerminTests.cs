@@ -99,7 +99,6 @@ public class AnnounceTerminTests : IntegrationTest
                     }}
                 }}"));
 
-
         var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
         terminResponse.Should().NotBeNull();
 
@@ -115,7 +114,7 @@ public class AnnounceTerminTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
-        Database.AddTerminAnnouncement(admin, termin, TerminAnnouncementType.Public);
+        Database.AddTerminAnnouncement(admin, termin);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -127,7 +126,6 @@ public class AnnounceTerminTests : IntegrationTest
                         eventName, status
                     }}
                 }}"));
-
 
         result.ShouldHaveError(DomainErrors.TerminAnnouncement.AlreadyPubliclyAnnounced);
 
@@ -155,7 +153,6 @@ public class AnnounceTerminTests : IntegrationTest
                     }}
                 }}"));
 
-
         var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
         terminResponse.Should().NotBeNull();
 
@@ -182,7 +179,6 @@ public class AnnounceTerminTests : IntegrationTest
                     }}
                 }}"));
 
-
         result.ShouldHaveError(DomainErrors.TerminAnnouncement.AlreadyAnnouncedBySameUser);
 
         var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
@@ -207,7 +203,6 @@ public class AnnounceTerminTests : IntegrationTest
                         eventName, status
                     }}
                 }}"));
-
 
         var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
         terminResponse.Should().NotBeNull();

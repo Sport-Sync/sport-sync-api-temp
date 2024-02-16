@@ -8,8 +8,17 @@ type Error {
   message: String
 }
 
+type GetAnnouncedTerminResponse {
+  termins: [TerminType!]!
+}
+
 type GetDatesByDayOfWeekResponse {
   dates: [DateTime!]!
+}
+
+type GetTerminByIdResponse {
+  termin: TerminType!
+  attendence: TerminAttendenceType!
 }
 
 type Mutation {
@@ -32,13 +41,21 @@ type Query {
   me: UserType @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
-  terminById(id: UUID!): TerminType @authorize
+  terminById(input: GetTerminByIdInput): GetTerminByIdResponse @authorize
+  announcedTermins(input: GetAnnouncedTerminsInput): GetAnnouncedTerminResponse @authorize
 }
 
 type Result {
   isSuccess: Boolean!
   isFailure: Boolean!
   error: Error
+}
+
+type TerminAttendenceType {
+  isCurrentUserAttending: Boolean
+  playersAttending: [PlayerType]
+  playersNotAttending: [PlayerType]
+  playersNotResponded: [PlayerType]
 }
 
 type TerminType {
@@ -52,7 +69,6 @@ type TerminType {
   address: String
   price: Decimal!
   numberOfPlayersExpected: Int!
-  players: [PlayerType]
   notes: String
 }
 
@@ -91,9 +107,17 @@ input CreateUserInput {
   password: String!
 }
 
+input GetAnnouncedTerminsInput {
+  date: DateTime!
+}
+
 input GetDatesByDayOfWeekInput {
   dayOfWeek: DayOfWeek!
   numberOfDates: Int!
+}
+
+input GetTerminByIdInput {
+  terminId: UUID!
 }
 
 input LoginInput {
