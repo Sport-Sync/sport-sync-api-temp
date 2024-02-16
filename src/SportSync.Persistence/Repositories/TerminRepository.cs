@@ -2,7 +2,6 @@
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
-using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -18,6 +17,7 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
     {
         return Maybe<Termin>.From(await DbContext.Set<Termin>()
             .Include(t => t.Players)
+                .ThenInclude(p => p.User)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 

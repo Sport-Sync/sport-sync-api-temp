@@ -183,14 +183,14 @@ public class Termin : AggregateRoot
         return terminApplication;
     }
 
-    private bool IsPlayer(User user)
+    public bool IsPlayer(Guid userId)
     {
-        return _players.Any(x => x.UserId == user.Id);
+        return _players.Any(x => x.UserId == userId);
     }
 
     private Result IsValidApplicant(User user)
     {
-        if (IsPlayer(user))
+        if (IsPlayer(user.Id))
         {
             return Result.Failure<TerminApplication>(DomainErrors.TerminApplication.AlreadyPlayer);
         }

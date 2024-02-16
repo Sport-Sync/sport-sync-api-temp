@@ -3,6 +3,7 @@ using HotChocolate.Authorization;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Events.GetDatesByDayOfWeek;
 using SportSync.Application.Termins.GetAnnouncedTermins;
+using SportSync.Application.Termins.GetTerminById;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -25,13 +26,11 @@ public class TerminQuery
         => repository.GetQueryable(x => x.Players.Any(c => c.UserId == userIdentifierProvider.UserId && date.Date == x.Date.Date));
 
     [Authorize]
-    [UseFirstOrDefault]
     [UseProjection]
-    public IQueryable<TerminType> GetTerminById(
-        [Service] ITerminRepository repository,
-        [Service] IUserIdentifierProvider userIdentifierProvider,
-        Guid id)
-        => repository.GetQueryable(x => x.Id == id && x.Players.Any(c => c.UserId == userIdentifierProvider.UserId));
+    public async Task<GetTerminByIdResponse> GetTerminById(
+        [Service] GetTerminByIdRequestHandler requestHandler,
+        GetTerminByIdInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
     public async Task<GetAnnouncedTerminResponse> GetAnnouncedTermins(
