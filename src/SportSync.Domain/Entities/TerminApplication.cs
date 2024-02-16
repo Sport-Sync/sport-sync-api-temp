@@ -2,6 +2,7 @@
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using static SportSync.Domain.Core.Errors.DomainErrors;
 
 namespace SportSync.Domain.Entities;
 
@@ -31,9 +32,11 @@ public class TerminApplication : AggregateRoot
 
     public bool Rejected { get; private set; }
 
+    public Guid CompletedByUserId { get; set; }
+
     public DateTime? CompletedOnUtc { get; private set; }
 
-    public Result Accept(DateTime utcNow)
+    public Result Accept(User user, DateTime utcNow)
     {
         if (Accepted)
         {
@@ -48,13 +51,13 @@ public class TerminApplication : AggregateRoot
         Accepted = true;
 
         CompletedOnUtc = utcNow;
-
+        CompletedByUserId = user.Id;
         //RaiseDomainEvent(new TerminApplicationAcceptedDomainEvent(this));
 
         return Result.Success();
     }
 
-    public Result Reject(DateTime utcNow)
+    public Result Reject(User user, DateTime utcNow)
     {
         if (Accepted)
         {
@@ -65,10 +68,10 @@ public class TerminApplication : AggregateRoot
         {
             return Result.Failure(DomainErrors.TerminApplication.AlreadyRejected);
         }
-
         Rejected = true;
 
         CompletedOnUtc = utcNow;
+        CompletedByUserId = user.Id;
 
         //RaiseDomainEvent(new FriendshipRequestRejectedDomainEvent(this));
 

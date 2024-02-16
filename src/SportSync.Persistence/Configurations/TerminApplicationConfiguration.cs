@@ -16,6 +16,12 @@ internal class TerminApplicationConfiguration : IEntityTypeConfiguration<TerminA
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(application => application.CompletedByUserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.HasOne<Termin>()
             .WithMany()
             .HasForeignKey(application => application.TerminId)
