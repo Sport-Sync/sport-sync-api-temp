@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using System.Reflection;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
@@ -43,6 +45,20 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new FriendshipConfiguration());
         modelBuilder.ApplyConfiguration(new TerminApplicationConfiguration());
         modelBuilder.ApplyConfiguration(new TerminAnnouncementConfiguration());
+
+        //var entityTypes = Assembly.GetExecutingAssembly()
+        //    .GetTypes()
+        //    .Where(t => typeof(Entity).IsAssignableFrom(t) && !t.IsInterface);
+
+        //foreach (var entityType in entityTypes)
+        //{
+        //    // Get the method MakeGenericMethod for ValueGeneratedNever
+        //    var method = typeof(EntityTypeBuilder).GetMethod(nameof(EntityTypeBuilder.Property))
+        //        .MakeGenericMethod(entityType.GetProperty(nameof(Entity.Id)).PropertyType);
+
+        //    // Invoke the method with arguments to configure the property
+        //    method.Invoke(modelBuilder.Entity(entityType), new object[] { entityType.GetProperty(nameof(Entity.Id)) });
+        //}
     }
 
     public new DbSet<TEntity> Set<TEntity>()

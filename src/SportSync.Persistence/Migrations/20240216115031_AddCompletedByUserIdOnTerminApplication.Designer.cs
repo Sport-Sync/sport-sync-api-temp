@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216115031_AddCompletedByUserIdOnTerminApplication")]
+    partial class AddCompletedByUserIdOnTerminApplication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -380,6 +383,7 @@ namespace SportSync.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("CompletedByUserId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("CompletedOnUtc")
@@ -453,6 +457,11 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("_passwordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -461,6 +470,9 @@ namespace SportSync.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Phone")
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
@@ -582,7 +594,8 @@ namespace SportSync.Persistence.Migrations
                     b.HasOne("SportSync.Domain.Entities.User", "CompletedByUser")
                         .WithMany()
                         .HasForeignKey("CompletedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("SportSync.Domain.Entities.Termin", null)
                         .WithMany()
@@ -593,34 +606,6 @@ namespace SportSync.Persistence.Migrations
                     b.Navigation("AppliedByUser");
 
                     b.Navigation("CompletedByUser");
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.User", b =>
-                {
-                    b.OwnsOne("SportSync.Domain.ValueObjects.PhoneNumber", "Phone", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)")
-                                .HasColumnName("Phone");
-
-                            b1.HasKey("UserId");
-
-                            b1.HasIndex("Value")
-                                .IsUnique()
-                                .HasFilter("[Phone] IS NOT NULL");
-
-                            b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
-                    b.Navigation("Phone");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.Event", b =>

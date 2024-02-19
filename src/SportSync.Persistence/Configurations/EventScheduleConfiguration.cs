@@ -10,6 +10,7 @@ internal class EventScheduleConfiguration : IEntityTypeConfiguration<EventSchedu
     public void Configure(EntityTypeBuilder<EventSchedule> builder)
     {
         builder.HasKey(sch => sch.Id);
+        builder.Property(sch => sch.Id).ValueGeneratedNever();
 
         builder.HasOne(x => x.Event)
             .WithMany(x => x.Schedules)

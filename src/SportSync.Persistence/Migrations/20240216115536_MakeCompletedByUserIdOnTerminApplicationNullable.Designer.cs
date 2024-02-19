@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240216115536_MakeCompletedByUserIdOnTerminApplicationNullable")]
+    partial class MakeCompletedByUserIdOnTerminApplicationNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -453,6 +456,11 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("_passwordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -461,6 +469,9 @@ namespace SportSync.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Phone")
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
@@ -593,34 +604,6 @@ namespace SportSync.Persistence.Migrations
                     b.Navigation("AppliedByUser");
 
                     b.Navigation("CompletedByUser");
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.User", b =>
-                {
-                    b.OwnsOne("SportSync.Domain.ValueObjects.PhoneNumber", "Phone", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)")
-                                .HasColumnName("Phone");
-
-                            b1.HasKey("UserId");
-
-                            b1.HasIndex("Value")
-                                .IsUnique()
-                                .HasFilter("[Phone] IS NOT NULL");
-
-                            b1.ToTable("Users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
-                    b.Navigation("Phone");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.Event", b =>

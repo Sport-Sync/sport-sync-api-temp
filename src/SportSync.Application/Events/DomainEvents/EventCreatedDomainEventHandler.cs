@@ -1,13 +1,13 @@
-﻿using MediatR;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using SportSync.Application.Core.Settings;
+using SportSync.Domain.Core.Events;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Events.DomainEvents;
 
-internal sealed class EventCreatedDomainEventHandler : INotificationHandler<EventCreatedDomainEvent>
+internal sealed class EventCreatedDomainEventHandler : IDomainEventHandler<EventCreatedDomainEvent>
 {
     private readonly EventSettings _eventSettings;
     private readonly ITerminRepository _terminRepository;
@@ -18,9 +18,9 @@ internal sealed class EventCreatedDomainEventHandler : INotificationHandler<Even
         _terminRepository = terminRepository;
     }
 
-    public Task Handle(EventCreatedDomainEvent notification, CancellationToken cancellationToken)
+    public Task Handle(EventCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        var @event = notification.CreatedEvent;
+        var @event = domainEvent.CreatedEvent;
 
         var terminsToCreate = new List<Termin>();
 
