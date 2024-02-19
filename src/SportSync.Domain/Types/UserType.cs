@@ -17,6 +17,6 @@ public class UserType
         FirstName = x.FirstName,
         LastName = x.LastName,
         Email = x.Email,
-        Phone = x.Phone
+        Phone = x.Phone.Value
     };
 }

@@ -5,6 +5,7 @@ using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Services;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Entities;
 
@@ -14,13 +15,13 @@ public class User : AggregateRoot
     private readonly HashSet<Friendship> _friendInviters = new();
     private readonly HashSet<Friendship> _friendInvitees = new();
 
-    private User(string firstName, string lastName, string email, string phone, string passwordHash)
+    private User(string firstName, string lastName, string email, PhoneNumber phone, string passwordHash)
         : base(Guid.NewGuid())
     {
         Ensure.NotEmpty(firstName, "The first name is required.", nameof(firstName));
         Ensure.NotEmpty(lastName, "The last name is required.", nameof(lastName));
         Ensure.NotEmpty(email, "The email is required.", nameof(email));
-        Ensure.NotEmpty(phone, "The phone is required.", nameof(phone));
+        Ensure.NotNull(phone, "The phone is required.", nameof(phone));
         Ensure.NotEmpty(passwordHash, "The password hash is required", nameof(passwordHash));
 
         FirstName = firstName;
@@ -42,7 +43,7 @@ public class User : AggregateRoot
 
     public string Email { get; set; }
 
-    public string Phone { get; set; }
+    public PhoneNumber Phone { get; set; }
 
     /// <summary>
     /// List of users who initiated the "friendship"
@@ -55,7 +56,7 @@ public class User : AggregateRoot
     public IReadOnlyCollection<Friendship> FriendInviters => _friendInviters.ToList();
     public IEnumerable<Guid> Friends => _friendInvitees.Select(x => x.UserId).Concat(_friendInviters.Select(x => x.FriendId));
 
-    public static User Create(string firstName, string lastName, string email, string phone, string passwordHash)
+    public static User Create(string firstName, string lastName, string email, PhoneNumber phone, string passwordHash)
     {
         return new User(firstName, lastName, email, phone, passwordHash);
     }

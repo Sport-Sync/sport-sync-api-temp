@@ -4,6 +4,7 @@ using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Persistence.Repositories;
 
@@ -23,9 +24,16 @@ internal sealed class UserRepository : QueryableGenericRepository<User, UserType
 
     }
 
+    public async Task<List<User>> GetByPhoneNumbersAsync(List<PhoneNumber> phoneNumbers, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<User>()
+            .Where(user =>  phoneNumbers.Contains(user.Phone))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> IsEmailUniqueAsync(string email) => !await AnyAsync(x => x.Email == email);
 
-    public async Task<bool> IsPhoneUniqueAsync(string phone) => !await AnyAsync(x => x.Phone == phone);
+    public async Task<bool> IsPhoneUniqueAsync(PhoneNumber phone) => !await AnyAsync(x => x.Phone == phone);
 
     public async Task<Maybe<User>> GetByEmailAsync(string email) => await FirstOrDefaultAsync(x => x.Email == email);
 }

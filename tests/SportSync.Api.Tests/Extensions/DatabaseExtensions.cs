@@ -1,6 +1,7 @@
 ﻿using SportSync.Api.Tests.Common;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Api.Tests.Extensions;
 
@@ -14,7 +15,7 @@ public static class DatabaseExtensions
         string phone = "0986732423",
         string passwordHash = "nuir4gh4598gh")
     {
-        var user = User.Create(firstName, lastName, email, phone, passwordHash);
+        var user = User.Create(firstName, lastName, email, PhoneNumber.Create(phone).Value, passwordHash);
         database.DbContext.Insert(user);
 
         return user;
