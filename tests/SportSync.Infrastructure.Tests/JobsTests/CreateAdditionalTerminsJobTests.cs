@@ -47,7 +47,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
         public async Task Job_ShouldCreate_CorrectNumberOfTermins()
         {
             var @event = Event.Create(
-                User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("093472836").Value, "jd394fz4398"),
+                User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
                 "event",
                 SportType.Football,
                 "address",
@@ -89,7 +89,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
         public async Task Job_ShouldFail_WhenTerminIsDone(TerminStatus status)
         {
             var @event = Event.Create(
-                User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("093472836").Value, "jd394fz4398"),
+                User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
                 "event",
                 SportType.Football,
                 "address",
@@ -131,7 +131,7 @@ namespace SportSync.Infrastructure.Tests.JobsTests
         public async Task Job_ShouldNotCreate_ForNotRepeatableTermins()
         {
             var @event = Event.Create(
-                User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("093472836").Value, "jd394fz4398"),
+                User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
                 "event",
                 SportType.Football,
                 "address",
