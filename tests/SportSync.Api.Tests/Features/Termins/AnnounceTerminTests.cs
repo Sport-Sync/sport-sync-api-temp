@@ -31,7 +31,7 @@ public class AnnounceTerminTests : IntegrationTest
     public async Task AnnounceByNonAdmin_ShouldSucced_OnlyForFriendList(bool publicAnnouncement, bool shouldSucceed)
     {
         var requestUser = Database.AddUser();
-        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var admin = Database.AddUser("second", "user", "user@gmail.com");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         termin.AddPlayers(new List<Guid>() { requestUser.Id });
         await Database.UnitOfWork.SaveChangesAsync();
