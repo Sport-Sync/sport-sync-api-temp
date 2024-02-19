@@ -12,7 +12,6 @@ namespace SportSync.Persistence.Configurations
             builder.Property(user => user.Id).ValueGeneratedNever();
 
             builder.HasIndex(x => x.Email).IsUnique();
-            builder.HasIndex(x => x.Phone).IsUnique();
 
             builder.Property<string>("_passwordHash")
                 .HasField("_passwordHash")
@@ -27,9 +26,17 @@ namespace SportSync.Persistence.Configurations
                 .HasMaxLength(100)
                 .IsRequired();
 
-            builder.Property(user => user.Phone)
-                .HasMaxLength(20)
-                .IsRequired();
+            builder.OwnsOne(user => user.Phone, phoneBuilder =>
+            {
+                phoneBuilder.WithOwner();
+
+                phoneBuilder.Property(phone => phone.Value)
+                    .HasColumnName(nameof(User.Phone))
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                phoneBuilder.HasIndex(phone => phone.Value).IsUnique();
+            });
 
             builder.Property(user => user.Email)
                 .HasMaxLength(100)

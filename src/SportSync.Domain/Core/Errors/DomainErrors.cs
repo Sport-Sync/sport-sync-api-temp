@@ -131,6 +131,13 @@ public static class DomainErrors
         public static Error InvalidFormat => new Error("Email.InvalidFormat", "The email format is invalid.");
     }
 
+    public static class PhoneNumber
+    {
+        public static Error NullOrEmpty => new Error("PhoneNumber.NullOrEmpty", "The phone number is required.");
+
+        public static Error InvalidFormat => new Error("Email.InvalidFormat", "The email format is invalid.");
+    }
+
     public static class General
     {
         public static Error UnProcessableRequest => new (

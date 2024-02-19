@@ -36,10 +36,16 @@ public class CreateUserRequestHandler : IRequestHandler<CreateUserInput, TokenRe
             throw new DomainException(DomainErrors.User.DuplicateEmail);
         }
 
-        // TODO: make phone as ValuObject and move this logic
-        input.Phone = input.Phone.Replace("+385", "0").Replace(" ", string.Empty);
+        var phoneNumberResult = PhoneNumber.Create(input.Phone);
 
-        if (!await _userRepository.IsPhoneUniqueAsync(input.Phone))
+        if (phoneNumberResult.IsFailure)
+        {
+            throw new DomainException(phoneNumberResult.Error);
+        }
+
+        var phoneNumber = phoneNumberResult.Value;
+
+        if (!await _userRepository.IsPhoneUniqueAsync(phoneNumber))
         {
             throw new DomainException(DomainErrors.User.DuplicatePhone);
         }
@@ -53,7 +59,7 @@ public class CreateUserRequestHandler : IRequestHandler<CreateUserInput, TokenRe
 
         var passwordHash = _passwordHasher.HashPassword(passwordResult.Value);
 
-        var user = User.Create(input.FirstName, input.LastName, input.Email, input.Phone, passwordHash);
+        var user = User.Create(input.FirstName, input.LastName, input.Email, phoneNumber, passwordHash);
 
         _userRepository.Insert(user);
 

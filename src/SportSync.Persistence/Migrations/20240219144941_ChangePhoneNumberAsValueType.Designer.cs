@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240219144941_ChangePhoneNumberAsValueType")]
+    partial class ChangePhoneNumberAsValueType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -376,12 +379,6 @@ namespace SportSync.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid>("AppliedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CompletedByUserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("CompletedOnUtc")
                         .HasColumnType("datetime2");
 
@@ -407,13 +404,14 @@ namespace SportSync.Persistence.Migrations
                     b.Property<Guid>("TerminId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AppliedByUserId");
-
-                    b.HasIndex("CompletedByUserId");
-
                     b.HasIndex("TerminId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TerminApplications", (string)null);
                 });
@@ -573,26 +571,17 @@ namespace SportSync.Persistence.Migrations
 
             modelBuilder.Entity("SportSync.Domain.Entities.TerminApplication", b =>
                 {
-                    b.HasOne("SportSync.Domain.Entities.User", "AppliedByUser")
-                        .WithMany()
-                        .HasForeignKey("AppliedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.User", "CompletedByUser")
-                        .WithMany()
-                        .HasForeignKey("CompletedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("SportSync.Domain.Entities.Termin", null)
                         .WithMany()
                         .HasForeignKey("TerminId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("AppliedByUser");
-
-                    b.Navigation("CompletedByUser");
+                    b.HasOne("SportSync.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.User", b =>

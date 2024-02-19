@@ -40,7 +40,7 @@ internal sealed class JwtProvider : IJwtProvider
         {
             new ("userId", user.Id.ToString()),
             new ("email", user.Email),
-            new ("phone", user.Phone),
+            new ("phone", user.Phone.Value),
             new ("name", user.FullName)
         };
 

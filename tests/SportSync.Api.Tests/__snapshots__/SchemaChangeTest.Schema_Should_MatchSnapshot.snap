@@ -21,6 +21,10 @@ type GetTerminByIdResponse {
   attendence: TerminAttendenceType!
 }
 
+type GetUsersByPhoneNumbersResponse {
+  users: [UserType!]!
+}
+
 type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
@@ -39,6 +43,7 @@ type PlayerType {
 
 type Query {
   me: UserType @authorize
+  usersByPhoneNumbers(input: GetUsersByPhoneNumbersInput): GetUsersByPhoneNumbersResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
   terminById(input: GetTerminByIdInput): GetTerminByIdResponse @authorize
@@ -118,6 +123,10 @@ input GetDatesByDayOfWeekInput {
 
 input GetTerminByIdInput {
   terminId: UUID!
+}
+
+input GetUsersByPhoneNumbersInput {
+  phoneNumbers: [String!]!
 }
 
 input LoginInput {

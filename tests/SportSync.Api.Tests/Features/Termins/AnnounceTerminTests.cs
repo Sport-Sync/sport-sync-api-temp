@@ -31,7 +31,7 @@ public class AnnounceTerminTests : IntegrationTest
     public async Task AnnounceByNonAdmin_ShouldSucced_OnlyForFriendList(bool publicAnnouncement, bool shouldSucceed)
     {
         var requestUser = Database.AddUser();
-        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var admin = Database.AddUser("second", "user", "user@gmail.com");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         termin.AddPlayers(new List<Guid>() { requestUser.Id });
         await Database.UnitOfWork.SaveChangesAsync();
@@ -63,7 +63,7 @@ public class AnnounceTerminTests : IntegrationTest
     public async Task AnnouncePublicly_ShouldFail_WhenUserIsNotAdmin()
     {
         var requestUser = Database.AddUser();
-        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var admin = Database.AddUser("second", "user", "user@gmail.com");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         termin.AddPlayers(new List<Guid>() { requestUser.Id });
         await Database.UnitOfWork.SaveChangesAsync();
@@ -86,7 +86,7 @@ public class AnnounceTerminTests : IntegrationTest
     [InlineData(TerminStatus.Pending, true)]
     public async Task Announce_ShouldFail_WhenHasDoneStatus(TerminStatus status, bool shouldSucceed)
     {
-        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var admin = Database.AddUser("second", "user", "user@gmail.com");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1), status: status);
 
         await Database.UnitOfWork.SaveChangesAsync();
@@ -119,7 +119,7 @@ public class AnnounceTerminTests : IntegrationTest
     [InlineData(false, TerminAnnouncementType.FriendList)]
     public async Task Announce_ShouldSucceed_AndSetProperStatus(bool publicly, TerminAnnouncementType expectedType)
     {
-        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var admin = Database.AddUser("second", "user", "user@gmail.com");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
 
         await Database.UnitOfWork.SaveChangesAsync();
@@ -171,7 +171,7 @@ public class AnnounceTerminTests : IntegrationTest
     public async Task Announce_ShouldRemovePrivateAnnouncement_WhenAnnouncingPublicly()
     {
         var admin = Database.AddUser();
-        var user = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var user = Database.AddUser("second", "user", "user@gmail.com");
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         termin.Announce(admin.Id, false);
         termin.Announce(user.Id, false);
@@ -224,7 +224,7 @@ public class AnnounceTerminTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
-        var user = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var user = Database.AddUser("second", "user", "user@gmail.com");
         termin.Announce(user.Id, false);
 
         await Database.UnitOfWork.SaveChangesAsync();
