@@ -37,7 +37,7 @@ public class CreateUserTests : IntegrationTest
         userFromDb.FirstName.Should().Be("Marko");
         userFromDb.LastName.Should().Be("Zdravko");
         userFromDb.Email.Should().Be("email@gmail.com");
-        userFromDb.Phone.Should().Be("0916395254");
+        userFromDb.Phone.Value.Should().Be("0916395254");
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class CreateUserTests : IntegrationTest
 
         var userFromDb = Database.DbContext.Set<User>().FirstOrDefault(x => x.Id == id);
         userFromDb.Should().NotBeNull();
-        userFromDb.Phone.Should().Be(expectedPhoneSaved);
+        userFromDb.Phone.Value.Should().Be(expectedPhoneSaved);
 
         Database.DbContext.Remove(userFromDb);
     }

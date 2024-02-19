@@ -31,7 +31,7 @@ public class SetTerminAttendenceTests : IntegrationTest
     public async Task SetAttendence_ShouldFail_WhenUserIsNotAPlayer()
     {
         var user = Database.AddUser();
-        var user2 = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var user2 = Database.AddUser("second", "user", "user@gmail.com");
         var termin = Database.AddTermin(user2, startDate: DateTime.Today.AddDays(1));
 
         await Database.UnitOfWork.SaveChangesAsync();

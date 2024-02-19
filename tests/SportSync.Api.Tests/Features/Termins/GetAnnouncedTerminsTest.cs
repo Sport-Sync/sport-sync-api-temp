@@ -14,7 +14,7 @@ public class GetAnnouncedTerminsTest : IntegrationTest
     {
         var tomorrow = DateTime.Today.AddDays(1);
         var requestUser = Database.AddUser();
-        var creatorUser = Database.AddUser("creator", "user", "user@gmail.com", "034234329");
+        var creatorUser = Database.AddUser("creator", "user", "user@gmail.com");
 
         var publicTermin = Database.AddTermin(creatorUser, startDate: tomorrow);
         var privateTermin = Database.AddTermin(creatorUser, startDate: tomorrow);
@@ -47,8 +47,8 @@ public class GetAnnouncedTerminsTest : IntegrationTest
     {
         var tomorrow = DateTime.Today.AddDays(1);
         var requestUser = Database.AddUser();
-        var creatorUser = Database.AddUser("creator", "user", "user@gmail.com", "034234329");
-        var friendUser = Database.AddUser("friend", "user", "user@gmail.com", "034234329");
+        var creatorUser = Database.AddUser("creator", "user", "user@gmail.com");
+        var friendUser = Database.AddUser("friend", "user", "user@gmail.com");
 
         var publicTermin = Database.AddTermin(creatorUser, startDate: tomorrow);
         var privateTermin = Database.AddTermin(creatorUser, startDate: tomorrow);
