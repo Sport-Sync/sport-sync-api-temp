@@ -1,5 +1,6 @@
 ﻿using HotChocolate.Authorization;
 using SportSync.Application.Core.Abstractions.Authentication;
+using SportSync.Application.Users.GetByPhoneNumbers;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -13,4 +14,11 @@ public class UserQuery
     [UseProjection]
     public IQueryable<UserType> Me([Service(ServiceKind.Synchronized)] IUserRepository repository, [Service] IUserIdentifierProvider userIdentifierProvider)
         => repository.GetQueryable(x => x.Id == userIdentifierProvider.UserId);
+
+
+    [Authorize]
+    public async Task<GetUsersByPhoneNumbersResponse> GetUsersByPhoneNumbers(
+        [Service] GetUsersByPhoneNumbersRequestHandler requestHandler,
+        GetUsersByPhoneNumbersInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

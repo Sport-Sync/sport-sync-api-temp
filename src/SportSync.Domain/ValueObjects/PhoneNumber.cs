@@ -15,6 +15,8 @@ public sealed class PhoneNumber : ValueObject
 
     private PhoneNumber(string value) => Value = value;
 
+    public static implicit operator string(PhoneNumber phoneNumber) => phoneNumber.Value;
+
     public static Result<PhoneNumber> Create(string value) =>
         Result.Create(value, DomainErrors.PhoneNumber.NullOrEmpty)
             .Ensure(e => !string.IsNullOrWhiteSpace(e), DomainErrors.PhoneNumber.NullOrEmpty)

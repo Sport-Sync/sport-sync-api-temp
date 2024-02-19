@@ -30,10 +30,10 @@ public class GetUsersByPhoneNumbersRequestHandler : IRequestHandler<GetUsersByPh
             throw new DomainException(phoneNumbersResult.First().Error);
         }
 
-        var phoneNumbers = validPhoneNumbers.Select(p => p.Value).ToList();
+        var phoneNumbers = validPhoneNumbers.Select(p => p.Value.Value).ToList();
 
         var users = await _userRepository
-            .GetQueryable(user => phoneNumbers.Contains(user.Phone))
+            .GetQueryable(user => phoneNumbers.Contains(user.Phone.Value))
             .ToListAsync(cancellationToken);
 
         return new GetUsersByPhoneNumbersResponse { Users = users };

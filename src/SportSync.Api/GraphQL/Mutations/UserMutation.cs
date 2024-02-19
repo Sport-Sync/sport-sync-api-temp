@@ -24,12 +24,6 @@ public class UserMutation
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    public async Task<Result> GetUsersByPhoneNumbers(
-        [Service] RejectFriendshipRequestHandler requestHandler,
-        RejectFriendshipRequestInput input,
-        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
-
-    [Authorize]
     public async Task<Result> SendFriendshipRequest(
         [Service] SendFriendshipRequestHandler requestHandler,
         SendFriendshipRequestInput input,
