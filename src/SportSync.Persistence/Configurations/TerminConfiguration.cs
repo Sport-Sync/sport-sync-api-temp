@@ -10,6 +10,7 @@ internal class TerminConfiguration : IEntityTypeConfiguration<Termin>
     public void Configure(EntityTypeBuilder<Termin> builder)
     {
         builder.HasKey(termin => termin.Id);
+        builder.Property(termin => termin.Id).ValueGeneratedNever();
 
         builder.HasOne<Event>()
             .WithMany()

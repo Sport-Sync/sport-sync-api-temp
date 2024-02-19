@@ -35,9 +35,9 @@ public class GetTerminByIdRequestHandler : IRequestHandler<GetTerminByIdInput, G
         }
 
         var isCurrentUserAttending = termin.Players.First(p => p.UserId == currentUserId).Attending;
-        var playersAttending = termin.Players.Where(p => p.Attending == true && p.UserId != currentUserId);
-        var playersNotAttending = termin.Players.Where(p => p.Attending == false && p.UserId != currentUserId);
-        var playersNotResponded = termin.Players.Where(p => p.Attending == null && p.UserId != currentUserId);
+        var playersAttending = termin.Players.Where(p => p.Attending == true);
+        var playersNotAttending = termin.Players.Where(p => p.Attending == false);
+        var playersNotResponded = termin.Players.Where(p => p.Attending == null);
 
         var response = new GetTerminByIdResponse
         {

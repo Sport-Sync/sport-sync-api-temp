@@ -38,7 +38,10 @@ public class AnnounceTerminRequestHandler : IRequestHandler<AnnounceTerminInput,
         var termin = maybeTermin.Value;
         var currentUserId = _userIdentifierProvider.UserId;
 
-        await _eventRepository.EnsureUserIsAdminOnEvent(termin.EventId, currentUserId, cancellationToken);
+        if (input.PublicAnnouncement)
+        {
+            await _eventRepository.EnsureUserIsAdminOnEvent(termin.EventId, currentUserId, cancellationToken);
+        }
 
         termin.Announce(currentUserId, input.PublicAnnouncement);
 

@@ -96,6 +96,8 @@ public class Termin : AggregateRoot
         return newTermin;
     }
 
+    public void AddPlayer(Guid userId) => AddPlayers(new List<Guid>() { userId });
+
     public void AddPlayers(List<Guid> userIds)
     {
         foreach (Guid userId in userIds)

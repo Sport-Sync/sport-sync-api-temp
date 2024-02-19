@@ -16,9 +16,9 @@ public class SendTerminApplicationTests : IntegrationTest
         var admin = Database.AddUser();
         var player = Database.AddUser("Player");
 
-        var termin = Database.AddTermin(admin);
+        var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         termin.AddPlayers(new List<Guid>() { player.Id });
-        Database.AddTerminAnnouncement(admin, termin);
+        termin.Announce(admin.Id, true);
 
         await Database.SaveChangesAsync();
 
@@ -36,7 +36,7 @@ public class SendTerminApplicationTests : IntegrationTest
         result.ShouldBeFailureResult("sendTerminApplication", DomainErrors.TerminApplication.AlreadyPlayer);
 
         var application = Database.DbContext.Set<TerminApplication>()
-            .FirstOrDefault(x => x.UserId == player.Id && x.TerminId == termin.Id);
+            .FirstOrDefault(x => x.AppliedByUserId == player.Id && x.TerminId == termin.Id);
 
         application.Should().BeNull();
     }
@@ -65,7 +65,7 @@ public class SendTerminApplicationTests : IntegrationTest
         result.ShouldBeFailureResult("sendTerminApplication", DomainErrors.TerminApplication.NotAnnounced);
 
         var application = Database.DbContext.Set<TerminApplication>()
-            .FirstOrDefault(x => x.UserId == player.Id && x.TerminId == termin.Id);
+            .FirstOrDefault(x => x.AppliedByUserId == player.Id && x.TerminId == termin.Id);
 
         application.Should().BeNull();
     }
@@ -95,7 +95,7 @@ public class SendTerminApplicationTests : IntegrationTest
         result.ShouldBeFailureResult("sendTerminApplication", DomainErrors.TerminApplication.NotOnFriendList);
 
         var application = Database.DbContext.Set<TerminApplication>()
-            .FirstOrDefault(x => x.UserId == player.Id && x.TerminId == termin.Id);
+            .FirstOrDefault(x => x.AppliedByUserId == player.Id && x.TerminId == termin.Id);
 
         application.Should().BeNull();
     }
@@ -125,7 +125,7 @@ public class SendTerminApplicationTests : IntegrationTest
         result.ShouldBeSuccessResult("sendTerminApplication");
 
         var application = Database.DbContext.Set<TerminApplication>()
-            .FirstOrDefault(x => x.UserId == applicant.Id && x.TerminId == termin.Id);
+            .FirstOrDefault(x => x.AppliedByUserId == applicant.Id && x.TerminId == termin.Id);
 
         application.Should().NotBeNull();
         application.Rejected.Should().BeFalse();
@@ -159,7 +159,7 @@ public class SendTerminApplicationTests : IntegrationTest
         result.ShouldBeSuccessResult("sendTerminApplication");
 
         var application = Database.DbContext.Set<TerminApplication>()
-            .FirstOrDefault(x => x.UserId == applicant.Id && x.TerminId == termin.Id);
+            .FirstOrDefault(x => x.AppliedByUserId == applicant.Id && x.TerminId == termin.Id);
 
         application.Should().NotBeNull();
         application.Rejected.Should().BeFalse();

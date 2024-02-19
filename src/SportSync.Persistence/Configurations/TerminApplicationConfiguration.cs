@@ -9,11 +9,17 @@ internal class TerminApplicationConfiguration : IEntityTypeConfiguration<TerminA
     public void Configure(EntityTypeBuilder<TerminApplication> builder)
     {
         builder.HasKey(application => application.Id);
+        builder.Property(application => application.Id).ValueGeneratedNever();
 
-        builder.HasOne<User>()
+        builder.HasOne(application => application.AppliedByUser)
             .WithMany()
-            .HasForeignKey(application => application.UserId)
+            .HasForeignKey(application => application.AppliedByUserId)
             .IsRequired()
+            .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasOne(application => application.CompletedByUser)
+            .WithMany()
+            .HasForeignKey(application => application.CompletedByUserId)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Termin>()

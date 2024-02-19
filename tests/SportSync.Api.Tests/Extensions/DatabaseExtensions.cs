@@ -82,16 +82,15 @@ public static class DatabaseExtensions
         return termin;
     }
 
-    public static TerminAnnouncement AddTerminAnnouncement(
+    public static TerminApplication AddTerminApplication(
         this Database database,
         User user,
-        Termin termin,
-        TerminAnnouncementType announcementType = TerminAnnouncementType.Public)
+        Termin termin)
     {
-        var announcement = new TerminAnnouncement(termin, user.Id, announcementType);
+        var terminApplication = new TerminApplication(user, termin);
 
-        database.DbContext.Set<TerminAnnouncement>().Add(announcement);
+        database.DbContext.Set<TerminApplication>().Add(terminApplication);
 
-        return announcement;
+        return terminApplication;
     }
 }
