@@ -9,7 +9,7 @@ internal class TerminApplicationConfiguration : IEntityTypeConfiguration<TerminA
     public void Configure(EntityTypeBuilder<TerminApplication> builder)
     {
         builder.HasKey(application => application.Id);
-        //builder.Property(application => application.Id).ValueGeneratedNever();
+        builder.Property(application => application.Id).ValueGeneratedNever();
 
         builder.HasOne(application => application.AppliedByUser)
             .WithMany()

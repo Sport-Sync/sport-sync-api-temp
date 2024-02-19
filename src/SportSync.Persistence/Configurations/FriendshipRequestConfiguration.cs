@@ -9,6 +9,7 @@ internal class FriendshipRequestConfiguration : IEntityTypeConfiguration<Friends
     public void Configure(EntityTypeBuilder<FriendshipRequest> builder)
     {
         builder.HasKey(friendshipRequest => friendshipRequest.Id);
+        builder.Property(friendshipRequest => friendshipRequest.Id).ValueGeneratedNever();
 
         builder.HasOne<User>()
             .WithMany()

@@ -156,6 +156,10 @@ public class AcceptTerminApplicationTests : IntegrationTest
         initialApplication.CompletedOnUtc.Should().BeNull();
         initialApplication.CompletedByUserId.Should().BeNull();
 
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.TerminId == termin.Id)
+            .Should().BeNull();
+
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                     mutation {{
@@ -170,5 +174,9 @@ public class AcceptTerminApplicationTests : IntegrationTest
         terminApplication.Rejected.Should().BeFalse();
         terminApplication.CompletedOnUtc.Should().Be(completedTime);
         terminApplication.CompletedByUserId.Should().Be(adminOnEvent.Id);
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.TerminId == termin.Id)
+            .Should().NotBeNull();
     }
 }

@@ -25,8 +25,42 @@ public class AnnounceTerminTests : IntegrationTest
         result.ShouldHaveError(DomainErrors.Termin.NotFound);
     }
 
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task AnnounceByNonAdmin_ShouldSucced_OnlyForFriendList(bool publicAnnouncement, bool shouldSucceed)
+    {
+        var requestUser = Database.AddUser();
+        var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
+        var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
+        termin.AddPlayers(new List<Guid>() { requestUser.Id });
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(requestUser.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceTermin(input: {{terminId: ""{termin.Id}"", publicAnnouncement: {publicAnnouncement.ToString().ToLower()}}}){{
+                        eventName
+                    }}
+                }}"));
+        if (shouldSucceed)
+        {
+            var terminResponse = result.ToResponseObject<TerminType>("announceTermin");
+            terminResponse.Should().NotBeNull();
+
+            var announcement = Database.DbContext.Set<TerminAnnouncement>().Single(x => x.TerminId == termin.Id);
+            announcement.UserId.Should().Be(requestUser.Id);
+            announcement.AnnouncementType.Should().Be(TerminAnnouncementType.FriendList);
+        }
+        else
+        {
+            result.ShouldHaveError(DomainErrors.User.Forbidden);
+        }
+    }
+
     [Fact]
-    public async Task Announce_ShouldFail_WhenUserIsNotAdmin()
+    public async Task AnnouncePublicly_ShouldFail_WhenUserIsNotAdmin()
     {
         var requestUser = Database.AddUser();
         var admin = Database.AddUser("second", "user", "user@gmail.com", "034234329");
@@ -141,7 +175,7 @@ public class AnnounceTerminTests : IntegrationTest
         var termin = Database.AddTermin(admin, startDate: DateTime.Today.AddDays(1));
         termin.Announce(admin.Id, false);
         termin.Announce(user.Id, false);
-        
+
         await Database.UnitOfWork.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);

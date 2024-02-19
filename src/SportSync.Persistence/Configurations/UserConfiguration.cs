@@ -9,6 +9,7 @@ namespace SportSync.Persistence.Configurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasKey(user => user.Id);
+            builder.Property(user => user.Id).ValueGeneratedNever();
 
             builder.HasIndex(x => x.Email).IsUnique();
             builder.HasIndex(x => x.Phone).IsUnique();

@@ -2,6 +2,7 @@
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.DomainEvents;
 
 namespace SportSync.Domain.Entities;
 
@@ -55,7 +56,8 @@ public class TerminApplication : AggregateRoot
 
         CompletedOnUtc = utcNow;
         CompletedByUserId = user.Id;
-        //RaiseDomainEvent(new TerminApplicationAcceptedDomainEvent(this));
+
+        RaiseDomainEvent(new TerminApplicationAcceptedDomainEvent(this));
 
         return Result.Success();
     }
@@ -75,8 +77,6 @@ public class TerminApplication : AggregateRoot
 
         CompletedOnUtc = utcNow;
         CompletedByUserId = user.Id;
-
-        //RaiseDomainEvent(new FriendshipRequestRejectedDomainEvent(this));
 
         return Result.Success();
     }

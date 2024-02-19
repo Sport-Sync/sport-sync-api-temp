@@ -2,7 +2,6 @@
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Application.Termins.GetAnnouncedTermins;
-using SportSync.Domain.Core.Errors;
 
 namespace SportSync.Api.Tests.Features.Termins;
 
@@ -18,9 +17,9 @@ public class GetAnnouncedTerminsTest : IntegrationTest
 
         var publicTermin = Database.AddTermin(creatorUser, startDate: tomorrow);
         var privateTermin = Database.AddTermin(creatorUser, startDate: tomorrow);
-        publicTermin.AddPlayers(new List<Guid>() { creatorUser.Id });
-        privateTermin.AddPlayers(new List<Guid>() { creatorUser.Id });
-        
+        publicTermin.AddPlayer(creatorUser.Id);
+        privateTermin.AddPlayer(creatorUser.Id);
+
         publicTermin.Announce(creatorUser.Id, true);
         privateTermin.Announce(creatorUser.Id, false);
 

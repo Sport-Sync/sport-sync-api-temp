@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SportSync.Domain.Entities;
 
@@ -10,6 +9,7 @@ internal class PlayerConfiguration : IEntityTypeConfiguration<Player>
     public void Configure(EntityTypeBuilder<Player> builder)
     {
         builder.HasKey(player => player.Id);
+        builder.Property(player => player.Id).ValueGeneratedNever();
 
         builder.HasOne(x => x.User)
             .WithMany()

@@ -9,6 +9,7 @@ internal class EventConfiguration : IEntityTypeConfiguration<Event>
     public void Configure(EntityTypeBuilder<Event> builder)
     {
         builder.HasKey(ev => ev.Id);
+        builder.Property(ev => ev.Id).ValueGeneratedNever();
 
         builder.Property(ev => ev.Name).IsRequired();
         builder.Property(ev => ev.Address).IsRequired();

@@ -9,7 +9,8 @@ internal class EventMemberConfiguration : IEntityTypeConfiguration<EventMember>
     public void Configure(EntityTypeBuilder<EventMember> builder)
     {
         builder.HasKey(member => member.Id);
-        
+        builder.Property(member => member.Id).ValueGeneratedNever();
+
         builder.HasOne<User>()
             .WithMany()
             .HasForeignKey(member => member.UserId)
