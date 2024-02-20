@@ -28,7 +28,7 @@ public class UserQuery
 
     [Authorize]
     public async Task<PagedList<UserType>> GetFriends(
-        [Service(ServiceKind.Synchronized)] GetFriendsRequestHandler requestHandler,
+        [Service] GetFriendsRequestHandler requestHandler,
         GetFriendsInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }
