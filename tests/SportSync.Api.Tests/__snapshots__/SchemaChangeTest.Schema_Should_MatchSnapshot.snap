@@ -34,6 +34,15 @@ type Mutation {
   createEvent(input: CreateEventInput): UUID! @authorize
 }
 
+type PagedListOfUserType {
+  page: Int!
+  pageSize: Int!
+  totalCount: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  items: [UserType!]!
+}
+
 type PlayerType {
   userId: UUID!
   firstName: String
@@ -44,6 +53,7 @@ type PlayerType {
 type Query {
   me: UserType @authorize
   usersByPhoneNumbers(input: GetUsersByPhoneNumbersInput): GetUsersByPhoneNumbersResponse @authorize
+  friends(input: GetFriendsInput): PagedListOfUserType @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
   terminById(input: GetTerminByIdInput): GetTerminByIdResponse @authorize
@@ -119,6 +129,13 @@ input GetAnnouncedTerminsInput {
 input GetDatesByDayOfWeekInput {
   dayOfWeek: DayOfWeek!
   numberOfDates: Int!
+}
+
+input GetFriendsInput {
+  phoneNumber: String
+  name: String
+  page: Int!
+  pageSize: Int!
 }
 
 input GetTerminByIdInput {
