@@ -65,8 +65,6 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
                     user.Id, 
                     friend.Id, 
                     friendshipRequestResult.Error.Message);
-
-                continue;
             }
 
             friendshipRequests.Add(friendshipRequestResult);
@@ -77,7 +75,11 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
             return Result.Failure(friendshipRequests.First().Error);
         }
 
-        _friendshipRequestRepository.InsertRange(friendshipRequests.Select(f => f.Value).ToList());
+        var validRequests = friendshipRequests.Where(r => r.IsSuccess)
+            .Select(r => r.Value)
+            .ToList();
+
+        _friendshipRequestRepository.InsertRange(validRequests);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
