@@ -18,6 +18,6 @@ internal sealed class CreateFriendshipOnRequestAcceptedDomainEventHandler : IDom
     {
         var friendshipService = new FriendshipService(_userRepository);
 
-        await friendshipService.CreateFriendshipAsync(domainEvent.FriendshipRequest);
+        await friendshipService.CreateFriendshipAsync(domainEvent.FriendshipRequest, cancellationToken);
     }
 }

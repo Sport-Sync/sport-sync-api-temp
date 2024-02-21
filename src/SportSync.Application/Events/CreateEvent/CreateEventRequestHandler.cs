@@ -32,7 +32,7 @@ public class CreateEventRequestHandler : IRequestHandler<CreateEventInput, Guid>
     {
         var creatorId = _userIdentifierProvider.UserId;
 
-        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(creatorId);
+        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(creatorId, cancellationToken);
 
         if (maybeUser.HasNoValue)
         {

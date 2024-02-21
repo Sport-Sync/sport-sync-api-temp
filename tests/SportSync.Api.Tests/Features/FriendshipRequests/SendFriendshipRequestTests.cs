@@ -21,7 +21,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendId: ""{user.Id}"" }}){{
+                        userId: ""{user.Id}"", friendIds: [""{user.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -44,7 +44,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendId: ""{friend.Id}"" }}){{
+                        userId: ""{user.Id}"", friendIds: [""{friend.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -66,7 +66,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendId: ""{friend.Id}"" }}){{
+                        userId: ""{user.Id}"", friendIds:  [""{friend.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -80,6 +80,7 @@ public class SendFriendshipRequestTests : IntegrationTest
     {
         var user = Database.AddUser();
         var friend = Database.AddUser("Mario", "Marić", "mail@mail.com");
+        var friend2 = Database.AddUser("Friend", "Second", "friend@mail.com");
 
         await Database.SaveChangesAsync();
 
@@ -89,7 +90,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendId: ""{friend.Id}"" }}){{
+                        userId: ""{user.Id}"", friendIds:  [""{friend.Id}"", ""{friend2.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -99,5 +100,40 @@ public class SendFriendshipRequestTests : IntegrationTest
         friendshipRequest.Accepted.Should().BeFalse();
         friendshipRequest.Rejected.Should().BeFalse();
         friendshipRequest.CompletedOnUtc.Should().BeNull();
+
+        var friendshipRequest2 = Database.DbContext.Set<FriendshipRequest>().First(x => x.UserId == user.Id && x.FriendId == friend2.Id);
+        friendshipRequest2.Accepted.Should().BeFalse();
+        friendshipRequest2.Rejected.Should().BeFalse();
+        friendshipRequest2.CompletedOnUtc.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SendFriendshipRequest_ShouldSucceed_EvenWhenOneFailed()
+    {
+        var user = Database.AddUser();
+        var friend = Database.AddUser("Mario", "Marić", "mail@mail.com");
+        var friend2 = Database.AddUser("Friend", "Second", "friend@mail.com");
+
+        Database.AddFriendship(user, friend);
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    sendFriendshipRequest(input: {{ 
+                        userId: ""{user.Id}"", friendIds:  [""{friend.Id}"", ""{friend2.Id}""] }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeSuccessResult("sendFriendshipRequest");
+
+        Database.DbContext.Set<FriendshipRequest>().FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id).Should().BeNull();
+
+        var friendshipRequest2 = Database.DbContext.Set<FriendshipRequest>().First(x => x.UserId == user.Id && x.FriendId == friend2.Id);
+        friendshipRequest2.Accepted.Should().BeFalse();
+        friendshipRequest2.Rejected.Should().BeFalse();
+        friendshipRequest2.CompletedOnUtc.Should().BeNull();
     }
 }

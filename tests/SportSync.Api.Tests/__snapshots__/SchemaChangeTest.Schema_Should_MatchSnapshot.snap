@@ -157,7 +157,7 @@ input RejectFriendshipRequestInput {
 
 input SendFriendshipRequestInput {
   userId: UUID!
-  friendId: UUID!
+  friendIds: [UUID!]!
 }
 
 input TimeInput {

@@ -21,13 +21,12 @@ internal sealed class UserRepository : QueryableGenericRepository<User, UserType
             .Include(x => x.FriendInviters)
             .Include(x => x.FriendInvitees)
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken));
-
     }
 
-    public async Task<List<User>> GetByPhoneNumbersAsync(List<PhoneNumber> phoneNumbers, CancellationToken cancellationToken)
+    public async Task<List<User>> GetByIdsAsync(List<Guid> userIds, CancellationToken cancellationToken)
     {
         return await DbContext.Set<User>()
-            .Where(user =>  phoneNumbers.Contains(user.Phone))
+            .Where(u => userIds.Contains(u.Id))
             .ToListAsync(cancellationToken);
     }
 

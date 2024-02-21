@@ -15,21 +15,21 @@ public class FriendshipService
         _userRepository = userRepository;
     }
 
-    public async Task CreateFriendshipAsync(FriendshipRequest friendshipRequest)
+    public async Task CreateFriendshipAsync(FriendshipRequest friendshipRequest, CancellationToken cancellationToken)
     {
         if (friendshipRequest.Rejected)
         {
             throw new DomainException(DomainErrors.FriendshipRequest.AlreadyRejected);
         }
 
-        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(friendshipRequest.UserId);
+        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(friendshipRequest.UserId, cancellationToken);
 
         if (maybeUser.HasNoValue)
         {
             throw new DomainException(DomainErrors.User.NotFound);
         }
 
-        Maybe<User> maybeFriend = await _userRepository.GetByIdAsync(friendshipRequest.FriendId);
+        Maybe<User> maybeFriend = await _userRepository.GetByIdAsync(friendshipRequest.FriendId, cancellationToken);
 
         if (maybeFriend.HasNoValue)
         {
