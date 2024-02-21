@@ -8,4 +8,5 @@ public interface IFriendshipRequestRepository
     Task<Maybe<FriendshipRequest>> GetByIdAsync(Guid friendshipRequestId, CancellationToken cancellationToken);
     Task<bool> CheckForPendingFriendshipRequestAsync(User user, User friend);
     void Insert(FriendshipRequest friendshipRequest);
+    void InsertRange(IReadOnlyCollection<FriendshipRequest> entities);
 }

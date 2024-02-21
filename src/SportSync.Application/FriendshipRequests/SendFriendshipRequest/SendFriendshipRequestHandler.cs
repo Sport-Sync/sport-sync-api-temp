@@ -1,4 +1,5 @@
-﻿using SportSync.Application.Core.Abstractions.Authentication;
+﻿using Microsoft.Extensions.Logging;
+using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Maybe;
@@ -14,17 +15,20 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
     private readonly IUserRepository _userRepository;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<SendFriendshipRequestHandler> _logger;
 
     public SendFriendshipRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IUserRepository userRepository,
         IFriendshipRequestRepository friendshipRequestRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, 
+        ILogger<SendFriendshipRequestHandler> logger)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
         _friendshipRequestRepository = friendshipRequestRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(SendFriendshipRequestInput request, CancellationToken cancellationToken)
@@ -41,23 +45,41 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
             return Result.Failure(DomainErrors.User.NotFound);
         }
 
-        Maybe<User> maybeFriend = await _userRepository.GetByIdAsync(request.FriendId, cancellationToken);
+        var friends = await _userRepository.GetByIdsAsync(request.FriendIds, cancellationToken);
 
-        if (maybeFriend.HasNoValue)
+        if (!friends.Any())
         {
             return Result.Failure(DomainErrors.User.NotFound);
         }
 
         var user = maybeUser.Value;
 
-        var friendshipRequestResult = await user.SendFriendshipRequest(_friendshipRequestRepository, maybeFriend.Value);
-
-        if (friendshipRequestResult.IsFailure)
+        var friendshipRequests = new List<Result<FriendshipRequest>>();
+        foreach (var friend in friends)
         {
-            return Result.Failure(friendshipRequestResult.Error);
+            var friendshipRequestResult = await user.SendFriendshipRequest(_friendshipRequestRepository, friend);
+
+            if (friendshipRequestResult.IsFailure)
+            {
+                _logger.LogError("Failed to send friendship request from user {userId} to friend {friendId}. Reason: {error}", 
+                    user.Id, 
+                    friend.Id, 
+                    friendshipRequestResult.Error.Message);
+            }
+
+            friendshipRequests.Add(friendshipRequestResult);
         }
-        
-        _friendshipRequestRepository.Insert(friendshipRequestResult.Value);
+
+        if (friendshipRequests.All(x => x.IsFailure))
+        {
+            return Result.Failure(friendshipRequests.First().Error);
+        }
+
+        var validRequests = friendshipRequests.Where(r => r.IsSuccess)
+            .Select(r => r.Value)
+            .ToList();
+
+        _friendshipRequestRepository.InsertRange(validRequests);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
