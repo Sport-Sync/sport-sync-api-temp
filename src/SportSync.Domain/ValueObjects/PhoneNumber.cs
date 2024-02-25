@@ -20,13 +20,18 @@ public sealed class PhoneNumber : ValueObject
     public static Result<PhoneNumber> Create(string value) =>
         Result.Create(value, DomainErrors.PhoneNumber.NullOrEmpty)
             .Ensure(e => !string.IsNullOrWhiteSpace(e), DomainErrors.PhoneNumber.NullOrEmpty)
-            .Ensure(e => PhoneNumberFormatRegex.Value.IsMatch(e), DomainErrors.Email.InvalidFormat)
-            .Map(e => new PhoneNumber(Beautify(value)));
+            .Ensure(e => PhoneNumberFormatRegex.Value.IsMatch(e), DomainErrors.PhoneNumber.InvalidFormat)
+            .Map(e => new PhoneNumber(Format(value)));
 
     protected override IEnumerable<object> GetAtomicValues()
     {
         yield return Value;
     }
 
-    private static string Beautify(string value) => value.Replace("+385", "0").Replace(" ", string.Empty);
+    public static string Format(string value) => 
+        value.Replace("+385", "0")
+            .Replace("(", string.Empty)
+            .Replace(")", string.Empty)
+            .Replace(" ", string.Empty)
+            .Replace("-", string.Empty);
 }
