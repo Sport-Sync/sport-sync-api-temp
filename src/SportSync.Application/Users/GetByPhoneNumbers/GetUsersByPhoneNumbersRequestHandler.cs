@@ -21,8 +21,7 @@ public class GetUsersByPhoneNumbersRequestHandler : IRequestHandler<GetUsersByPh
             return new GetUsersByPhoneNumbersResponse();
         }
 
-        var formattedPhoneNumbers = request.PhoneNumbers.Select(PhoneNumber.Format).ToList();
-        var phoneNumbersResult = formattedPhoneNumbers.Select(PhoneNumber.Create).ToList();
+        var phoneNumbersResult = request.PhoneNumbers.Select(PhoneNumber.Create).ToList();
 
         var validPhoneNumbers = phoneNumbersResult.Where(p => p.IsSuccess).ToList();
 

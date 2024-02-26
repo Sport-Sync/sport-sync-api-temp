@@ -37,4 +37,35 @@ public class GetUsersByPhoneNumbersTests : IntegrationTest
         userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).Should().NotBeNull();
         userResponse.Users.FirstOrDefault(x => x.Id == user3.Id).Should().NotBeNull();
     }
+
+    [Theory]
+    [InlineData("0998026836", "0998026836")]
+    [InlineData("+385998026836", "0998026836")]
+    [InlineData("+385 9980 26836", "0998026836")]
+    [InlineData("(+385) 9980 26836", "0998026836")]
+    [InlineData("099-8026-836", "0998026836")]
+    [InlineData("099/8026/836", "0998026836")]
+    public async Task GetByPhoneNumbers_ShouldSanitize_ThenReturnExistingUsers(string inputPhoneNumber, string existingUserPhoneNumber)
+    {
+        var currentUser = Database.AddUser();
+        var user1 = Database.AddUser(phone: existingUserPhoneNumber);
+
+        await Database.SaveChangesAsync();
+        UserIdentifierMock.Setup(x => x.UserId).Returns(currentUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                query{{
+                    usersByPhoneNumbers(input: {{phoneNumbers: [""{inputPhoneNumber}""]}}){{
+                        users{{
+                            firstName, email, phone, id
+                        }}
+                    }}
+                }}"));
+
+        var userResponse = result.ToResponseObject<GetUsersByPhoneNumbersResponse>("usersByPhoneNumbers");
+
+        userResponse.Users.Count.Should().Be(1);
+        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).Should().NotBeNull();
+    }
 }
