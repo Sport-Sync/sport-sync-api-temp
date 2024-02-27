@@ -44,10 +44,12 @@ public class Program
             .AddQueryType(q => q.Name("Query"))
             .AddType<UserQuery>()
             .AddType<TerminQuery>()
+            .AddType<FriendshipQuery>()
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<UserMutation>()
             .AddType<TerminMutation>()
             .AddType<EventMutation>()
+            .AddType<FriendshipMutation>()
             .AddTypeConverter<DateTime, DateTimeOffset>(t => t.Kind is DateTimeKind.Unspecified ? DateTime.SpecifyKind(t, DateTimeKind.Utc) : t)
             .AddTypeConverter<DateTimeOffset, DateTime>(d => d.DateTime)
             .AddConvention<INamingConventions>(new EnumNamingConvention());

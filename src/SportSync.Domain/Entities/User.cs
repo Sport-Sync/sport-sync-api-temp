@@ -121,6 +121,21 @@ public class User : AggregateRoot
         return friendship;
     }
 
+    public Result RemoveFriend(Guid friendId)
+    {
+        var removed = _friendInvitees.RemoveWhere(x => x.UserId == friendId);
+
+        if (removed > 0)
+        {
+            return Result.Success();
+        }
+
+        removed = _friendInviters.RemoveWhere(x => x.FriendId == friendId);
+        return removed > 0 ?
+            Result.Success() :
+            Result.Failure<Friendship>(DomainErrors.FriendshipRequest.FriendNotFound);
+    }
+
     private bool CheckIfFriends(User friend)
     {
         return Friends.Any(id => id == friend.Id);

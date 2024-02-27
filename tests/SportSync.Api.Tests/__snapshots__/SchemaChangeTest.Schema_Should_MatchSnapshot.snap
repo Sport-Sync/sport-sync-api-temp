@@ -3,11 +3,6 @@
   mutation: Mutation
 }
 
-type Error {
-  code: String
-  message: String
-}
-
 type GetAnnouncedTerminResponse {
   termins: [TerminType!]!
 }
@@ -28,19 +23,7 @@ type GetUsersByPhoneNumbersResponse {
 type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
-  sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
-  acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
-  rejectFriendshipRequest(input: RejectFriendshipRequestInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
-}
-
-type PagedListOfUserType {
-  page: Int!
-  pageSize: Int!
-  totalCount: Int!
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  items: [UserType!]!
 }
 
 type PlayerType {
@@ -53,17 +36,10 @@ type PlayerType {
 type Query {
   me: UserType @authorize
   usersByPhoneNumbers(input: GetUsersByPhoneNumbersInput): GetUsersByPhoneNumbersResponse @authorize
-  friends(input: GetFriendsInput): PagedListOfUserType @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
   terminById(input: GetTerminByIdInput): GetTerminByIdResponse @authorize
   announcedTermins(input: GetAnnouncedTerminsInput): GetAnnouncedTerminResponse @authorize
-}
-
-type Result {
-  isSuccess: Boolean!
-  isFailure: Boolean!
-  error: Error
 }
 
 type TerminAttendenceType {
@@ -99,10 +75,6 @@ type UserType {
   phone: String
 }
 
-input AcceptFriendshipRequestInput {
-  friendshipRequestId: UUID!
-}
-
 input CreateEventInput {
   memberIds: [UUID!]!
   name: String!
@@ -131,13 +103,6 @@ input GetDatesByDayOfWeekInput {
   numberOfDates: Int!
 }
 
-input GetFriendsInput {
-  phoneNumber: String
-  name: String
-  page: Int!
-  pageSize: Int!
-}
-
 input GetTerminByIdInput {
   terminId: UUID!
 }
@@ -149,15 +114,6 @@ input GetUsersByPhoneNumbersInput {
 input LoginInput {
   email: String!
   password: String!
-}
-
-input RejectFriendshipRequestInput {
-  friendshipRequestId: UUID!
-}
-
-input SendFriendshipRequestInput {
-  userId: UUID!
-  friendIds: [UUID!]!
 }
 
 input TimeInput {

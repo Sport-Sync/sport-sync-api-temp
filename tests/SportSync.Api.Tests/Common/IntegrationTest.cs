@@ -49,10 +49,12 @@ public class IntegrationTest : IDisposable
             .AddQueryType(q => q.Name("Query"))
             .AddType<UserQuery>()
             .AddType<TerminQuery>()
+            .AddType<FriendshipQuery>()
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<TerminMutation>()
             .AddType<UserMutation>()
             .AddType<EventMutation>()
+            .AddType<FriendshipMutation>()
             .AddConvention<INamingConventions>(new EnumNamingConvention())
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>
 {
