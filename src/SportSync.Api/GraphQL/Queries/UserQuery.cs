@@ -25,10 +25,4 @@ public class UserQuery
         [Service] GetUsersByPhoneNumbersRequestHandler requestHandler,
         GetUsersByPhoneNumbersInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
-
-    [Authorize]
-    public async Task<PagedList<UserType>> GetFriends(
-        [Service] GetFriendsRequestHandler requestHandler,
-        GetFriendsInput input,
-        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }
