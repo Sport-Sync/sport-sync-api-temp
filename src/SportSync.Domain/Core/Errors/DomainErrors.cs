@@ -138,6 +138,11 @@ public static class DomainErrors
         public static Error InvalidFormat => new Error("Email.InvalidFormat", "The email format is invalid.");
     }
 
+    public static class Notification
+    {
+        public static Error TooManyActions => new Error("Notification.TooManyActions", "Notification can not have more than 3 actions.");
+    }
+
     public static class General
     {
         public static Error UnProcessableRequest => new (

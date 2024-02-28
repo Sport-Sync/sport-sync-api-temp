@@ -2,6 +2,7 @@
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Services;
@@ -102,7 +103,7 @@ public class User : AggregateRoot
 
         var friendshipRequest = new FriendshipRequest(this, friend);
 
-        //RaiseDomainEvent(new FriendshipRequestSentDomainEvent(friendshipRequest));
+        RaiseDomainEvent(new FriendshipRequestSentDomainEvent(friendshipRequest));
 
         return friendshipRequest;
     }

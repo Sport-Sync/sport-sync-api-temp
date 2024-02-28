@@ -17,7 +17,7 @@ public class PushNotificationService : IPushNotificationService
         {
             var message = new Message()
             {
-                Notification = new Notification
+                Notification = new FirebaseAdmin.Messaging.Notification
                 {
                     Title = "X je kreirao novi termin",
                     Body = "Novi temrin je kreiran ponedjeljkom"
