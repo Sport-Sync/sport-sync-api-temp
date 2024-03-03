@@ -11,13 +11,13 @@ public class FriendshipRequestRepository : GenericRepository<FriendshipRequest>,
         : base(dbContext)
     {
     }
-
-    public async Task<bool> CheckForPendingFriendshipRequestAsync(User user, User friend)
+    
+    public async Task<List<FriendshipRequest>> GetAllPendingForUserIdAsync(Guid userId)
     {
         return await DbContext.Set<FriendshipRequest>()
-            .AnyAsync(friendshipRequest =>
-                (friendshipRequest.UserId == user.Id || friendshipRequest.UserId == friend.Id) &&
-                (friendshipRequest.FriendId == user.Id || friendshipRequest.FriendId == friend.Id) &&
-                friendshipRequest.CompletedOnUtc == null);
+            .Where(friendshipRequest =>
+                (friendshipRequest.UserId == userId || friendshipRequest.FriendId == userId) &&
+                friendshipRequest.CompletedOnUtc == null)
+            .ToListAsync();
     }
 }

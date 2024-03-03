@@ -4,7 +4,6 @@ using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
-using SportSync.Domain.Repositories;
 using SportSync.Domain.Services;
 using SportSync.Domain.ValueObjects;
 
@@ -84,7 +83,7 @@ public class User : AggregateRoot
         return @event;
     }
 
-    public async Task<Result<FriendshipRequest>> SendFriendshipRequest(IFriendshipRequestRepository friendshipRequestRepository, User friend)
+    public Result<FriendshipRequest> SendFriendshipRequest(User friend, List<FriendshipRequest> existingFriendshipRequests)
     {
         if (Id == friend.Id)
         {
@@ -96,7 +95,7 @@ public class User : AggregateRoot
             return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.AlreadyFriends);
         }
 
-        if (await friendshipRequestRepository.CheckForPendingFriendshipRequestAsync(this, friend))
+        if (existingFriendshipRequests.Any(x => x.FriendId == friend.Id || x.UserId == friend.Id))
         {
             return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.PendingFriendshipRequest);
         }

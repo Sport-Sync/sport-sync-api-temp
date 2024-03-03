@@ -21,7 +21,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendIds: [""{user.Id}""] }}){{
+                        friendIds: [""{user.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -44,7 +44,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendIds: [""{friend.Id}""] }}){{
+                        friendIds: [""{friend.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -66,7 +66,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendIds:  [""{friend.Id}""] }}){{
+                        friendIds:  [""{friend.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -90,7 +90,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendIds:  [""{friend.Id}"", ""{friend2.Id}""] }}){{
+                        friendIds:  [""{friend.Id}"", ""{friend2.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 
@@ -123,7 +123,7 @@ public class SendFriendshipRequestTests : IntegrationTest
             q => q.SetQuery(@$"
                     mutation {{
                     sendFriendshipRequest(input: {{ 
-                        userId: ""{user.Id}"", friendIds:  [""{friend.Id}"", ""{friend2.Id}""] }}){{
+                        friendIds:  [""{friend.Id}"", ""{friend2.Id}""] }}){{
                             isSuccess, isFailure, error{{ message, code }}
                         }}}}"));
 

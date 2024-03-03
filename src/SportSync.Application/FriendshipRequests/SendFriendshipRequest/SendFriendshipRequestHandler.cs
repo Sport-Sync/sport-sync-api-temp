@@ -33,16 +33,11 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
 
     public async Task<Result> Handle(SendFriendshipRequestInput request, CancellationToken cancellationToken)
     {
-        if (request.UserId != _userIdentifierProvider.UserId)
-        {
-            return Result.Failure(DomainErrors.User.Forbidden);
-        }
-
-        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+        Maybe<User> maybeUser = await _userRepository.GetByIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 
         if (maybeUser.HasNoValue)
         {
-            return Result.Failure(DomainErrors.User.NotFound);
+            return Result.Failure(DomainErrors.User.Forbidden);
         }
 
         var friends = await _userRepository.GetByIdsAsync(request.FriendIds, cancellationToken);
@@ -55,9 +50,11 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
         var user = maybeUser.Value;
 
         var friendshipRequests = new List<Result<FriendshipRequest>>();
+        var existingFriendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(_userIdentifierProvider.UserId);
+
         foreach (var friend in friends)
         {
-            var friendshipRequestResult = await user.SendFriendshipRequest(_friendshipRequestRepository, friend);
+            var friendshipRequestResult = user.SendFriendshipRequest(friend, existingFriendshipRequests);
 
             if (friendshipRequestResult.IsFailure)
             {
