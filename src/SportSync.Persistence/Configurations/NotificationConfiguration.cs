@@ -11,12 +11,12 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
         builder.HasKey(notification => notification.Id);
         builder.Property(notification => notification.Id).ValueGeneratedNever();
 
-        builder.OwnsOne(notification => notification.Actions, actionsBuilder =>
+        builder.OwnsOne(notification => notification.Commands, actionsBuilder =>
         {
             actionsBuilder.WithOwner();
 
             actionsBuilder.Property(actions => actions.Value)
-                .HasColumnName(nameof(Notification.Actions))
+                .HasColumnName(nameof(Notification.Commands))
                 .HasMaxLength(200)
                 .IsRequired();
         });
@@ -26,6 +26,12 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .HasForeignKey(notification => notification.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.Property(notification => notification.ResourceId);
+        
+        builder.Property(notification => notification.CompletedOnUtc);
+
+        builder.Property(notification => notification.CompletedWithCommand);
 
         builder.Property(notification => notification.CreatedOnUtc).IsRequired();
 

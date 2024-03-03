@@ -21,7 +21,7 @@ public class CreateNotificationOnFriendshipRequestSentDomainEventHandler : IDoma
         // TODO: use factory (think about how to use localization)
         var notification =
             Notification.Create(domainEvent.FriendshipRequest.FriendId, NotificationType.FriendshipRequestReceived,
-                NotificationActions.Create("Accept", "Decline"));
+                NotificationCommands.AcceptReject, domainEvent.FriendshipRequest.Id);
 
         _notificationRepository.Insert(notification);
 
