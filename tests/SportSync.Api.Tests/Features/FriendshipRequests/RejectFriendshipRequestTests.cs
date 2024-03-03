@@ -3,6 +3,7 @@ using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Entities;
+using SportSync.Domain.Enumerations;
 
 namespace SportSync.Api.Tests.Features.FriendshipRequests;
 
@@ -145,5 +146,46 @@ public class RejectFriendshipRequestTests : IntegrationTest
         Database.DbContext.Set<Friendship>()
             .FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id)
             .Should().BeNull();
+    }
+
+    [Fact]
+    public async Task RejectFriendshipRequest_ShouldSucceed_AndCompleteNotification()
+    {
+        var date = DateTime.Now;
+        DateTimeProviderMock.Setup(x => x.UtcNow).Returns(date);
+
+        var user = Database.AddUser();
+        var friend = Database.AddUser("Friend", "Friendman");
+        var friendshipRequest = Database.AddFriendshipRequest(user, friend);
+        friendshipRequest.CompletedOnUtc.Should().BeNull();
+        var notification = Database.AddNotification(user.Id, NotificationType.FriendshipRequestReceived, friendshipRequest.Id);
+
+        await Database.SaveChangesAsync();
+
+        notification.CompletedOnUtc.Should().BeNull();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(friend.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    rejectFriendshipRequest(input: {{ 
+                        friendshipRequestId: ""{friendshipRequest.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeSuccessResult("rejectFriendshipRequest");
+
+        var friendshipRequestDb = Database.DbContext.Set<FriendshipRequest>().First(x => x.UserId == user.Id && x.FriendId == friend.Id);
+        friendshipRequestDb.Accepted.Should().BeFalse();
+        friendshipRequestDb.Rejected.Should().BeTrue();
+        friendshipRequestDb.CompletedOnUtc.Should().Be(date);
+
+        Database.DbContext.Set<Friendship>()
+            .FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id)
+            .Should().BeNull();
+
+        var notificationDb = Database.DbContext.Set<Notification>().First(x => x.ResourceId == friendshipRequest.Id);
+        notificationDb.CompletedOnUtc.Should().Be(date);
     }
 }

@@ -53,6 +53,7 @@ public class IntegrationTest : IDisposable
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<TerminMutation>()
             .AddType<UserMutation>()
+            .AddType<NotificationMutation>()
             .AddType<EventMutation>()
             .AddType<FriendshipMutation>()
             .AddConvention<INamingConventions>(new EnumNamingConvention())

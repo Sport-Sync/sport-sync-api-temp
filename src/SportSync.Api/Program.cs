@@ -47,6 +47,7 @@ public class Program
             .AddType<FriendshipQuery>()
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<UserMutation>()
+            .AddType<NotificationMutation>()
             .AddType<TerminMutation>()
             .AddType<EventMutation>()
             .AddType<FriendshipMutation>()

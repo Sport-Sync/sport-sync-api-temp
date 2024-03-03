@@ -112,10 +112,7 @@ public class SendFriendshipRequestTests : IntegrationTest
 
         notification.Type.Should().Be(NotificationType.FriendshipRequestReceived);
         notification.ResourceId.Should().Be(friendshipRequest.Id);
-        notification.Commands.Commands.Length.Should().Be(2);
         notification.CompletedOnUtc.Should().BeNull();
-        notification.Commands.Commands.Should().Contain(NotificationCommand.Accept);
-        notification.Commands.Commands.Should().Contain(NotificationCommand.Reject);
 
         notification2.Type.Should().Be(NotificationType.FriendshipRequestReceived);
         notification2.ResourceId.Should().Be(friendshipRequest2.Id);

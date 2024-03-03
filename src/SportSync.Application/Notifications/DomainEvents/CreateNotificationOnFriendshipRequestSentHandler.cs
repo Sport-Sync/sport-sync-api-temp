@@ -3,25 +3,22 @@ using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
-using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Notifications.DomainEvents;
 
-public class CreateNotificationOnFriendshipRequestSentDomainEventHandler : IDomainEventHandler<FriendshipRequestSentDomainEvent>
+public class CreateNotificationOnFriendshipRequestSentHandler : IDomainEventHandler<FriendshipRequestSentDomainEvent>
 {
     private readonly INotificationRepository _notificationRepository;
 
-    public CreateNotificationOnFriendshipRequestSentDomainEventHandler(INotificationRepository notificationRepository)
+    public CreateNotificationOnFriendshipRequestSentHandler(INotificationRepository notificationRepository)
     {
         _notificationRepository = notificationRepository;
     }
 
     public Task Handle(FriendshipRequestSentDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        // TODO: use factory (think about how to use localization)
-        var notification =
-            Notification.Create(domainEvent.FriendshipRequest.FriendId, NotificationType.FriendshipRequestReceived,
-                NotificationCommands.AcceptReject, domainEvent.FriendshipRequest.Id);
+        var friendshipRequest = domainEvent.FriendshipRequest;
+        var notification = Notification.Create(friendshipRequest.FriendId, NotificationType.FriendshipRequestReceived, friendshipRequest.Id);
 
         _notificationRepository.Insert(notification);
 

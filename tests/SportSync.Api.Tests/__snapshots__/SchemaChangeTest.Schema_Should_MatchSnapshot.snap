@@ -3,6 +3,11 @@
   mutation: Mutation
 }
 
+type Error {
+  code: String
+  message: String
+}
+
 type GetAnnouncedTerminResponse {
   termins: [TerminType!]!
 }
@@ -23,7 +28,25 @@ type GetUsersByPhoneNumbersResponse {
 type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
+  setTerminAttendence(input: SetTerminAttendenceInput): SetTerminAttendenceResponse @authorize
+  announceTermin(input: AnnounceTerminInput): TerminType @authorize
+  sendTerminApplication(input: SendTerminApplicationInput): Result @authorize
+  acceptTerminApplication(input: AcceptTerminApplicationInput): Result @authorize
+  rejectTerminApplication(input: RejectTerminApplicationInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
+  sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
+  acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
+  rejectFriendshipRequest(input: RejectFriendshipRequestInput): Result @authorize
+  removeFriendship(input: RemoveFriendshipInput): Result @authorize
+}
+
+type PagedListOfUserType {
+  page: Int!
+  pageSize: Int!
+  totalCount: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  items: [UserType!]!
 }
 
 type PlayerType {
@@ -40,6 +63,17 @@ type Query {
   termins(date: DateTime!): [TerminType] @authorize
   terminById(input: GetTerminByIdInput): GetTerminByIdResponse @authorize
   announcedTermins(input: GetAnnouncedTerminsInput): GetAnnouncedTerminResponse @authorize
+  friends(input: GetFriendsInput): PagedListOfUserType @authorize
+}
+
+type Result {
+  isSuccess: Boolean!
+  isFailure: Boolean!
+  error: Error
+}
+
+type SetTerminAttendenceResponse {
+  players: [PlayerType!]!
 }
 
 type TerminAttendenceType {
@@ -75,6 +109,19 @@ type UserType {
   phone: String
 }
 
+input AcceptFriendshipRequestInput {
+  friendshipRequestId: UUID!
+}
+
+input AcceptTerminApplicationInput {
+  terminApplicationId: UUID!
+}
+
+input AnnounceTerminInput {
+  terminId: UUID!
+  publicAnnouncement: Boolean!
+}
+
 input CreateEventInput {
   memberIds: [UUID!]!
   name: String!
@@ -103,6 +150,13 @@ input GetDatesByDayOfWeekInput {
   numberOfDates: Int!
 }
 
+input GetFriendsInput {
+  phoneNumber: String
+  name: String
+  page: Int!
+  pageSize: Int!
+}
+
 input GetTerminByIdInput {
   terminId: UUID!
 }
@@ -114,6 +168,31 @@ input GetUsersByPhoneNumbersInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input RejectFriendshipRequestInput {
+  friendshipRequestId: UUID!
+}
+
+input RejectTerminApplicationInput {
+  terminApplicationId: UUID!
+}
+
+input RemoveFriendshipInput {
+  friendId: UUID!
+}
+
+input SendFriendshipRequestInput {
+  friendIds: [UUID!]!
+}
+
+input SendTerminApplicationInput {
+  terminId: UUID!
+}
+
+input SetTerminAttendenceInput {
+  terminId: UUID!
+  attending: Boolean!
 }
 
 input TimeInput {
