@@ -1,8 +1,6 @@
-﻿using System.Reflection;
-using MediatR;
+﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
@@ -45,6 +43,7 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new FriendshipConfiguration());
         modelBuilder.ApplyConfiguration(new TerminApplicationConfiguration());
         modelBuilder.ApplyConfiguration(new TerminAnnouncementConfiguration());
+        modelBuilder.ApplyConfiguration(new NotificationConfiguration());
 
         //var entityTypes = Assembly.GetExecutingAssembly()
         //    .GetTypes()

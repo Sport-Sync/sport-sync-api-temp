@@ -18,10 +18,15 @@ public class SchemaChangeTest
             .AddAuthorization()
             .AddQueryType(q => q.Name("Query"))
             .AddType<UserQuery>()
+            .AddType<NotificationQuery>()
             .AddType<TerminQuery>()
+            .AddType<FriendshipQuery>()
             .AddMutationType(q => q.Name("Mutation"))
             .AddType<UserMutation>()
+            .AddType<NotificationMutation>()
+            .AddType<TerminMutation>()
             .AddType<EventMutation>()
+            .AddType<FriendshipMutation>()
             .BuildSchemaAsync();
 
         schema.ToString().MatchSnapshot();

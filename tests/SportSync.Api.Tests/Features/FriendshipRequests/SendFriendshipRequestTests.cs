@@ -3,6 +3,7 @@ using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Entities;
+using SportSync.Domain.Enumerations;
 
 namespace SportSync.Api.Tests.Features.FriendshipRequests;
 
@@ -76,7 +77,7 @@ public class SendFriendshipRequestTests : IntegrationTest
     }
 
     [Fact]
-    public async Task SendFriendshipRequest_ShouldSucceed()
+    public async Task SendFriendshipRequest_Should_CreateNotification()
     {
         var user = Database.AddUser();
         var friend = Database.AddUser("Mario", "Marić", "mail@mail.com");
@@ -105,6 +106,16 @@ public class SendFriendshipRequestTests : IntegrationTest
         friendshipRequest2.Accepted.Should().BeFalse();
         friendshipRequest2.Rejected.Should().BeFalse();
         friendshipRequest2.CompletedOnUtc.Should().BeNull();
+
+        var notification = Database.DbContext.Set<Notification>().Single(x => x.UserId == friend.Id);
+        var notification2 = Database.DbContext.Set<Notification>().Single(x => x.UserId == friend2.Id);
+
+        notification.Type.Should().Be(NotificationTypeEnum.FriendshipRequestReceived);
+        notification.ResourceId.Should().Be(friendshipRequest.Id);
+        notification.CompletedOnUtc.Should().BeNull();
+
+        notification2.Type.Should().Be(NotificationTypeEnum.FriendshipRequestReceived);
+        notification2.ResourceId.Should().Be(friendshipRequest2.Id);
     }
 
     [Fact]

@@ -94,4 +94,17 @@ public static class DatabaseExtensions
 
         return terminApplication;
     }
+
+    public static Notification AddNotification(
+        this Database database,
+        Guid userId,
+        NotificationTypeEnum type = NotificationTypeEnum.FriendshipRequestReceived,
+        Guid? resourceId = null)
+    {
+        var notification = Notification.Create(userId, type, resourceId);
+
+        database.DbContext.Set<Notification>().Add(notification);
+
+        return notification;
+    }
 }

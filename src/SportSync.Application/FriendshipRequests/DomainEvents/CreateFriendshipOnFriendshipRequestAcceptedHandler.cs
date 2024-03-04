@@ -5,11 +5,11 @@ using SportSync.Domain.Services;
 
 namespace SportSync.Application.FriendshipRequests.DomainEvents;
 
-internal sealed class CreateFriendshipOnRequestAcceptedDomainEventHandler : IDomainEventHandler<FriendshipRequestAcceptedDomainEvent>
+public class CreateFriendshipOnFriendshipRequestAcceptedHandler : IDomainEventHandler<FriendshipRequestAcceptedDomainEvent>
 {
     private readonly IUserRepository _userRepository;
 
-    public CreateFriendshipOnRequestAcceptedDomainEventHandler(IUserRepository userRepository)
+    public CreateFriendshipOnFriendshipRequestAcceptedHandler(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }

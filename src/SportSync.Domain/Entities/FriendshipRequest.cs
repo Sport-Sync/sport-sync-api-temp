@@ -71,7 +71,7 @@ public class FriendshipRequest : AggregateRoot
 
         CompletedOnUtc = utcNow;
 
-        //RaiseDomainEvent(new FriendshipRequestRejectedDomainEvent(this));
+        RaiseDomainEvent(new FriendshipRequestRejectedDomainEvent(this));
 
         return Result.Success();
     }

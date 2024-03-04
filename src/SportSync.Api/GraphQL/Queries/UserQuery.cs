@@ -1,8 +1,6 @@
 ﻿using HotChocolate.Authorization;
 using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Common;
 using SportSync.Application.Users.GetByPhoneNumbers;
-using SportSync.Application.Users.GetFriends;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
