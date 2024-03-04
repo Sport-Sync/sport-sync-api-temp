@@ -98,7 +98,7 @@ public static class DatabaseExtensions
     public static Notification AddNotification(
         this Database database,
         Guid userId,
-        NotificationType type = NotificationType.FriendshipRequestReceived,
+        NotificationTypeEnum type = NotificationTypeEnum.FriendshipRequestReceived,
         Guid? resourceId = null)
     {
         var notification = Notification.Create(userId, type, resourceId);

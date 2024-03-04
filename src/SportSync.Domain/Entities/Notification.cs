@@ -6,7 +6,7 @@ namespace SportSync.Domain.Entities;
 
 public class Notification : AggregateRoot
 {
-    private Notification(Guid userId, NotificationType type, Guid? resourceId = null)
+    private Notification(Guid userId, NotificationTypeEnum type, Guid? resourceId = null)
         : base(Guid.NewGuid())
     {
         Ensure.NotEmpty(userId, "The user identifier is required.", $"{nameof(userId)}");
@@ -22,10 +22,10 @@ public class Notification : AggregateRoot
 
     public Guid UserId { get; set; }
     public Guid? ResourceId { get; set; }
-    public NotificationType Type { get; set; }
+    public NotificationTypeEnum Type { get; set; }
     public DateTime? CompletedOnUtc { get; private set; }
 
-    public static Notification Create(Guid userId, NotificationType type, Guid? resourceId = null)
+    public static Notification Create(Guid userId, NotificationTypeEnum type, Guid? resourceId = null)
     {
         return new Notification(userId, type, resourceId);
     }

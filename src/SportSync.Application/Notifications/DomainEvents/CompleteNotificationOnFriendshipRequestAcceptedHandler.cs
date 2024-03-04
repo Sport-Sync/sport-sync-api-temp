@@ -20,7 +20,7 @@ public class CompleteNotificationOnFriendshipRequestAcceptedHandler : IDomainEve
     {
         var notification = (await _notificationRepository.GetByResourceIdAndType(
             domainEvent.FriendshipRequest.Id, 
-            NotificationType.FriendshipRequestReceived, 
+            NotificationTypeEnum.FriendshipRequestReceived, 
             cancellationToken)).SingleOrDefault();
 
         if (notification == null)

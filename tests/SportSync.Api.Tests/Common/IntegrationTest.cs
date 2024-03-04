@@ -48,6 +48,7 @@ public class IntegrationTest : IDisposable
             .AddFiltering()
             .AddQueryType(q => q.Name("Query"))
             .AddType<UserQuery>()
+            .AddType<NotificationQuery>()
             .AddType<TerminQuery>()
             .AddType<FriendshipQuery>()
             .AddMutationType(q => q.Name("Mutation"))

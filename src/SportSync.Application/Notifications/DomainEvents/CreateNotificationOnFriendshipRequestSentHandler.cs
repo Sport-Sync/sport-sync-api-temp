@@ -18,7 +18,7 @@ public class CreateNotificationOnFriendshipRequestSentHandler : IDomainEventHand
     public Task Handle(FriendshipRequestSentDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var friendshipRequest = domainEvent.FriendshipRequest;
-        var notification = Notification.Create(friendshipRequest.FriendId, NotificationType.FriendshipRequestReceived, friendshipRequest.Id);
+        var notification = Notification.Create(friendshipRequest.FriendId, NotificationTypeEnum.FriendshipRequestReceived, friendshipRequest.Id);
 
         _notificationRepository.Insert(notification);
 

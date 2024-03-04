@@ -1,6 +1,6 @@
 ﻿namespace SportSync.Domain.Enumerations;
 
-public enum NotificationType
+public enum NotificationTypeEnum
 {
     FriendshipRequestReceived,
     TerminApplicationReceived
