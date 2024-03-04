@@ -3,6 +3,7 @@ using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
+using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
 
 namespace SportSync.Domain.Entities;
@@ -181,6 +182,8 @@ public class Termin : AggregateRoot
         }
 
         var terminApplication = new TerminApplication(user, this);
+
+        RaiseDomainEvent(new TerminApplicationSentDomainEvent(terminApplication));
 
         return terminApplication;
     }

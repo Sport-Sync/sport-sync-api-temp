@@ -51,7 +51,7 @@ public class CreateEventRequestHandler : IRequestHandler<CreateEventInput, Guid>
             time.EndTime,
             time.RepeatWeekly)).ToList();
 
-        @event.AddMembers(input.MemberIds);
+        @event.AddMembers(input.MemberIds.ToArray());
         @event.AddSchedules(eventSchedules);
 
         _eventRepository.Insert(@event);

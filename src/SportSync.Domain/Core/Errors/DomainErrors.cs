@@ -29,6 +29,11 @@ public static class DomainErrors
         public static Error AlreadyFinished => new("Termin.AlreadyFinished", "The termin has already finished or is in progress.");
     }
 
+    public static class Event
+    {
+        public static Error NotMember => new("Termin.NotMember", "The user is not a member of an event.");
+    }
+
     public static class Password
     {
         public static Error NullOrEmpty => new ("Password.NullOrEmpty", "The password is required.");

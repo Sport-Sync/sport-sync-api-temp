@@ -29,6 +29,18 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<EventMember>> GetAdmins(Guid terminId, CancellationToken cancellationToken)
+    {
+        var query = from termin in DbContext.Set<Termin>()
+            join @event in DbContext.Set<Event>() on termin.EventId equals @event.Id
+            join member in DbContext.Set<EventMember>() on @event.Id equals member.EventId
+            where termin.Id == terminId && member.IsAdmin
+            select member;
+
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
     public async Task<List<(Termin LastTermin, int PendingTerminsCount)>> GetLastRepeatableTermins()
     {
         var today = DateTime.Today;

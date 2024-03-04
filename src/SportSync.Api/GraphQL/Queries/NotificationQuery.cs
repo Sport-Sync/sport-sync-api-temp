@@ -12,5 +12,5 @@ public class NotificationQuery
     public IQueryable<NotificationType> GetNotifications(
         [Service] INotificationRepository repository,
         [Service] IUserIdentifierProvider userIdProvider) => 
-            repository.GetQueryable(x => x.UserId == userIdProvider.UserId);
+            repository.GetQueryable(x => x.UserId == userIdProvider.UserId && x.CompletedOnUtc == null);
 }

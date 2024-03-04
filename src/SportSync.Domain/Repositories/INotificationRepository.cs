@@ -10,5 +10,6 @@ public interface INotificationRepository : IQueryableRepository<Notification, No
     Task<Maybe<Notification>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<List<Notification>> GetByResourceIdAndType(Guid resourceId, NotificationTypeEnum type, CancellationToken cancellationToken);
     void Insert(Notification notification);
+    void InsertRange(IReadOnlyCollection<Notification> entities);
     void Remove(Notification notification);
 }

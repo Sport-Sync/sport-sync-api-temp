@@ -1,4 +1,6 @@
-﻿using SportSync.Domain.Core.Primitives;
+﻿using SportSync.Domain.Core.Errors;
+using SportSync.Domain.Core.Primitives;
+using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
@@ -55,16 +57,33 @@ public class Event : AggregateRoot
         return @event;
     }
 
-    public void AddMembers(List<Guid> userIds)
+    public void AddMembers(params Guid[] userIds)
     {
         foreach (Guid userId in userIds)
         {
-            if (_members.Any(x => x.UserId == userId))
+            if (!IsMember(userId))
             {
-                continue;
+                _members.Add(EventMember.Create(userId, Id));
             }
-            _members.Add(EventMember.Create(userId, Id));
         }
+    }
+
+    public Result MakeAdmin(User user)
+    {
+        if (!IsMember(user.Id))
+        {
+            return Result.Failure(DomainErrors.Event.NotMember);
+        }
+
+        if (IsAdmin(user.Id))
+        {
+            return Result.Success();
+        }
+
+        var member = _members.Single(x => x.UserId == user.Id);
+        member.IsAdmin = true;
+
+        return Result.Success();
     }
 
     public void AddSchedules(List<EventSchedule> schedules)
@@ -73,5 +92,15 @@ public class Event : AggregateRoot
         {
             _schedules.Add(schedule);
         }
+    }
+
+    private bool IsMember(Guid userId)
+    {
+        return _members.Any(x => x.UserId == userId);
+    }
+
+    private bool IsAdmin(Guid userId)
+    {
+        return _members.Any(x => x.UserId == userId && x.IsAdmin);
     }
 }
