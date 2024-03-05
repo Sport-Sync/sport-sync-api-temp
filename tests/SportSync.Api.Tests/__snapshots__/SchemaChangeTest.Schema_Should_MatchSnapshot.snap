@@ -163,8 +163,7 @@ input GetDatesByDayOfWeekInput {
 }
 
 input GetFriendsInput {
-  phoneNumber: String
-  name: String
+  search: String
   page: Int!
   pageSize: Int!
 }
