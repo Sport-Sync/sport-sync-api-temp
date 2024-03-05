@@ -32,8 +32,7 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
 
         var friends = _userRepository.GetQueryable(u =>
             (u.FriendInvitees.Any(x => x.UserId == userId) || u.FriendInviters.Any(x => x.FriendId == userId)) &&
-            (request.Name == null || u.FirstName.StartsWith(request.Name) || u.LastName.StartsWith(request.Name)) &&
-            (request.PhoneNumber == null || u.Phone.Value.StartsWith(request.PhoneNumber)));
+            (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)));
 
         var totalCount = await friends.CountAsync(cancellationToken);
 
