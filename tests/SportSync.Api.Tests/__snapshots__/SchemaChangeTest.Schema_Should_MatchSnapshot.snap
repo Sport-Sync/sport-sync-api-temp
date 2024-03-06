@@ -8,6 +8,15 @@ type Error {
   message: String
 }
 
+type FriendshipRequestType {
+  id: UUID!
+  userId: UUID!
+  friendId: UUID!
+  accepted: Boolean!
+  rejected: Boolean!
+  sender: UserType
+}
+
 type GetAnnouncedTerminResponse {
   termins: [TerminType!]!
 }
@@ -72,6 +81,7 @@ type Query {
   terminById(input: GetTerminByIdInput): GetTerminByIdResponse @authorize
   announcedTermins(input: GetAnnouncedTerminsInput): GetAnnouncedTerminResponse @authorize
   friends(input: GetFriendsInput): PagedListOfUserType @authorize
+  pendingFriendshipRequests: [FriendshipRequestType] @authorize
 }
 
 type Result {

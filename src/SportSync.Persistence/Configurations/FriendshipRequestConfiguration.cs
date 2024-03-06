@@ -11,7 +11,7 @@ internal class FriendshipRequestConfiguration : IEntityTypeConfiguration<Friends
         builder.HasKey(friendshipRequest => friendshipRequest.Id);
         builder.Property(friendshipRequest => friendshipRequest.Id).ValueGeneratedNever();
 
-        builder.HasOne<User>()
+        builder.HasOne(friendshipRequest => friendshipRequest.User)
             .WithMany()
             .HasForeignKey(friendshipRequest => friendshipRequest.UserId)
             .IsRequired()

@@ -2,13 +2,14 @@
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.Types;
 
 namespace SportSync.Persistence.Repositories;
 
-public class FriendshipRequestRepository : GenericRepository<FriendshipRequest>, IFriendshipRequestRepository
+public class FriendshipRequestRepository : QueryableGenericRepository<FriendshipRequest, FriendshipRequestType>, IFriendshipRequestRepository
 {
     public FriendshipRequestRepository(IDbContext dbContext)
-        : base(dbContext)
+        : base(dbContext, FriendshipRequestType.PropertySelector)
     {
     }
     

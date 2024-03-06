@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives;
 
@@ -17,7 +18,7 @@ public abstract class QueryableGenericRepository<TEntity, TQueryableType> : Gene
 
     public virtual IQueryable<TQueryableType> GetQueryable(Expression<Func<TEntity, bool>> where = null)
     {
-        var query = DbContext.Set<TEntity>().AsQueryable();
+        var query = DbContext.Set<TEntity>().AsNoTracking().AsQueryable();
 
         if (where is not null)
         {
