@@ -39,6 +39,38 @@ public class GetUsersByPhoneNumbersTests : IntegrationTest
     }
 
     [Fact]
+    public async Task GetByPhoneNumbers_Should_FilterOutFriends()
+    {
+        var currentUser = Database.AddUser();
+        var user1 = Database.AddUser(phone: "0919279259");
+        var user2 = Database.AddUser(phone: "099927 9259");
+        var user3 = Database.AddUser(phone: "+385 99927 3333");
+        var user4 = Database.AddUser(phone: "0929279259");
+
+        currentUser.AddFriend(user1);
+        user2.AddFriend(currentUser);
+
+        await Database.SaveChangesAsync();
+        UserIdentifierMock.Setup(x => x.UserId).Returns(currentUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@"
+                query{
+                    usersByPhoneNumbers(input: {phoneNumbers: [""0929279259"", ""0919279259"", ""099927 9259"", ""+385 99927 3333""]}){
+                        users{
+                            firstName, email, phone, id
+                        }
+                    }
+                }"));
+
+        var userResponse = result.ToResponseObject<GetUsersByPhoneNumbersResponse>("usersByPhoneNumbers");
+
+        userResponse.Users.Count.Should().Be(2);
+        userResponse.Users.FirstOrDefault(x => x.Id == user3.Id).Should().NotBeNull();
+        userResponse.Users.FirstOrDefault(x => x.Id == user4.Id).Should().NotBeNull();
+    }
+
+    [Fact]
     public async Task GetByPhoneNumbers_Should_NotReturnCurrentUser()
     {
         var currentUser = Database.AddUser(phone: "0918877665");
