@@ -38,6 +38,32 @@ public class GetUsersByPhoneNumbersTests : IntegrationTest
         userResponse.Users.FirstOrDefault(x => x.Id == user3.Id).Should().NotBeNull();
     }
 
+    [Fact]
+    public async Task GetByPhoneNumbers_Should_NotReturnCurrentUser()
+    {
+        var currentUser = Database.AddUser(phone: "0918877665");
+        var anotherUser = Database.AddUser(phone: "0959279259");
+
+        await Database.SaveChangesAsync();
+        UserIdentifierMock.Setup(x => x.UserId).Returns(currentUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@"
+                query{
+                    usersByPhoneNumbers(input: {phoneNumbers: [""0959279259"", ""0918877665""]}){
+                        users{
+                            firstName, email, phone, id
+                        }
+                    }
+                }"));
+
+        var userResponse = result.ToResponseObject<GetUsersByPhoneNumbersResponse>("usersByPhoneNumbers");
+
+        userResponse.Users.Count.Should().Be(1);
+        userResponse.Users.FirstOrDefault(x => x.Id == anotherUser.Id).Should().NotBeNull();
+        userResponse.Users.FirstOrDefault(x => x.Id == currentUser.Id).Should().BeNull();
+    }
+
     [Theory]
     [InlineData("0998026836", "0998026836")]
     [InlineData("+385998026836", "0998026836")]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.ValueObjects;
@@ -8,10 +9,12 @@ namespace SportSync.Application.Users.GetByPhoneNumbers;
 public class GetUsersByPhoneNumbersRequestHandler : IRequestHandler<GetUsersByPhoneNumbersInput, GetUsersByPhoneNumbersResponse>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUserIdentifierProvider _userIdentifierProvider;
 
-    public GetUsersByPhoneNumbersRequestHandler(IUserRepository userRepository)
+    public GetUsersByPhoneNumbersRequestHandler(IUserRepository userRepository, IUserIdentifierProvider userIdentifierProvider)
     {
         _userRepository = userRepository;
+        _userIdentifierProvider = userIdentifierProvider;
     }
 
     public async Task<GetUsersByPhoneNumbersResponse> Handle(GetUsersByPhoneNumbersInput request, CancellationToken cancellationToken)
@@ -33,7 +36,7 @@ public class GetUsersByPhoneNumbersRequestHandler : IRequestHandler<GetUsersByPh
         var phoneNumbers = validPhoneNumbers.Select(p => p.Value.Value).ToList();
 
         var users = await _userRepository
-            .GetQueryable(user => phoneNumbers.Contains(user.Phone.Value))
+            .GetQueryable(user => phoneNumbers.Contains(user.Phone.Value) && user.Id != _userIdentifierProvider.UserId)
             .ToListAsync(cancellationToken);
 
         return new GetUsersByPhoneNumbersResponse { Users = users };
