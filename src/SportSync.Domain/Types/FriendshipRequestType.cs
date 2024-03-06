@@ -5,21 +5,20 @@ namespace SportSync.Domain.Types;
 
 public class FriendshipRequestType
 {
+    public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid FriendId { get; set; }
     public bool Accepted { get; set; }
     public bool Rejected { get; set; }
+    public UserType Sender { get; set; }
 
     public static Expression<Func<FriendshipRequest, FriendshipRequestType>> PropertySelector = x => new FriendshipRequestType
     {
+        Id = x.Id,
         Accepted = x.Accepted,
         Rejected = x.Rejected,
         UserId = x.UserId,
-        FriendId = x.FriendId
+        FriendId = x.FriendId,
+        Sender = UserType.FromUser(x.User)
     };
-
-    public static FriendshipRequestType FromFriendshipRequest(FriendshipRequest friendshipRequest)
-    {
-        return PropertySelector.Compile()(friendshipRequest);
-    }
 }

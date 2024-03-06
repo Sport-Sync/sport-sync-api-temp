@@ -19,4 +19,6 @@ public class UserType
         Email = x.Email,
         Phone = x.Phone.Value
     };
+
+    public static UserType FromUser(User user) => PropertySelector.Compile()(user);
 }

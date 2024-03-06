@@ -33,8 +33,5 @@ public class TerminType
         Status = x.Status
     };
 
-    public static TerminType FromTermin(Termin termin)
-    {
-        return PropertySelector.Compile()(termin);
-    }
+    public static TerminType FromTermin(Termin termin) => PropertySelector.Compile()(termin);
 }

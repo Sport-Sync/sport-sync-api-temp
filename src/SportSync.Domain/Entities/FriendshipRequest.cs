@@ -32,6 +32,8 @@ public class FriendshipRequest : AggregateRoot
 
     public bool Rejected { get; private set; }
 
+    public User User { get; set; }
+
     public DateTime? CompletedOnUtc { get; private set; }
     
     public Result Accept(DateTime utcNow)
