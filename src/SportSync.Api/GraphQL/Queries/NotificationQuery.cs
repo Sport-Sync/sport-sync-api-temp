@@ -1,7 +1,5 @@
 ﻿using HotChocolate.Authorization;
-using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Domain.Repositories;
-using SportSync.Domain.Types;
+using SportSync.Application.Notifications.GetNotifications;
 
 namespace sport_sync.GraphQL.Queries;
 
@@ -9,8 +7,8 @@ namespace sport_sync.GraphQL.Queries;
 public class NotificationQuery
 {
     [Authorize]
-    public IQueryable<NotificationType> GetNotifications(
-        [Service] INotificationRepository repository,
-        [Service] IUserIdentifierProvider userIdProvider) => 
-            repository.GetQueryable(x => x.UserId == userIdProvider.UserId && x.CompletedOnUtc == null);
+    public async Task<GetNotificationsResponse> GetNotifications(
+        [Service] GetNotificationsRequestHandler requestHandler,
+        GetNotificationsInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

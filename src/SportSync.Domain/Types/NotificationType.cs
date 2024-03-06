@@ -9,11 +9,13 @@ public class NotificationType
     public Guid Id { get; set; }
     public Guid? ResourceId { get; set; }
     public NotificationTypeEnum Type { get; set; }
+    public bool Completed { get; set; }
 
     public static Expression<Func<Notification, NotificationType>> PropertySelector = x => new NotificationType
     {
         Id = x.Id,
         Type = x.Type,
-        ResourceId = x.ResourceId
+        ResourceId = x.ResourceId,
+        Completed = x.CompletedOnUtc != null
     };
 }

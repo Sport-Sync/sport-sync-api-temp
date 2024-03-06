@@ -25,6 +25,10 @@ type GetDatesByDayOfWeekResponse {
   dates: [DateTime!]!
 }
 
+type GetNotificationsResponse {
+  notifications: [NotificationType!]!
+}
+
 type GetTerminByIdResponse {
   termin: TerminType!
   attendence: TerminAttendenceType!
@@ -54,6 +58,7 @@ type NotificationType {
   id: UUID!
   resourceId: UUID
   type: NotificationTypeEnum!
+  completed: Boolean!
 }
 
 type PagedListOfUserType {
@@ -75,7 +80,7 @@ type PlayerType {
 type Query {
   me: UserType @authorize
   usersByPhoneNumbers(input: GetUsersByPhoneNumbersInput): GetUsersByPhoneNumbersResponse @authorize
-  notifications: [NotificationType] @authorize
+  notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
   terminById(input: GetTerminByIdInput): GetTerminByIdResponse @authorize
@@ -176,6 +181,10 @@ input GetFriendsInput {
   search: String
   page: Int!
   pageSize: Int!
+}
+
+input GetNotificationsInput {
+  count: Int!
 }
 
 input GetTerminByIdInput {
