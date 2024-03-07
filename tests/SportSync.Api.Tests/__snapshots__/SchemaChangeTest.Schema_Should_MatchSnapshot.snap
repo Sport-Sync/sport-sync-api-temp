@@ -180,6 +180,7 @@ input GetDatesByDayOfWeekInput {
 input GetFriendsInput {
   search: String
   page: Int!
+  firstPageSize: Int
   pageSize: Int!
 }
 

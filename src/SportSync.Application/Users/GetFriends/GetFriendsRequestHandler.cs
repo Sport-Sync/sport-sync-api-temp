@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Common;
+using SportSync.Application.Core.Constants;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
@@ -36,11 +37,16 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
 
         var totalCount = await friends.CountAsync(cancellationToken);
 
+        var firstPageSize = request.FirstPageSize ?? PaginationConstants.FirstPageSize;
+
+        var skip = request.Page == 1 ? 0 : 
+            firstPageSize + ((request.Page - 2) * request.PageSize);
+
         var friendsPage = await friends
-            .Skip((request.Page - 1) * request.PageSize)
+            .Skip(skip)
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount);
+        return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }
 }
