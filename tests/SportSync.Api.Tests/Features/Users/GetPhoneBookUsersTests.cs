@@ -23,7 +23,7 @@ public class GetPhoneBookUsersTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@"
                 query{
-                    honeBookUsers(input: {phoneNumbers: [""0959279259"", ""0919279259"", ""099927 9259"", ""+385 99927 3333""]}){
+                    phoneBookUsers(input: {phoneNumbers: [""0959279259"", ""0919279259"", ""099927 9259"", ""+385 99927 3333""]}){
                         users{
                             firstName, email, phone, id
                         }
