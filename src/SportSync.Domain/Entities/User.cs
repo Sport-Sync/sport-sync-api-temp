@@ -83,7 +83,7 @@ public class User : AggregateRoot
         return @event;
     }
 
-    public Result<FriendshipRequest> SendFriendshipRequest(User friend, List<FriendshipRequest> existingFriendshipRequests)
+    public Result<FriendshipRequest> SendFriendshipRequest(User friend)
     {
         if (Id == friend.Id)
         {
@@ -93,11 +93,6 @@ public class User : AggregateRoot
         if (CheckIfFriends(friend))
         {
             return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.AlreadyFriends);
-        }
-
-        if (existingFriendshipRequests.Any(x => x.FriendId == friend.Id || x.UserId == friend.Id))
-        {
-            return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.PendingFriendshipRequest);
         }
 
         var friendshipRequest = new FriendshipRequest(this, friend);

@@ -54,7 +54,12 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
 
         foreach (var friend in friends)
         {
-            var friendshipRequestResult = user.SendFriendshipRequest(friend, existingFriendshipRequests);
+            if (existingFriendshipRequests.Any(x => x.FriendId == friend.Id || x.UserId == friend.Id))
+            {
+                return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.PendingFriendshipRequest);
+            }
+
+            var friendshipRequestResult = user.SendFriendshipRequest(friend);
 
             if (friendshipRequestResult.IsFailure)
             {

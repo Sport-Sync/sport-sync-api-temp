@@ -22,3 +22,23 @@ public class UserType
 
     public static UserType FromUser(User user) => PropertySelector.Compile()(user);
 }
+
+public class PhoneBookUserType : UserType
+{
+    public bool PendingFriendshipRequest { get; set; }
+
+    public PhoneBookUserType(UserType user, bool pendingFriendshipRequest)
+    {
+        Id = user.Id;
+        FirstName = user.FirstName;
+        LastName = user.LastName;
+        Email = user.Email;
+        Phone = user.Phone;
+        PendingFriendshipRequest = pendingFriendshipRequest;
+    }
+
+    public PhoneBookUserType()
+    {
+        
+    }
+}
