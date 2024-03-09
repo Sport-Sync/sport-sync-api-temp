@@ -29,13 +29,13 @@ type GetNotificationsResponse {
   notifications: [NotificationType!]!
 }
 
+type GetPhoneBookUsersResponse {
+  users: [PhoneBookUserType!]!
+}
+
 type GetTerminByIdResponse {
   termin: TerminType!
   attendence: TerminAttendenceType!
-}
-
-type GetUsersByPhoneNumbersResponse {
-  users: [UserType!]!
 }
 
 type Mutation {
@@ -70,6 +70,15 @@ type PagedListOfUserType {
   items: [UserType!]!
 }
 
+type PhoneBookUserType {
+  pendingFriendshipRequest: Boolean!
+  id: UUID!
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+}
+
 type PlayerType {
   userId: UUID!
   firstName: String
@@ -79,7 +88,7 @@ type PlayerType {
 
 type Query {
   me: UserType @authorize
-  usersByPhoneNumbers(input: GetUsersByPhoneNumbersInput): GetUsersByPhoneNumbersResponse @authorize
+  phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   termins(date: DateTime!): [TerminType] @authorize
@@ -187,12 +196,12 @@ input GetNotificationsInput {
   count: Int!
 }
 
-input GetTerminByIdInput {
-  terminId: UUID!
+input GetPhoneBookUsersInput {
+  phoneNumbers: [String!]!
 }
 
-input GetUsersByPhoneNumbersInput {
-  phoneNumbers: [String!]!
+input GetTerminByIdInput {
+  terminId: UUID!
 }
 
 input LoginInput {

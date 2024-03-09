@@ -2,17 +2,18 @@
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.Types;
 using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Users.GetByPhoneNumbers;
 
-public class GetUsersByPhoneNumbersRequestHandler : IRequestHandler<GetUsersByPhoneNumbersInput, GetUsersByPhoneNumbersResponse>
+public class GetPhoneBookUsersRequestHandler : IRequestHandler<GetPhoneBookUsersInput, GetPhoneBookUsersResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
 
-    public GetUsersByPhoneNumbersRequestHandler(
+    public GetPhoneBookUsersRequestHandler(
         IUserRepository userRepository,
         IUserIdentifierProvider userIdentifierProvider,
         IFriendshipRequestRepository friendshipRequestRepository)
@@ -22,11 +23,11 @@ public class GetUsersByPhoneNumbersRequestHandler : IRequestHandler<GetUsersByPh
         _friendshipRequestRepository = friendshipRequestRepository;
     }
 
-    public async Task<GetUsersByPhoneNumbersResponse> Handle(GetUsersByPhoneNumbersInput request, CancellationToken cancellationToken)
+    public async Task<GetPhoneBookUsersResponse> Handle(GetPhoneBookUsersInput request, CancellationToken cancellationToken)
     {
         if (!request.PhoneNumbers.Any())
         {
-            return new GetUsersByPhoneNumbersResponse();
+            return new GetPhoneBookUsersResponse();
         }
 
         var phoneNumbersResult = request.PhoneNumbers.Select(PhoneNumber.Create).ToList();
@@ -50,10 +51,16 @@ public class GetUsersByPhoneNumbersRequestHandler : IRequestHandler<GetUsersByPh
                 user.FriendInviters.All(inv => inv.FriendId != currentUserId))
             .ToListAsync(cancellationToken);
 
-        var friendshipRequests = _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUserId);
+        var friendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUserId);
 
-        // TODO: set pending friendshipRequests to response as a flag
+        var phoneBookUsers = new List<PhoneBookUserType>();
+        
+        foreach (var user in users)
+        {
+            var friendshipRequestExists = friendshipRequests.Any(x => x.FriendId == user.Id || x.UserId == user.Id);
+            phoneBookUsers.Add(new PhoneBookUserType(user, friendshipRequestExists));
+        }
 
-        return new GetUsersByPhoneNumbersResponse { Users = users };
+        return new GetPhoneBookUsersResponse { Users = phoneBookUsers };
     }
 }

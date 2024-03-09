@@ -19,8 +19,8 @@ public class UserQuery
 
 
     [Authorize]
-    public async Task<GetUsersByPhoneNumbersResponse> GetUsersByPhoneNumbers(
-        [Service] GetUsersByPhoneNumbersRequestHandler requestHandler,
-        GetUsersByPhoneNumbersInput input,
+    public async Task<GetPhoneBookUsersResponse> GetPhoneBookUsers(
+        [Service] GetPhoneBookUsersRequestHandler requestHandler,
+        GetPhoneBookUsersInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }
