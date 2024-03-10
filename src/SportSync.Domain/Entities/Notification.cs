@@ -6,6 +6,8 @@ namespace SportSync.Domain.Entities;
 
 public class Notification : AggregateRoot
 {
+    //private string _subjects;
+
     private Notification(Guid userId, NotificationTypeEnum type, Guid? resourceId = null)
         : base(Guid.NewGuid())
     {
@@ -14,6 +16,7 @@ public class Notification : AggregateRoot
         UserId = userId;
         ResourceId = resourceId;
         Type = type;
+        //_subjects = string.Join(",", subjects);
     }
 
     private Notification()
@@ -24,6 +27,7 @@ public class Notification : AggregateRoot
     public Guid? ResourceId { get; set; }
     public NotificationTypeEnum Type { get; set; }
     public DateTime? CompletedOnUtc { get; private set; }
+    //public string Subjects { get; set; }
 
     public static Notification Create(Guid userId, NotificationTypeEnum type, Guid? resourceId = null)
     {

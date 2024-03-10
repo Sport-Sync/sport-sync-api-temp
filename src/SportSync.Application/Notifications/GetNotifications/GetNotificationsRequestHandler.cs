@@ -1,4 +1,5 @@
-﻿using SportSync.Application.Core.Abstractions.Authentication;
+﻿using Newtonsoft.Json;
+using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Notifications.GetNotifications;
@@ -25,6 +26,11 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
             .GetQueryable(x => x.UserId == _userIdentifierProvider.UserId && x.CompletedOnUtc == null)
             .Take(request.Count)
             .ToList();
+
+        notifications.First().Details = JsonConvert.SerializeObject(new
+        {
+            UserName = "Pero Perić", Termin = "Fuca petkom"
+        });
 
         return new GetNotificationsResponse { Notifications = notifications };
     }
