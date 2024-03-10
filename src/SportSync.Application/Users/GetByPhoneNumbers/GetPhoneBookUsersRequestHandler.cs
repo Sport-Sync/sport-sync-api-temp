@@ -57,8 +57,11 @@ public class GetPhoneBookUsersRequestHandler : IRequestHandler<GetPhoneBookUsers
         
         foreach (var user in users)
         {
-            var friendshipRequestExists = friendshipRequests.Any(x => x.FriendId == user.Id || x.UserId == user.Id);
-            phoneBookUsers.Add(new PhoneBookUserType(user, friendshipRequestExists));
+            var pendingFriendshipRequest = friendshipRequests.FirstOrDefault(x => x.FriendId == user.Id || x.UserId == user.Id);
+            PendingFriendshipRequestType? pendingFriendshipRequestType = pendingFriendshipRequest == null
+                ? null
+                : PendingFriendshipRequestType.Create(pendingFriendshipRequest.Id, pendingFriendshipRequest.UserId == currentUserId);
+            phoneBookUsers.Add(new PhoneBookUserType(user, pendingFriendshipRequestType));
         }
 
         return new GetPhoneBookUsersResponse { Users = phoneBookUsers };
