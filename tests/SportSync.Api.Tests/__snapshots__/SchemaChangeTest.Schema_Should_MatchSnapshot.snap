@@ -70,8 +70,14 @@ type PagedListOfUserType {
   items: [UserType!]!
 }
 
+type PendingFriendshipRequestType {
+  friendshipRequestId: UUID!
+  sentByMe: Boolean!
+}
+
 type PhoneBookUserType {
-  pendingFriendshipRequest: Boolean!
+  pendingFriendshipRequest: PendingFriendshipRequestType
+  hasPendingFriendshipRequest: Boolean!
   id: UUID!
   firstName: String
   lastName: String
