@@ -56,7 +56,6 @@ public class AcceptFriendshipRequestTests : IntegrationTest
         friendshipRequestDb.Rejected.Should().BeFalse();
         friendshipRequestDb.CompletedOnUtc.Should().BeNull();
 
-
         Database.DbContext.Set<Friendship>()
             .FirstOrDefault(x => x.UserId == user.Id && x.FriendId == friend.Id)
             .Should().BeNull();
