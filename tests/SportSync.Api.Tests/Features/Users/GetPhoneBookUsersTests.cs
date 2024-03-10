@@ -50,7 +50,7 @@ public class GetPhoneBookUsersTests : IntegrationTest
 
         await Database.SaveChangesAsync();
 
-        Database.AddFriendshipRequest(currentUser, user1);
+        var friendshipRequest = Database.AddFriendshipRequest(currentUser, user1);
         Database.AddFriendshipRequest(user2, currentUser);
         Database.AddFriendshipRequest(user3, currentUser, accepted: true);
         Database.AddFriendshipRequest(user4, currentUser, rejected: true);
@@ -64,7 +64,9 @@ public class GetPhoneBookUsersTests : IntegrationTest
                 query{
                     phoneBookUsers(input: {phoneNumbers: [""0929279259"", ""0919279259"", ""099927 9259"", ""0929279251"", ""+385 99927 3333""]}){
                         users{
-                            firstName, email, phone, id, pendingFriendshipRequest
+                            firstName, email, phone, id, hasPendingFriendshipRequest, pendingFriendshipRequest{
+                                sentByMe, friendshipRequestId
+                            }
                         }
                     }
                 }"));
@@ -72,10 +74,14 @@ public class GetPhoneBookUsersTests : IntegrationTest
         var userResponse = result.ToResponseObject<GetPhoneBookUsersResponse>("phoneBookUsers");
 
         userResponse.Users.Count.Should().Be(4);
-        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).PendingFriendshipRequest.Should().BeTrue();
-        userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).PendingFriendshipRequest.Should().BeTrue();
-        userResponse.Users.FirstOrDefault(x => x.Id == user4.Id).PendingFriendshipRequest.Should().BeFalse();
-        userResponse.Users.FirstOrDefault(x => x.Id == user5.Id).PendingFriendshipRequest.Should().BeFalse();
+        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).HasPendingFriendshipRequest.Should().BeTrue();
+        userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).HasPendingFriendshipRequest.Should().BeTrue();
+        userResponse.Users.FirstOrDefault(x => x.Id == user4.Id).HasPendingFriendshipRequest.Should().BeFalse();
+        userResponse.Users.FirstOrDefault(x => x.Id == user5.Id).HasPendingFriendshipRequest.Should().BeFalse();
+
+        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).PendingFriendshipRequest.SentByMe.Should().BeTrue();
+        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).PendingFriendshipRequest.FriendshipRequestId.Should().Be(friendshipRequest.Id);
+        userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).PendingFriendshipRequest.SentByMe.Should().BeFalse();
 
     }
 

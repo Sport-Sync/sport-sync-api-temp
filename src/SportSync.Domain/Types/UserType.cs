@@ -25,9 +25,12 @@ public class UserType
 
 public class PhoneBookUserType : UserType
 {
-    public bool PendingFriendshipRequest { get; set; }
+    public PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
 
-    public PhoneBookUserType(UserType user, bool pendingFriendshipRequest)
+    public bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
+
+
+    public PhoneBookUserType(UserType user, PendingFriendshipRequestType pendingFriendshipRequest = null)
     {
         Id = user.Id;
         FirstName = user.FirstName;
@@ -39,6 +42,19 @@ public class PhoneBookUserType : UserType
 
     public PhoneBookUserType()
     {
-        
+
     }
+}
+
+public class PendingFriendshipRequestType
+{
+    public Guid FriendshipRequestId { get; set; }
+    public bool SentByMe { get; set; }
+
+    public static PendingFriendshipRequestType Create(Guid friendshipRequestId, bool sentByMe) =>
+        new()
+        {
+            FriendshipRequestId = friendshipRequestId,
+            SentByMe = sentByMe
+        };
 }
