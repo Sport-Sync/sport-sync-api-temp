@@ -36,6 +36,7 @@ type GetPhoneBookUsersResponse {
 type GetTerminByIdResponse {
   termin: TerminType!
   attendence: TerminAttendenceType!
+  isCurrentUserAdmin: Boolean!
 }
 
 type Mutation {

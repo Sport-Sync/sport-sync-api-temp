@@ -34,6 +34,9 @@ public class GetTerminByIdRequestHandler : IRequestHandler<GetTerminByIdInput, G
             throw new DomainException(DomainErrors.Termin.PlayerNotFound);
         }
 
+        var admins = await _terminRepository.GetAdmins(termin.Id, cancellationToken);
+
+        var isCurrentUserAdmin = admins.Any(a => a.UserId == currentUserId);
         var isCurrentUserAttending = termin.Players.First(p => p.UserId == currentUserId).Attending;
         var playersAttending = termin.Players.Where(p => p.Attending == true);
         var playersNotAttending = termin.Players.Where(p => p.Attending == false);
@@ -42,6 +45,7 @@ public class GetTerminByIdRequestHandler : IRequestHandler<GetTerminByIdInput, G
         var response = new GetTerminByIdResponse
         {
             Termin = TerminType.FromTermin(termin),
+            IsCurrentUserAdmin = isCurrentUserAdmin,
             Attendence = new TerminAttendenceType()
             {
                 IsCurrentUserAttending = isCurrentUserAttending,
