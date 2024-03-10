@@ -52,6 +52,7 @@ type Mutation {
   sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
   acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
   rejectFriendshipRequest(input: RejectFriendshipRequestInput): Result @authorize
+  cancelFriendshipRequest(input: CancelFriendshipRequestInput): Result @authorize
   removeFriendship(input: RemoveFriendshipInput): Result @authorize
 }
 
@@ -159,6 +160,10 @@ input AcceptTerminApplicationInput {
 input AnnounceTerminInput {
   terminId: UUID!
   publicAnnouncement: Boolean!
+}
+
+input CancelFriendshipRequestInput {
+  friendshipRequestId: UUID!
 }
 
 input CreateEventInput {

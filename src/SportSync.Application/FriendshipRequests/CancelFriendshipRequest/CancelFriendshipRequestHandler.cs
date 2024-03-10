@@ -6,28 +6,25 @@ using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 
-namespace SportSync.Application.FriendshipRequests.AcceptFriendshipRequest;
+namespace SportSync.Application.FriendshipRequests.CancelFriendshipRequest;
 
-public class AcceptFriendshipRequestHandler : IRequestHandler<AcceptFriendshipRequestInput, Result>
+public class CancelFriendshipRequestHandler : IRequestHandler<CancelFriendshipRequestInput, Result>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IDateTime _dateTime;
 
-    public AcceptFriendshipRequestHandler(
-        IUserIdentifierProvider userIdentifierProvider, 
+    public CancelFriendshipRequestHandler(
+        IUserIdentifierProvider userIdentifierProvider,
         IFriendshipRequestRepository friendshipRequestRepository,
-        IUnitOfWork unitOfWork, 
-        IDateTime dateTime)
+        IUnitOfWork unitOfWork)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _friendshipRequestRepository = friendshipRequestRepository;
         _unitOfWork = unitOfWork;
-        _dateTime = dateTime;
     }
 
-    public async Task<Result> Handle(AcceptFriendshipRequestInput request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CancelFriendshipRequestInput request, CancellationToken cancellationToken)
     {
         Maybe<FriendshipRequest> maybeFriendshipRequest = await _friendshipRequestRepository.GetByIdAsync(request.FriendshipRequestId, cancellationToken);
 
@@ -38,17 +35,22 @@ public class AcceptFriendshipRequestHandler : IRequestHandler<AcceptFriendshipRe
 
         FriendshipRequest friendshipRequest = maybeFriendshipRequest.Value;
 
-        if (friendshipRequest.FriendId != _userIdentifierProvider.UserId)
+        if (friendshipRequest.UserId != _userIdentifierProvider.UserId)
         {
             return Result.Failure(DomainErrors.User.Forbidden);
         }
 
-        Result acceptResult = friendshipRequest.Accept(_dateTime.UtcNow);
-
-        if (acceptResult.IsFailure)
+        if (friendshipRequest.Accepted)
         {
-            return Result.Failure(acceptResult.Error);
+            return Result.Failure(DomainErrors.FriendshipRequest.AlreadyAccepted);
         }
+
+        if (friendshipRequest.Rejected)
+        {
+            return Result.Failure(DomainErrors.FriendshipRequest.AlreadyRejected);
+        }
+
+        _friendshipRequestRepository.Remove(friendshipRequest);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

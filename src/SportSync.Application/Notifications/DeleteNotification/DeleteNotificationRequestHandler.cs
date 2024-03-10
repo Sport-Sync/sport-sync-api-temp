@@ -39,6 +39,6 @@ public class DeleteNotificationRequestHandler : IRequestHandler<DeleteNotificati
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(notification);
+        return Result.Success();
     }
 }

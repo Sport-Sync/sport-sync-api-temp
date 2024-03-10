@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportSync.Application.Core.Abstractions.Data;
+using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
@@ -20,5 +21,12 @@ public class FriendshipRequestRepository : QueryableGenericRepository<Friendship
                 (friendshipRequest.UserId == userId || friendshipRequest.FriendId == userId) &&
                 friendshipRequest.CompletedOnUtc == null)
             .ToListAsync();
+    }
+
+    public override async Task<Maybe<FriendshipRequest>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return Maybe<FriendshipRequest>.From(await DbContext.Set<FriendshipRequest>()
+            .Include(t => t.User)
+            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 }

@@ -10,4 +10,5 @@ public interface IFriendshipRequestRepository : IQueryableRepository<FriendshipR
     Task<List<FriendshipRequest>> GetAllPendingForUserIdAsync(Guid userId);
     void Insert(FriendshipRequest friendshipRequest);
     void InsertRange(IReadOnlyCollection<FriendshipRequest> entities);
+    void Remove(FriendshipRequest friendshipRequest);
 }
