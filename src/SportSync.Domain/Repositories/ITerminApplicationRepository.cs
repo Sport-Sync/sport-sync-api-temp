@@ -6,5 +6,6 @@ namespace SportSync.Domain.Repositories;
 public interface ITerminApplicationRepository
 {
     Task<Maybe<TerminApplication>> GetByIdAsync(Guid terminApplicationId, CancellationToken cancellationToken);
+    Task<List<TerminApplication>> GetByTerminIdAsync(Guid terminId, CancellationToken cancellationToken);
     void Insert(TerminApplication terminApplication);
 }

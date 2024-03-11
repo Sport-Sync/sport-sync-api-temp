@@ -1,4 +1,5 @@
-﻿using SportSync.Application.Core.Abstractions.Authentication;
+﻿using Newtonsoft.Json;
+using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Notifications.GetNotifications;

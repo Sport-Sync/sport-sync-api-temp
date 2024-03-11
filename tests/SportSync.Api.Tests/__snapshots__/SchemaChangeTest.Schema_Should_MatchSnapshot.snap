@@ -57,9 +57,10 @@ type Mutation {
 }
 
 type NotificationType {
-  id: UUID!
+  notificationId: UUID!
   resourceId: UUID
   type: NotificationTypeEnum!
+  details: String
   completed: Boolean!
 }
 

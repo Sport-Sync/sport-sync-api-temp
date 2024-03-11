@@ -3,4 +3,4 @@ using SportSync.Domain.Entities;
 
 namespace SportSync.Domain.DomainEvents;
 
-public record TerminApplicationSentDomainEvent(TerminApplication TerminApplication) : IDomainEvent;
+public record TerminApplicationSentDomainEvent(TerminApplication TerminApplication, Termin Termin) : IDomainEvent;
