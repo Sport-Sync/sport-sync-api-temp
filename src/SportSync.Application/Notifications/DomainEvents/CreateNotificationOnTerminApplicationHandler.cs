@@ -3,6 +3,7 @@ using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Notifications.DomainEvents;
 
@@ -22,10 +23,19 @@ public class CreateNotificationOnTerminApplicationHandler : IDomainEventHandler<
         var terminApplication = domainEvent.TerminApplication;
         var admins = await _terminRepository.GetAdmins(terminApplication.TerminId, cancellationToken);
 
+        var notificationDetails = NotificationDetails.Create()
+            .WithUserName(terminApplication.AppliedByUser.FullName)
+            .WithTermin(domainEvent.Termin.EventName);
+
         var notifications = new List<Notification>();
         foreach (var admin in admins)
         {
-            var notification = Notification.Create(admin.UserId, NotificationTypeEnum.TerminApplicationReceived, terminApplication.TerminId);
+            var notification = Notification.Create(
+                admin.UserId, 
+                NotificationTypeEnum.TerminApplicationReceived, 
+                terminApplication.TerminId,
+                notificationDetails);
+
             notifications.Add(notification);
         }
 

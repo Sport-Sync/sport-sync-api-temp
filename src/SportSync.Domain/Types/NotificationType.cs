@@ -17,6 +17,7 @@ public class NotificationType
         NotificationId = x.Id,
         Type = x.Type,
         ResourceId = x.ResourceId,
+        Details = x.Details.Value,
         Completed = x.CompletedOnUtc != null
     };
 }

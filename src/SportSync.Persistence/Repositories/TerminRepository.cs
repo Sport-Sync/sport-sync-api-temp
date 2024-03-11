@@ -18,6 +18,7 @@ public class TerminRepository : QueryableGenericRepository<Termin, TerminType>, 
         return Maybe<Termin>.From(await DbContext.Set<Termin>()
             .Include(t => t.Players)
                 .ThenInclude(p => p.User)
+            .Include(t => t.Announcements)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 

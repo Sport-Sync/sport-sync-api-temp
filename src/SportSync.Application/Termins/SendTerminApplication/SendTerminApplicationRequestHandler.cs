@@ -46,6 +46,13 @@ public class SendTerminApplicationRequestHandler : IRequestHandler<SendTerminApp
             return Result.Failure(DomainErrors.Termin.NotFound);
         }
 
+        var existingTerminApplications = await _terminApplicationRepository.GetByTerminIdAsync(request.TerminId, cancellationToken);
+        if (existingTerminApplications.Any(a => a.AppliedByUserId == _userIdentifierProvider.UserId &&
+                                                a.CompletedOnUtc == null))
+        {
+            return Result.Failure(DomainErrors.TerminApplication.PendingTerminApplication);
+        }
+
         var termin = maybeTermin.Value;
         var user = maybeUser.Value;
 

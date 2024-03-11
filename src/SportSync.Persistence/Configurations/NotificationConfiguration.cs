@@ -17,8 +17,18 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.OwnsOne(notification => notification.Details, detailsBuilder =>
+        {
+            detailsBuilder.WithOwner();
+
+            detailsBuilder.Property(details => details.Value)
+                .HasColumnName(nameof(Notification.Details))
+                .HasDefaultValue("{}")
+                .IsRequired();
+        });
+
         builder.Property(notification => notification.ResourceId);
-        
+
         builder.Property(notification => notification.CompletedOnUtc);
 
         builder.Property(notification => notification.CreatedOnUtc).IsRequired();

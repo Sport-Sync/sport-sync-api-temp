@@ -3,6 +3,7 @@ using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Application.Notifications.DomainEvents;
 
@@ -22,7 +23,8 @@ public class CreateNotificationOnFriendshipRequestSentHandler : IDomainEventHand
         var notification = Notification.Create(
             friendshipRequest.FriendId,
             NotificationTypeEnum.FriendshipRequestReceived,
-            friendshipRequest.Id);
+            friendshipRequest.Id,
+            NotificationDetails.Create().WithUserName(friendshipRequest.User.FullName));
 
         _notificationRepository.Insert(notification);
 

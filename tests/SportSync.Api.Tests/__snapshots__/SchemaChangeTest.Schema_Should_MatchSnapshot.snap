@@ -59,7 +59,7 @@ type NotificationType {
   notificationId: UUID!
   resourceId: UUID
   type: NotificationTypeEnum!
-  subjectNames: [String]
+  details: String
   completed: Boolean!
 }
 

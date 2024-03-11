@@ -183,7 +183,7 @@ public class Termin : AggregateRoot
 
         var terminApplication = new TerminApplication(user, this);
 
-        RaiseDomainEvent(new TerminApplicationSentDomainEvent(terminApplication));
+        RaiseDomainEvent(new TerminApplicationSentDomainEvent(terminApplication, this));
 
         return terminApplication;
     }

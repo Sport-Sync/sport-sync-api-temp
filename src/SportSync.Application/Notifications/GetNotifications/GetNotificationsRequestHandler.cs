@@ -27,11 +27,6 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
             .Take(request.Count)
             .ToList();
 
-        notifications.First().Details = JsonConvert.SerializeObject(new
-        {
-            UserName = "Pero Perić", Termin = "Fuca petkom"
-        });
-
         return new GetNotificationsResponse { Notifications = notifications };
     }
 }
