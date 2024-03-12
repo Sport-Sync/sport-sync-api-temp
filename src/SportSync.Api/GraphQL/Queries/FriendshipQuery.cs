@@ -1,9 +1,7 @@
-﻿using System.Linq.Expressions;
-using HotChocolate.Authorization;
+﻿using HotChocolate.Authorization;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Common;
 using SportSync.Application.Users.GetFriends;
-using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -23,7 +21,6 @@ public class FriendshipQuery
     [UseProjection]
     public IQueryable<FriendshipRequestType> GetPendingFriendshipRequests(
         [Service] IFriendshipRequestRepository _repository,
-        [Service] IUserIdentifierProvider _userIdentifierProvider) => 
-            _repository.GetQueryable(x => x.FriendId == _userIdentifierProvider.UserId &&
-                                          x.CompletedOnUtc == null);
+        [Service] IUserIdentifierProvider _userIdentifierProvider) =>
+            _repository.GetQueryable(x => x.FriendId == _userIdentifierProvider.UserId && x.CompletedOnUtc == null);
 }
