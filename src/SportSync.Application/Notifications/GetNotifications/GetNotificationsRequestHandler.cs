@@ -23,7 +23,7 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
         }
 
         var notifications = _notificationRepository
-            .GetQueryable(x => x.UserId == _userIdentifierProvider.UserId && x.CompletedOnUtc == null)
+            .GetQueryable(x => x.UserId == _userIdentifierProvider.UserId)
             .Take(request.Count)
             .ToList();
 

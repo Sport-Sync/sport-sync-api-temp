@@ -28,6 +28,8 @@ public class Notification : AggregateRoot
     public DateTime? CompletedOnUtc { get; private set; }
     public NotificationDetails Details { get; set; }
 
+    public bool Completed => CompletedOnUtc != null;
+
     public static Notification Create(Guid userId, NotificationTypeEnum type, Guid? resourceId = null, NotificationDetails details = null)
     {
         details ??= NotificationDetails.Create();
@@ -36,6 +38,11 @@ public class Notification : AggregateRoot
 
     public void Complete(DateTime utcNow)
     {
+        if (Completed)
+        {
+            return;
+        }
+
         CompletedOnUtc = utcNow;
     }
 }

@@ -43,6 +43,7 @@ type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
   deleteNotification(input: DeleteNotificationInput): Result @authorize
+  completeNotification(input: CompleteNotificationInput): Result @authorize
   setTerminAttendence(input: SetTerminAttendenceInput): SetTerminAttendenceResponse @authorize
   announceTermin(input: AnnounceTerminInput): TerminType @authorize
   sendTerminApplication(input: SendTerminApplicationInput): Result @authorize
@@ -165,6 +166,10 @@ input AnnounceTerminInput {
 
 input CancelFriendshipRequestInput {
   friendshipRequestId: UUID!
+}
+
+input CompleteNotificationInput {
+  notificationId: UUID!
 }
 
 input CreateEventInput {
