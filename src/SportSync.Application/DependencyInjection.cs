@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using SportSync.Application.Core.Abstractions.Common;
 
 namespace SportSync.Application
 {

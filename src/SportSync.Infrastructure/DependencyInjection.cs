@@ -62,6 +62,8 @@ public static class DependencyInjection
 
         services.AddScoped<IUserIdentifierProvider, UserIdentifierProvider>();
 
+        services.AddScoped<IHttpHeaderProvider, HttpHeaderProvider>();
+
         services.AddScoped<IJwtProvider, JwtProvider>();
 
         services.AddTransient<IDateTime, DateTimeProvider>();

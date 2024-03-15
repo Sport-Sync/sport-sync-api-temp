@@ -61,7 +61,7 @@ type NotificationType {
   notificationId: UUID!
   resourceId: UUID
   type: NotificationTypeEnum!
-  details: String
+  content: String
   completed: Boolean!
 }
 
