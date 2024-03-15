@@ -101,7 +101,7 @@ public static class DatabaseExtensions
         NotificationTypeEnum type = NotificationTypeEnum.FriendshipRequestReceived,
         Guid? resourceId = null)
     {
-        var notification = Notification.Create(userId, type, resourceId);
+        var notification = Notification.Create(userId, type, NotificationContentData.None, resourceId);
 
         database.DbContext.Set<Notification>().Add(notification);
 

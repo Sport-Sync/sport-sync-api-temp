@@ -23,8 +23,8 @@ public class CreateNotificationOnFriendshipRequestSentHandler : IDomainEventHand
         var notification = Notification.Create(
             friendshipRequest.FriendId,
             NotificationTypeEnum.FriendshipRequestReceived,
-            friendshipRequest.Id,
-            NotificationDetails.Create().WithUserName(friendshipRequest.User.FullName));
+            NotificationContentData.Create(friendshipRequest.User.FullName),
+            friendshipRequest.Id);
 
         _notificationRepository.Insert(notification);
 

@@ -17,12 +17,12 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.OwnsOne(notification => notification.Details, detailsBuilder =>
+        builder.OwnsOne(notification => notification.ContentData, detailsBuilder =>
         {
             detailsBuilder.WithOwner();
 
             detailsBuilder.Property(details => details.Value)
-                .HasColumnName(nameof(Notification.Details))
+                .HasColumnName(nameof(Notification.ContentData))
                 .HasDefaultValue("{}")
                 .IsRequired();
         });

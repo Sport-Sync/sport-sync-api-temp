@@ -23,18 +23,14 @@ public class CreateNotificationOnTerminApplicationHandler : IDomainEventHandler<
         var terminApplication = domainEvent.TerminApplication;
         var admins = await _terminRepository.GetAdmins(terminApplication.TerminId, cancellationToken);
 
-        var notificationDetails = NotificationDetails.Create()
-            .WithUserName(terminApplication.AppliedByUser.FullName)
-            .WithTermin(domainEvent.Termin.EventName);
-
         var notifications = new List<Notification>();
         foreach (var admin in admins)
         {
             var notification = Notification.Create(
                 admin.UserId, 
-                NotificationTypeEnum.TerminApplicationReceived, 
-                terminApplication.TerminId,
-                notificationDetails);
+                NotificationTypeEnum.TerminApplicationReceived,
+                NotificationContentData.Create(terminApplication.AppliedByUser.FullName, domainEvent.Termin.EventName),
+                terminApplication.TerminId);
 
             notifications.Add(notification);
         }
