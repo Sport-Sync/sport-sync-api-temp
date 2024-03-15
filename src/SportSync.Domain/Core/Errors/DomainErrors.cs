@@ -148,7 +148,9 @@ public static class DomainErrors
         public static Error TooManyActions => new Error("Notification.TooManyActions", "Notification can not have more than 3 actions.");
         
         public static Error NotFound => new Error("Notification.NotFound", "Notification with specified id was not found.");
-        
+
+        public static Error ContentNotImplemented => new Error("Notification.ContentNotImplemented", "Content not implemented for specified notification type.");
+
         public static Error CommandNotFound => new Error("Notification.CommandNotFound", "Command was not found for this notification.");
     }
 

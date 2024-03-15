@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportSync.Application.Core.Abstractions.Authentication;
+using SportSync.Application.Core.Constants;
+using SportSync.Domain.Core.Constants;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Services.Factories.Notification;
 
@@ -33,8 +35,8 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
             .Take(request.Count)
             .ToListAsync(cancellationToken);
 
-        var maybeLanguage = _httpHeaderProvider.Get("language");
-        var language = maybeLanguage.HasValue ? maybeLanguage.Value : "Hr";
+        var maybeLanguage = _httpHeaderProvider.Language();
+        var language = maybeLanguage.HasValue ? maybeLanguage.Value : LocalizationConstants.Croatian;
 
         var contentFactory = NotificationLocalizedFactory.GetLocalizedFactory(language);
 

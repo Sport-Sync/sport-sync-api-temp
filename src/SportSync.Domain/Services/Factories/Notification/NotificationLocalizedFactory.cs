@@ -1,4 +1,5 @@
-﻿using SportSync.Domain.Services.Factories.Notification.Concrete;
+﻿using SportSync.Domain.Core.Constants;
+using SportSync.Domain.Services.Factories.Notification.Concrete;
 
 namespace SportSync.Domain.Services.Factories.Notification;
 
@@ -8,8 +9,8 @@ public static class NotificationLocalizedFactory
     {
         return language switch
         {
-            "En" => new EnglishNotificationContentFactory(),
-            "Hr" => new CroatianNotificationContentFactory(),
+            LocalizationConstants.English => new EnglishNotificationContentFactory(),
+            LocalizationConstants.Croatian => new CroatianNotificationContentFactory(),
             _ => new CroatianNotificationContentFactory()
         };
     }
