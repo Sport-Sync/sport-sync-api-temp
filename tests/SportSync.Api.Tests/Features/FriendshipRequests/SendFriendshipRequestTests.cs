@@ -111,11 +111,11 @@ public class SendFriendshipRequestTests : IntegrationTest
         var notification2 = Database.DbContext.Set<Notification>().Single(x => x.UserId == friend2.Id);
 
         notification.Type.Should().Be(NotificationTypeEnum.FriendshipRequestReceived);
-        notification.ResourceId.Should().Be(friendshipRequest.Id);
+        notification.ResourceId.Should().Be(friendshipRequest.UserId);
         notification.CompletedOnUtc.Should().BeNull();
 
         notification2.Type.Should().Be(NotificationTypeEnum.FriendshipRequestReceived);
-        notification2.ResourceId.Should().Be(friendshipRequest2.Id);
+        notification2.ResourceId.Should().Be(friendshipRequest2.UserId);
     }
 
     [Fact]
