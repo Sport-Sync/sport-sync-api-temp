@@ -218,7 +218,7 @@ public class SendTerminApplicationTests : IntegrationTest
             notification.CompletedOnUtc.Should().BeNull();
             notification.ResourceId.Should().Be(termin.Id);
             notification.Type.Should().Be(NotificationTypeEnum.TerminApplicationReceived);
-            notification.ContentData.Data.Should().BeEquivalentTo(applicant.FullName, @event.Name);
+            notification.ContentData.Data.Should().BeEquivalentTo(applicant.FullName, @event.Name, termin.Date.ToShortDateString());
         }
     }
 }
