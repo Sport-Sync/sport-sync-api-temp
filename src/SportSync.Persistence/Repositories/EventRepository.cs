@@ -2,6 +2,7 @@
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
+using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 
@@ -12,6 +13,14 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
     public EventRepository(IDbContext dbContext)
         : base(dbContext)
     {
+    }
+
+    public override async Task<Maybe<Event>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return Maybe<Event>.From(await DbContext.Set<Event>()
+            .Include(e => e.Members)
+            .Include(t => t.Schedules)
+            .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 
     public async Task EnsureUserIsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken)

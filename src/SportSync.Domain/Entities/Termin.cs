@@ -181,7 +181,7 @@ public class Termin : AggregateRoot
             return Result.Failure<TerminApplication>(canApply.Error);
         }
 
-        var terminApplication = new TerminApplication(user, this);
+        var terminApplication = TerminApplication.Create(user, this);
 
         RaiseDomainEvent(new TerminApplicationSentDomainEvent(terminApplication, this));
 

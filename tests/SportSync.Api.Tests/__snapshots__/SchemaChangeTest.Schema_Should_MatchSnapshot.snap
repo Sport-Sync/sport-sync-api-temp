@@ -50,6 +50,7 @@ type Mutation {
   acceptTerminApplication(input: AcceptTerminApplicationInput): Result @authorize
   rejectTerminApplication(input: RejectTerminApplicationInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
+  sendEventInvitation(input: SendEventInvitationInput): Result @authorize
   sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
   acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
   rejectFriendshipRequest(input: RejectFriendshipRequestInput): Result @authorize
@@ -240,6 +241,11 @@ input RemoveFriendshipInput {
   friendId: UUID!
 }
 
+input SendEventInvitationInput {
+  eventId: UUID!
+  userId: UUID!
+}
+
 input SendFriendshipRequestInput {
   friendIds: [UUID!]!
 }
@@ -280,6 +286,7 @@ enum DayOfWeek {
 enum NotificationTypeEnum {
   FRIENDSHIP_REQUEST_RECEIVED
   TERMIN_APPLICATION_RECEIVED
+  EVENT_INVITATION_SENT
 }
 
 enum SportType {

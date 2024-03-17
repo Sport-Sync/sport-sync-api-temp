@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
@@ -49,7 +48,7 @@ public class SendTerminApplicationTests : IntegrationTest
         var player = Database.AddUser("Player");
 
         var termin = Database.AddTermin(admin);
-        
+
         await Database.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(player.Id);
@@ -76,7 +75,7 @@ public class SendTerminApplicationTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var player = Database.AddUser("Player");
-        
+
         var termin = Database.AddTermin(admin, status: TerminStatus.Pending, startDate: DateTime.Today.AddDays(1));
         termin.Announce(admin.Id, false);
 
@@ -107,7 +106,7 @@ public class SendTerminApplicationTests : IntegrationTest
         var admin = Database.AddUser();
         var applicant = Database.AddUser("Player");
 
-        var termin = Database.AddTermin(admin, status: TerminStatus.Pending, startDate:DateTime.Today.AddDays(1));
+        var termin = Database.AddTermin(admin, status: TerminStatus.Pending, startDate: DateTime.Today.AddDays(1));
         termin.Announce(admin.Id, true);
 
         await Database.SaveChangesAsync();
@@ -212,5 +211,14 @@ public class SendTerminApplicationTests : IntegrationTest
 
         notifications.FirstOrDefault(x => x.UserId == admin1.Id && x.Type == NotificationTypeEnum.TerminApplicationReceived).Should().NotBeNull();
         notifications.FirstOrDefault(x => x.UserId == admin2.Id && x.Type == NotificationTypeEnum.TerminApplicationReceived).Should().NotBeNull();
+
+        foreach (var notification in notifications)
+        {
+            notification.Completed.Should().BeFalse();
+            notification.CompletedOnUtc.Should().BeNull();
+            notification.ResourceId.Should().Be(termin.Id);
+            notification.Type.Should().Be(NotificationTypeEnum.TerminApplicationReceived);
+            notification.ContentData.Data.Should().BeEquivalentTo(applicant.FullName, @event.Name, termin.Date.ToShortDateString());
+        }
     }
 }

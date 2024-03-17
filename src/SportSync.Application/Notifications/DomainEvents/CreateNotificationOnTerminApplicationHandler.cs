@@ -21,6 +21,7 @@ public class CreateNotificationOnTerminApplicationHandler : IDomainEventHandler<
     public async Task Handle(TerminApplicationSentDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var terminApplication = domainEvent.TerminApplication;
+        var termin = domainEvent.Termin;
         var admins = await _terminRepository.GetAdmins(terminApplication.TerminId, cancellationToken);
 
         var notifications = new List<Notification>();
@@ -29,7 +30,7 @@ public class CreateNotificationOnTerminApplicationHandler : IDomainEventHandler<
             var notification = Notification.Create(
                 admin.UserId, 
                 NotificationTypeEnum.TerminApplicationReceived,
-                NotificationContentData.Create(terminApplication.AppliedByUser.FullName, domainEvent.Termin.EventName),
+                NotificationContentData.Create(terminApplication.AppliedByUser.FullName, termin.EventName, termin.Date.ToShortDateString()),
                 terminApplication.TerminId);
 
             notifications.Add(notification);

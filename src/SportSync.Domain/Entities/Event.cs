@@ -11,6 +11,7 @@ public class Event : AggregateRoot
 {
     private readonly HashSet<EventMember> _members = new();
     private readonly HashSet<EventSchedule> _schedules = new();
+    private readonly HashSet<EventInvitation> _invitations = new();
 
     private Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
         : base(Guid.NewGuid())
@@ -44,6 +45,7 @@ public class Event : AggregateRoot
     public string Notes { get; set; }
 
     public IReadOnlyCollection<EventSchedule> Schedules => _schedules.ToList();
+    public IReadOnlyCollection<EventInvitation> Invitations => _invitations.ToList();
     public IReadOnlyCollection<EventMember> Members => _members.ToList();
     public List<Guid> MemberUserIds => _members.Select(m => m.UserId).ToList();
 
@@ -66,6 +68,26 @@ public class Event : AggregateRoot
                 _members.Add(EventMember.Create(userId, Id));
             }
         }
+    }
+
+    public Result<EventInvitation> InviteUser(User invitationSender, User invitationReceiver)
+    {
+        if (!IsAdmin(invitationSender.Id))
+        {
+            return Result.Failure<EventInvitation>(DomainErrors.User.Forbidden);
+        }
+
+        if (IsMember(invitationReceiver.Id))
+        {
+            return Result.Failure<EventInvitation>(DomainErrors.EventInvitation.AlreadyMember);
+        }
+
+        var invitation = EventInvitation.Create(invitationSender, invitationReceiver, this);
+        _invitations.Add(invitation);
+
+        RaiseDomainEvent(new EventInvitationSentDomainEvent(invitation, this));
+
+        return invitation;
     }
 
     public Result MakeAdmin(User user)
@@ -94,12 +116,12 @@ public class Event : AggregateRoot
         }
     }
 
-    private bool IsMember(Guid userId)
+    public bool IsMember(Guid userId)
     {
         return _members.Any(x => x.UserId == userId);
     }
 
-    private bool IsAdmin(Guid userId)
+    public bool IsAdmin(Guid userId)
     {
         return _members.Any(x => x.UserId == userId && x.IsAdmin);
     }
