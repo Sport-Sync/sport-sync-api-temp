@@ -8,7 +8,7 @@ namespace SportSync.Domain.Entities;
 
 public class TerminApplication : AggregateRoot
 {
-    public TerminApplication(User user, Termin termin)
+    private TerminApplication(User user, Termin termin)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(user, "The user is required.", nameof(user));
@@ -39,6 +39,11 @@ public class TerminApplication : AggregateRoot
     public bool Rejected { get; private set; }
 
     public DateTime? CompletedOnUtc { get; private set; }
+
+    public static TerminApplication Create(User user, Termin termin)
+    {
+        return new TerminApplication(user, termin);
+    }
 
     public Result Accept(User user, DateTime utcNow)
     {

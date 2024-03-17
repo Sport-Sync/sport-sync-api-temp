@@ -56,6 +56,23 @@ public static class DatabaseExtensions
         return friendship;
     }
 
+    public static Event AddEvent(
+        this Database database,
+        User user,
+        string eventName = "event",
+        SportType sportType = SportType.Football,
+        EventSchedule schedule = null)
+    {
+        var tomorrow = DateTime.Today.AddDays(1);
+        schedule ??= EventSchedule.Create(DayOfWeek.Wednesday, tomorrow, tomorrow.AddHours(10), tomorrow.AddHours(11), false);
+        var ev = Event.Create(user, eventName, sportType, "address", 2, 10, null);
+        
+        database.DbContext.Set<EventSchedule>().Add(schedule);
+        database.DbContext.Set<Event>().Add(ev);
+
+        return ev;
+    }
+
     public static Termin AddTermin(
         this Database database,
         User user,
@@ -88,7 +105,7 @@ public static class DatabaseExtensions
         User user,
         Termin termin)
     {
-        var terminApplication = new TerminApplication(user, termin);
+        var terminApplication = TerminApplication.Create(user, termin);
 
         database.DbContext.Set<TerminApplication>().Add(terminApplication);
 

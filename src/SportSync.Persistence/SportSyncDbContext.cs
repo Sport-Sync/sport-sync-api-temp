@@ -44,6 +44,7 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new TerminApplicationConfiguration());
         modelBuilder.ApplyConfiguration(new TerminAnnouncementConfiguration());
         modelBuilder.ApplyConfiguration(new NotificationConfiguration());
+        modelBuilder.ApplyConfiguration(new EventInvitationConfiguration());
 
         //var entityTypes = Assembly.GetExecutingAssembly()
         //    .GetTypes()

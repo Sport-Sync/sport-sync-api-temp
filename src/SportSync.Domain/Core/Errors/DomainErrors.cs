@@ -31,7 +31,8 @@ public static class DomainErrors
 
     public static class Event
     {
-        public static Error NotMember => new("Termin.NotMember", "The user is not a member of an event.");
+        public static Error NotMember => new("Event.NotMember", "The user is not a member of an event.");
+        public static Error NotFound => new("Event.NotFound", "The event with the specified identifier was not found.");
     }
 
     public static class Password
@@ -82,6 +83,19 @@ public static class DomainErrors
         public static Error PendingFriendshipRequest => new Error(
             "FriendshipRequest.PendingFriendshipRequest",
             "The friendship request can not be sent because there is a pending friendship request.");
+    }
+
+    public static class EventInvitation
+    {
+        public static Error AlreadyAccepted => new Error(
+            "EventInvitation.AlreadyAccepted",
+            "The invitation has already been accepted.");
+
+        public static Error AlreadyRejected => new Error(
+            "EventInvitation.AlreadyRejected",
+            "The invitation has already been rejected.");
+
+        public static Error AlreadyMember => new("EventInvitation.AlreadyMember", "The user is already a member on this event.");
     }
 
     public static class TerminApplication
