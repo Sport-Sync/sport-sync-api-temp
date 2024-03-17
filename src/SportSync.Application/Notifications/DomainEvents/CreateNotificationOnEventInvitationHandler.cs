@@ -26,7 +26,6 @@ public class CreateNotificationOnEventInvitationHandler : IDomainEventHandler<Ev
             NotificationContentData.Create(eventInvitation.SentByUser.FullName, domainEvent.Event.Name),
             eventInvitation.EventId);
 
-
         _notificationRepository.Insert(notification);
 
         return Task.CompletedTask;
