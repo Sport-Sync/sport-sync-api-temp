@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Constants;
 using SportSync.Domain.Core.Constants;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Services.Factories.Notification;
@@ -14,8 +13,8 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
     private readonly IHttpHeaderProvider _httpHeaderProvider;
 
     public GetNotificationsRequestHandler(
-        INotificationRepository notificationRepository, 
-        IUserIdentifierProvider userIdentifierProvider, 
+        INotificationRepository notificationRepository,
+        IUserIdentifierProvider userIdentifierProvider,
         IHttpHeaderProvider httpHeaderProvider)
     {
         _notificationRepository = notificationRepository;
@@ -38,11 +37,11 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
         var maybeLanguage = _httpHeaderProvider.Language();
         var language = maybeLanguage.HasValue ? maybeLanguage.Value : LocalizationConstants.Croatian;
 
-        var contentFactory = NotificationLocalizedFactory.GetLocalizedFactory(language);
+        var contentProvider = NotificationContentFactory.GetContentProvider(language);
 
         foreach (var notification in notifications)
         {
-            notification.Content = contentFactory.Content(notification.Type, notification.ContentData);
+            notification.Content = contentProvider.Content(notification.Type, notification.ContentData);
         }
 
         return new GetNotificationsResponse { Notifications = notifications };

@@ -13,14 +13,14 @@ public class GetNotificationContentTests
     [Theory]
     [InlineData("Hr")]
     [InlineData("En")]
-    public void Test(string language)
+    public void GetNotificationContent_ShouldBeImplemented_ForAllNotificationTypes(string language)
     {
         var notificationTypes = Enum.GetValues(typeof(NotificationTypeEnum)).Cast<NotificationTypeEnum>().ToList();
 
-        var contentFactory = NotificationLocalizedFactory.GetLocalizedFactory(language);
+        var contentProvider = NotificationContentFactory.GetContentProvider(language);
         foreach (var notificationType in notificationTypes)
         {
-            var content = contentFactory.Content(notificationType, NotificationContentData.None);
+            var content = contentProvider.Content(notificationType, NotificationContentData.None);
             content.Should().NotBeEmpty();
         }
     }

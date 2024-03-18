@@ -23,6 +23,13 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 
+    public async Task<List<EventInvitation>> GetPendingInvitations(Guid eventId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<EventInvitation>()
+            .Where(i => i.EventId == eventId && i.CompletedOnUtc == null)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task EnsureUserIsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken)
     {
         var user = await DbContext.Set<Event>()

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
@@ -73,6 +68,54 @@ public class SendEventInvitationTests : IntegrationTest
             .FirstOrDefault(x => x.SentToUserId == invitee.Id);
 
         invitation.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SendEventInvitation_ShouldFail_WhenReceiverIsAlreadyInvited()
+    {
+        var admin = Database.AddUser();
+        var invitee = Database.AddUser("Invitee");
+
+        var @event = Database.AddEvent(admin);
+
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
+
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    sendEventInvitation(input: {{eventId: ""{@event.Id}"", userId: ""{invitee.Id}""}}){{
+                        isSuccess, isFailure, error{{ message, code }}
+                    }}
+                }}"));
+
+        result.ShouldBeSuccessResult("sendEventInvitation");
+
+        var invitation = Database.DbContext.Set<EventInvitation>()
+            .FirstOrDefault(x => x.SentToUserId == invitee.Id);
+
+        invitation.Should().NotBeNull();
+
+        invitation.SentByUserId.Should().Be(admin.Id);
+        invitation.Rejected.Should().BeFalse();
+        invitation.Accepted.Should().BeFalse();
+        invitation.CompletedOnUtc.Should().BeNull();
+
+        Database.DbContext.Set<Notification>()
+            .FirstOrDefault(x => x.UserId == invitee.Id)
+            .Should().NotBeNull();
+
+        var secondResult = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    sendEventInvitation(input: {{eventId: ""{@event.Id}"", userId: ""{invitee.Id}""}}){{
+                        isSuccess, isFailure, error{{ message, code }}
+                    }}
+                }}"));
+
+        secondResult.ShouldBeFailureResult("sendEventInvitation", DomainErrors.EventInvitation.AlreadyInvited);
     }
 
     [Fact]

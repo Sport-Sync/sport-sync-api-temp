@@ -4,6 +4,7 @@ using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
+using SportSync.Domain.Repositories;
 
 namespace SportSync.Domain.Entities;
 
@@ -70,7 +71,7 @@ public class Event : AggregateRoot
         }
     }
 
-    public Result<EventInvitation> InviteUser(User invitationSender, User invitationReceiver)
+    public async Task<Result<EventInvitation>> InviteUser(User invitationSender, User invitationReceiver, IEventRepository eventRepository)
     {
         if (!IsAdmin(invitationSender.Id))
         {
@@ -80,6 +81,13 @@ public class Event : AggregateRoot
         if (IsMember(invitationReceiver.Id))
         {
             return Result.Failure<EventInvitation>(DomainErrors.EventInvitation.AlreadyMember);
+        }
+
+        var existingInvitations = await eventRepository.GetPendingInvitations(Id, CancellationToken.None);
+
+        if (existingInvitations.Any(i => i.SentToUserId == invitationReceiver.Id))
+        {
+            return Result.Failure<EventInvitation>(DomainErrors.EventInvitation.AlreadyInvited);
         }
 
         var invitation = EventInvitation.Create(invitationSender, invitationReceiver, this);

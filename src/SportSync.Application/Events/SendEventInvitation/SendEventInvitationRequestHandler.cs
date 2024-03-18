@@ -52,7 +52,7 @@ public class SendEventInvitationRequestHandler : IRequestHandler<SendEventInvita
         var currentUser = maybeCurrentUser.Value;
         var invitee = maybeInvitee.Value;
 
-        var invitationResult = @event.InviteUser(currentUser, invitee);
+        var invitationResult = await @event.InviteUser(currentUser, invitee, _eventRepository);
 
         if (invitationResult.IsFailure)
         {

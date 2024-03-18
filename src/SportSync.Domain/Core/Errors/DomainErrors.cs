@@ -96,6 +96,8 @@ public static class DomainErrors
             "The invitation has already been rejected.");
 
         public static Error AlreadyMember => new("EventInvitation.AlreadyMember", "The user is already a member on this event.");
+
+        public static Error AlreadyInvited => new("EventInvitation.AlreadyInvited", "The user is already invited to this event. Waiting for response.");
     }
 
     public static class TerminApplication

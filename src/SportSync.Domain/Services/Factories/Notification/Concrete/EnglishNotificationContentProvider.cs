@@ -5,7 +5,7 @@ using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Services.Factories.Notification.Concrete;
 
-public class EnglishNotificationContentFactory : INotificationContentFactory
+public class EnglishNotificationContentProvider : INotificationContentProvider
 {
     public string Content(NotificationTypeEnum type, NotificationContentData contentData)
     {
