@@ -19,7 +19,7 @@ public class PushNotificationService : IPushNotificationService
             {
                 Notification = new FirebaseAdmin.Messaging.Notification
                 {
-                    Title = "X je kreirao novi termin",
+                    Title = "X je kreirao novi match",
                     Body = "Novi temrin je kreiran ponedjeljkom"
                 },
                 Data = new Dictionary<string, string>

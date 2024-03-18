@@ -12,7 +12,7 @@ public class CroatianNotificationContentProvider : INotificationContentProvider
         return type switch
         {
             NotificationTypeEnum.FriendshipRequestReceived => $"{contentData[0]} vam je poslao zahtjev za prijateljstvom",
-            NotificationTypeEnum.TerminApplicationReceived => $"{contentData[0]} se želi pridružiti na vašu utakmicu '{contentData[1]}' dana {contentData[2]}",
+            NotificationTypeEnum.MatchApplicationReceived => $"{contentData[0]} se želi pridružiti na vašu utakmicu '{contentData[1]}' dana {contentData[2]}",
             NotificationTypeEnum.EventInvitationSent => $"{contentData[0]} vam je poslao zahtjev da se pridružite na termin '{contentData[1]}'",
             _ => throw new DomainException(DomainErrors.Notification.ContentNotImplemented)
         };

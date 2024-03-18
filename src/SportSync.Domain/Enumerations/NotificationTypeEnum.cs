@@ -3,6 +3,6 @@
 public enum NotificationTypeEnum
 {
     FriendshipRequestReceived,
-    TerminApplicationReceived,
+    MatchApplicationReceived,
     EventInvitationSent
 }

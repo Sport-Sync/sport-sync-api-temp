@@ -18,25 +18,25 @@ internal class EventScheduleConfiguration : IEntityTypeConfiguration<EventSchedu
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
         
-        builder.Property(termin => termin.RepeatWeekly).IsRequired();
-        builder.Property(termin => termin.DayOfWeek).IsRequired();
+        builder.Property(match => match.RepeatWeekly).IsRequired();
+        builder.Property(match => match.DayOfWeek).IsRequired();
 
-        builder.Property(termin => termin.StartDate).IsRequired();
+        builder.Property(match => match.StartDate).IsRequired();
 
-        builder.Property(termin => termin.StartTime)
+        builder.Property(match => match.StartTime)
             .HasConversion<TimeOnlyConverter>()
             .IsRequired();
 
-        builder.Property(termin => termin.EndTime)
+        builder.Property(match => match.EndTime)
             .HasConversion<TimeOnlyConverter>()
             .IsRequired();
 
-        builder.Property(termin => termin.CreatedOnUtc).IsRequired();
-        builder.Property(termin => termin.ModifiedOnUtc);
-        builder.Property(termin => termin.DeletedOnUtc);
-        builder.Property(termin => termin.Deleted).HasDefaultValue(false);
+        builder.Property(match => match.CreatedOnUtc).IsRequired();
+        builder.Property(match => match.ModifiedOnUtc);
+        builder.Property(match => match.DeletedOnUtc);
+        builder.Property(match => match.Deleted).HasDefaultValue(false);
         
-        builder.HasQueryFilter(termin => !termin.Deleted);
+        builder.HasQueryFilter(match => !match.Deleted);
 
         builder.ToTable("EventSchedules");
     }

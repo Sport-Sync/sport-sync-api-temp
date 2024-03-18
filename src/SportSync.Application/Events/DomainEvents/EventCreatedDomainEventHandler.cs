@@ -10,60 +10,60 @@ namespace SportSync.Application.Events.DomainEvents;
 internal sealed class EventCreatedDomainEventHandler : IDomainEventHandler<EventCreatedDomainEvent>
 {
     private readonly EventSettings _eventSettings;
-    private readonly ITerminRepository _terminRepository;
+    private readonly IMatchRepository _matchRepository;
 
-    public EventCreatedDomainEventHandler(IOptions<EventSettings> eventSettings, ITerminRepository terminRepository)
+    public EventCreatedDomainEventHandler(IOptions<EventSettings> eventSettings, IMatchRepository matchRepository)
     {
         _eventSettings = eventSettings.Value;
-        _terminRepository = terminRepository;
+        _matchRepository = matchRepository;
     }
 
     public Task Handle(EventCreatedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var @event = domainEvent.CreatedEvent;
 
-        var terminsToCreate = new List<Termin>();
+        var matchesToCreate = new List<Match>();
 
         foreach (var schedule in @event.Schedules)
         {
             if (schedule.RepeatWeekly)
             {
-                var termins = AddWeeklyRepeatableTermins(@event, schedule, schedule.StartDate);
-                terminsToCreate.AddRange(termins);
+                var matches = AddWeeklyRepeatableMatches(@event, schedule, schedule.StartDate);
+                matchesToCreate.AddRange(matches);
             }
             else
             {
-                var termin = AddTermin(@event, schedule);
-                terminsToCreate.Add(termin);
+                var match = AddMatch(@event, schedule);
+                matchesToCreate.Add(match);
             }
         }
 
-        _terminRepository.InsertRange(terminsToCreate);
+        _matchRepository.InsertRange(matchesToCreate);
 
         return Task.CompletedTask;
     }
 
-    private Termin AddTermin(Event @event, EventSchedule schedule)
+    private Match AddMatch(Event @event, EventSchedule schedule)
     {
-        var termin = Termin.Create(@event, schedule.StartDate, schedule);
+        var match = Match.Create(@event, schedule.StartDate, schedule);
 
-        termin.AddPlayers(@event.MemberUserIds);
+        match.AddPlayers(@event.MemberUserIds);
 
-        return termin;
+        return match;
     }
 
-    private IEnumerable<Termin> AddWeeklyRepeatableTermins(Event @event, EventSchedule schedule, DateTime startDate)
+    private IEnumerable<Match> AddWeeklyRepeatableMatches(Event @event, EventSchedule schedule, DateTime startDate)
     {
-        var nextTerminDate = startDate;
+        var nextMatchDate = startDate;
 
-        for (int i = 0; i < _eventSettings.NumberOfTerminsToCreateInFuture; i++)
+        for (int i = 0; i < _eventSettings.NumberOfMatchesToCreateInFuture; i++)
         {
-            var nextTermin = Termin.Create(@event, nextTerminDate, schedule);
-            nextTermin.AddPlayers(@event.MemberUserIds);
+            var nextMatch = Match.Create(@event, nextMatchDate, schedule);
+            nextMatch.AddPlayers(@event.MemberUserIds);
 
-            nextTerminDate = nextTerminDate.AddDays(7);
+            nextMatchDate = nextMatchDate.AddDays(7);
 
-            yield return nextTermin;
+            yield return nextMatch;
         }
     }
 }

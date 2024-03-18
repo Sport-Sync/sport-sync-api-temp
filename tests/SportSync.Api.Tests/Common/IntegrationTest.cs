@@ -49,10 +49,10 @@ public class IntegrationTest : IDisposable
             .AddQueryType(q => q.Name("Query"))
             .AddType<UserQuery>()
             .AddType<NotificationQuery>()
-            .AddType<TerminQuery>()
+            .AddType<MatchQuery>()
             .AddType<FriendshipQuery>()
             .AddMutationType(q => q.Name("Mutation"))
-            .AddType<TerminMutation>()
+            .AddType<MatchMutation>()
             .AddType<UserMutation>()
             .AddType<NotificationMutation>()
             .AddType<EventMutation>()
@@ -78,7 +78,7 @@ public class IntegrationTest : IDisposable
                     })
                 .Configure<EventSettings>(x =>
                 {
-                    x.NumberOfTerminsToCreateInFuture = 14;
+                    x.NumberOfMatchesToCreateInFuture = 14;
                 })
                 .AddScoped(_ => UserIdentifierMock.Object)
                 .AddScoped(_ => DateTimeProviderMock.Object)

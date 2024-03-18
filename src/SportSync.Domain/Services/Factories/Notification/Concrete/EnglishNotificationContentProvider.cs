@@ -12,7 +12,7 @@ public class EnglishNotificationContentProvider : INotificationContentProvider
         return type switch
         {
             NotificationTypeEnum.FriendshipRequestReceived => $"{contentData[0]} has sent you a friend request",
-            NotificationTypeEnum.TerminApplicationReceived => $"{contentData[0]} wants to join to your match '{contentData[1]}' on day {contentData[2]}",
+            NotificationTypeEnum.MatchApplicationReceived => $"{contentData[0]} wants to join to your match '{contentData[1]}' on day {contentData[2]}",
             NotificationTypeEnum.EventInvitationSent => $"{contentData[0]} has sent you a request to join their event '{contentData[1]}'",
             _ => throw new DomainException(DomainErrors.Notification.ContentNotImplemented)
         };

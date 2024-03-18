@@ -36,13 +36,13 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new EventConfiguration());
         modelBuilder.ApplyConfiguration(new EventMemberConfiguration());
-        modelBuilder.ApplyConfiguration(new TerminConfiguration());
+        modelBuilder.ApplyConfiguration(new MatchConfiguration());
         modelBuilder.ApplyConfiguration(new PlayerConfiguration());
         modelBuilder.ApplyConfiguration(new EventScheduleConfiguration());
         modelBuilder.ApplyConfiguration(new FriendshipRequestConfiguration());
         modelBuilder.ApplyConfiguration(new FriendshipConfiguration());
-        modelBuilder.ApplyConfiguration(new TerminApplicationConfiguration());
-        modelBuilder.ApplyConfiguration(new TerminAnnouncementConfiguration());
+        modelBuilder.ApplyConfiguration(new MatchApplicationConfiguration());
+        modelBuilder.ApplyConfiguration(new MatchAnnouncementConfiguration());
         modelBuilder.ApplyConfiguration(new NotificationConfiguration());
         modelBuilder.ApplyConfiguration(new EventInvitationConfiguration());
 

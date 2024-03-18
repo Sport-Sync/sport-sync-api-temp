@@ -22,11 +22,11 @@ public static class DomainErrors
             "The password cannot be changed to the specified password.");
     }
 
-    public static class Termin
+    public static class Match
     {
-        public static Error NotFound => new("Termin.NotFound", "The termin with the specified identifier was not found.");
-        public static Error PlayerNotFound => new("Termin.PlayerNotFound", "Identified player is not part of this termin.");
-        public static Error AlreadyFinished => new("Termin.AlreadyFinished", "The termin has already finished or is in progress.");
+        public static Error NotFound => new("Match.NotFound", "The match with the specified identifier was not found.");
+        public static Error PlayerNotFound => new("Match.PlayerNotFound", "Identified player is not part of this match.");
+        public static Error AlreadyFinished => new("Match.AlreadyFinished", "The match has already finished or is in progress.");
     }
 
     public static class Event
@@ -100,47 +100,47 @@ public static class DomainErrors
         public static Error AlreadyInvited => new("EventInvitation.AlreadyInvited", "The user is already invited to this event. Waiting for response.");
     }
 
-    public static class TerminApplication
+    public static class MatchApplication
     {
         public static Error NotFound => new Error(
-            "TerminApplication.NotFound",
-            "The termin application with the specified identifier was not found.");
+            "MatchApplication.NotFound",
+            "The match application with the specified identifier was not found.");
 
         public static Error AlreadyAccepted => new Error(
-            "TerminApplication.AlreadyAccepted",
+            "MatchApplication.AlreadyAccepted",
             "The application has already been accepted.");
 
         public static Error AlreadyRejected => new Error(
-            "TerminApplication.AlreadyRejected",
+            "MatchApplication.AlreadyRejected",
             "The application has already been rejected.");
 
         public static Error AlreadyPlayer => new Error(
-            "TerminApplication.AlreadyPlayer",
-            "The user is already a player in this termin.");
+            "MatchApplication.AlreadyPlayer",
+            "The user is already a player in this match.");
 
         public static Error NotAnnounced => new Error(
-            "TerminApplication.NotAnnounced",
-            "The termin is not announced. Unable to perform the operation.");
+            "MatchApplication.NotAnnounced",
+            "The match is not announced. Unable to perform the operation.");
 
         public static Error NotOnFriendList => new Error(
-            "TerminApplication.NotOnFriendList",
-            "The termin is announced only for friends. The user is not on the friend list.");
+            "MatchApplication.NotOnFriendList",
+            "The match is announced only for friends. The user is not on the friend list.");
 
 
-        public static Error PendingTerminApplication => new Error(
-            "TerminApplication.PendingTerminApplication",
+        public static Error PendingMatchApplication => new Error(
+            "MatchApplication.PendingMatchApplication",
             "The application can not be sent because there is a pending one already.");
     }
 
-    public static class TerminAnnouncement
+    public static class MatchAnnouncement
     {
         public static Error AlreadyPubliclyAnnounced => new Error(
-            "TerminAnnouncement.AlreadyPubliclyAnnounced",
-            "The termin is already publicly announced.");
+            "MatchAnnouncement.AlreadyPubliclyAnnounced",
+            "The match is already publicly announced.");
 
         public static Error AlreadyAnnouncedBySameUser => new Error(
-            "TerminAnnouncement.AlreadyAnnouncedBySameUser",
-            "The termin is already announced by same user.");
+            "MatchAnnouncement.AlreadyAnnouncedBySameUser",
+            "The match is already announced by same user.");
     }
 
     public static class Email
