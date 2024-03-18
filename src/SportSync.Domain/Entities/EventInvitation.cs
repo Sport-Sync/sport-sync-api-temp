@@ -67,7 +67,7 @@ public class EventInvitation : Entity
         Accepted = true;
         CompletedOnUtc = utcNow;
 
-        //RaiseDomainEvent(new TerminApplicationAcceptedDomainEvent(this));
+        //RaiseDomainEvent(new MatchApplicationAcceptedDomainEvent(this));
 
         return Result.Success();
     }

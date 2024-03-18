@@ -270,82 +270,7 @@ namespace SportSync.Persistence.Migrations
                     b.ToTable("FriendshipRequests", (string)null);
                 });
 
-            modelBuilder.Entity("SportSync.Domain.Entities.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("CompletedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("ResourceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications", (string)null);
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.Player", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool?>("Attending")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("DeletedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("ModifiedOnUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TerminId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TerminId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Players", (string)null);
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.Termin", b =>
+            modelBuilder.Entity("SportSync.Domain.Entities.Match", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -409,10 +334,10 @@ namespace SportSync.Persistence.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("Termins", (string)null);
+                    b.ToTable("Matches", (string)null);
                 });
 
-            modelBuilder.Entity("SportSync.Domain.Entities.TerminAnnouncement", b =>
+            modelBuilder.Entity("SportSync.Domain.Entities.MatchAnnouncement", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -423,25 +348,25 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("MatchId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("TerminId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TerminId");
+                    b.HasIndex("MatchId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TerminAnnouncements", (string)null);
+                    b.ToTable("MatchAnnouncements", (string)null);
                 });
 
-            modelBuilder.Entity("SportSync.Domain.Entities.TerminApplication", b =>
+            modelBuilder.Entity("SportSync.Domain.Entities.MatchApplication", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -471,6 +396,9 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOnUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("MatchId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("datetime2");
 
@@ -479,18 +407,90 @@ namespace SportSync.Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid>("TerminId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AppliedByUserId");
 
                     b.HasIndex("CompletedByUserId");
 
-                    b.HasIndex("TerminId");
+                    b.HasIndex("MatchId");
 
-                    b.ToTable("TerminApplications", (string)null);
+                    b.ToTable("MatchApplications", (string)null);
+                });
+
+            modelBuilder.Entity("SportSync.Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CompletedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("DeletedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("ResourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications", (string)null);
+                });
+
+            modelBuilder.Entity("SportSync.Domain.Entities.Player", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("Attending")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("DeletedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MatchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.User", b =>
@@ -623,6 +623,62 @@ namespace SportSync.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SportSync.Domain.Entities.Match", b =>
+                {
+                    b.HasOne("SportSync.Domain.Entities.Event", null)
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SportSync.Domain.Entities.EventSchedule", "Schedule")
+                        .WithMany()
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Schedule");
+                });
+
+            modelBuilder.Entity("SportSync.Domain.Entities.MatchAnnouncement", b =>
+                {
+                    b.HasOne("SportSync.Domain.Entities.Match", null)
+                        .WithMany("Announcements")
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SportSync.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SportSync.Domain.Entities.MatchApplication", b =>
+                {
+                    b.HasOne("SportSync.Domain.Entities.User", "AppliedByUser")
+                        .WithMany()
+                        .HasForeignKey("AppliedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("SportSync.Domain.Entities.User", "CompletedByUser")
+                        .WithMany()
+                        .HasForeignKey("CompletedByUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("SportSync.Domain.Entities.Match", null)
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AppliedByUser");
+
+                    b.Navigation("CompletedByUser");
+                });
+
             modelBuilder.Entity("SportSync.Domain.Entities.Notification", b =>
                 {
                     b.HasOne("SportSync.Domain.Entities.User", null)
@@ -656,9 +712,9 @@ namespace SportSync.Persistence.Migrations
 
             modelBuilder.Entity("SportSync.Domain.Entities.Player", b =>
                 {
-                    b.HasOne("SportSync.Domain.Entities.Termin", null)
+                    b.HasOne("SportSync.Domain.Entities.Match", null)
                         .WithMany("Players")
-                        .HasForeignKey("TerminId")
+                        .HasForeignKey("MatchId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -669,62 +725,6 @@ namespace SportSync.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.Termin", b =>
-                {
-                    b.HasOne("SportSync.Domain.Entities.Event", null)
-                        .WithMany()
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.EventSchedule", "Schedule")
-                        .WithMany()
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Schedule");
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.TerminAnnouncement", b =>
-                {
-                    b.HasOne("SportSync.Domain.Entities.Termin", null)
-                        .WithMany("Announcements")
-                        .HasForeignKey("TerminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SportSync.Domain.Entities.TerminApplication", b =>
-                {
-                    b.HasOne("SportSync.Domain.Entities.User", "AppliedByUser")
-                        .WithMany()
-                        .HasForeignKey("AppliedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("SportSync.Domain.Entities.User", "CompletedByUser")
-                        .WithMany()
-                        .HasForeignKey("CompletedByUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("SportSync.Domain.Entities.Termin", null)
-                        .WithMany()
-                        .HasForeignKey("TerminId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("AppliedByUser");
-
-                    b.Navigation("CompletedByUser");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.User", b =>
@@ -764,7 +764,7 @@ namespace SportSync.Persistence.Migrations
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("SportSync.Domain.Entities.Termin", b =>
+            modelBuilder.Entity("SportSync.Domain.Entities.Match", b =>
                 {
                     b.Navigation("Announcements");
 

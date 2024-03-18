@@ -9,5 +9,5 @@ public class EventSettings
 
     }
 
-    public int NumberOfTerminsToCreateInFuture { get; set; }
+    public int NumberOfMatchesToCreateInFuture { get; set; }
 }

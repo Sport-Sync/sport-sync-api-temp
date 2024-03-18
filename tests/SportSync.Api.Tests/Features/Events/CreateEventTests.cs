@@ -58,11 +58,11 @@ public class CreateEventTests : IntegrationTest
         eventFromDb.Name.Should().Be("Fuca petkom");
         eventFromDb.SportType.Should().Be(SportType.Football);
 
-        var termins = Database.DbContext.Set<Termin>().Where(x => x.EventId == eventCreatedId);
-        termins.Count().Should().Be(15);
-        termins.All(x => x.Status == TerminStatus.Pending).Should().BeTrue();
+        var matches = Database.DbContext.Set<Match>().Where(x => x.EventId == eventCreatedId);
+        matches.Count().Should().Be(15);
+        matches.All(x => x.Status == MatchStatus.Pending).Should().BeTrue();
 
-        var players = Database.DbContext.Set<Player>().Where(x => termins.Select(t => t.Id).Contains(x.TerminId));
+        var players = Database.DbContext.Set<Player>().Where(x => matches.Select(t => t.Id).Contains(x.MatchId));
         players.Count().Should().Be(30);
         players.Where(x => x.UserId == member.Id).Count().Should().Be(15);
         players.All(p => p.Attending == null).Should().BeTrue();
@@ -122,7 +122,7 @@ public class CreateEventTests : IntegrationTest
         result.ShouldHaveError("The time for today is invalid.");
 
         Database.DbContext.Set<Event>().Should().BeEmpty();
-        Database.DbContext.Set<Termin>().Should().BeEmpty();
+        Database.DbContext.Set<Match>().Should().BeEmpty();
     }
 
     [Fact]
@@ -168,7 +168,7 @@ public class CreateEventTests : IntegrationTest
         result.ShouldHaveError("StartDate should not be in past.");
 
         Database.DbContext.Set<Event>().Should().BeEmpty();
-        Database.DbContext.Set<Termin>().Should().BeEmpty();
+        Database.DbContext.Set<Match>().Should().BeEmpty();
     }
 
     [Fact]
@@ -214,7 +214,7 @@ public class CreateEventTests : IntegrationTest
         result.ShouldHaveError("StartTime needs to be earlier than EndTime.");
 
         Database.DbContext.Set<Event>().Should().BeEmpty();
-        Database.DbContext.Set<Termin>().Should().BeEmpty();
+        Database.DbContext.Set<Match>().Should().BeEmpty();
     }
 
     [Fact]
@@ -260,6 +260,6 @@ public class CreateEventTests : IntegrationTest
         result.ShouldHaveError("StartDate should be on the same day as 'DayOfWeek' input.");
 
         Database.DbContext.Set<Event>().Should().BeEmpty();
-        Database.DbContext.Set<Termin>().Should().BeEmpty();
+        Database.DbContext.Set<Match>().Should().BeEmpty();
     }
 }

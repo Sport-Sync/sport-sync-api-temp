@@ -17,9 +17,9 @@ internal class PlayerConfiguration : IEntityTypeConfiguration<Player>
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne<Termin>()
+        builder.HasOne<Match>()
             .WithMany(x => x.Players)
-            .HasForeignKey(player => player.TerminId)
+            .HasForeignKey(player => player.MatchId)
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
 

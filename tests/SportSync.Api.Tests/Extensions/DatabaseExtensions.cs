@@ -73,43 +73,43 @@ public static class DatabaseExtensions
         return ev;
     }
 
-    public static Termin AddTermin(
+    public static Match AddMatch(
         this Database database,
         User user,
         string eventName = "event",
         SportType sportType = SportType.Football,
         EventSchedule schedule = null,
         DateTime startDate = default,
-        TerminStatus status = TerminStatus.Pending)
+        MatchStatus status = MatchStatus.Pending)
     {
         var tomorrow = DateTime.Today.AddDays(1);
         schedule ??= EventSchedule.Create(DayOfWeek.Wednesday, tomorrow, tomorrow.AddHours(10), tomorrow.AddHours(11), false);
 
         var ev = Event.Create(user, eventName, sportType, "address", 2, 10, null);
-        var termin = Termin.Create(ev, startDate, schedule);
-        termin.Status = status;
+        var match = Match.Create(ev, startDate, schedule);
+        match.Status = status;
 
         database.DbContext.Set<EventSchedule>().Add(schedule);
         database.DbContext.Set<Event>().Add(ev);
-        database.DbContext.Set<Termin>().Add(termin);
+        database.DbContext.Set<Match>().Add(match);
 
-        var player = Player.Create(user.Id, termin.Id);
+        var player = Player.Create(user.Id, match.Id);
 
         database.DbContext.Set<Player>().Add(player);
 
-        return termin;
+        return match;
     }
 
-    public static TerminApplication AddTerminApplication(
+    public static MatchApplication AddMatchApplication(
         this Database database,
         User user,
-        Termin termin)
+        Match match)
     {
-        var terminApplication = TerminApplication.Create(user, termin);
+        var matchApplication = MatchApplication.Create(user, match);
 
-        database.DbContext.Set<TerminApplication>().Add(terminApplication);
+        database.DbContext.Set<MatchApplication>().Add(matchApplication);
 
-        return terminApplication;
+        return matchApplication;
     }
 
     public static Notification AddNotification(
