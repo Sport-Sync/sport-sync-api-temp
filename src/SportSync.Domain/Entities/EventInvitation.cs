@@ -5,7 +5,7 @@ using SportSync.Domain.Core.Utility;
 
 namespace SportSync.Domain.Entities;
 
-public class EventInvitation : AggregateRoot
+public class EventInvitation : Entity
 {
     private EventInvitation(User byUser, User toUser, Event @event)
         : base(Guid.NewGuid())

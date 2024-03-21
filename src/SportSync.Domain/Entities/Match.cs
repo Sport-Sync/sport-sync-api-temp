@@ -161,15 +161,27 @@ public class Match : AggregateRoot
             throw new DomainException(DomainErrors.Match.AlreadyFinished);
         }
 
-        if (Date < DateTime.Today)
+        if (HasPassed())
         {
             throw new DomainException(DomainErrors.Match.AlreadyFinished);
+        }
+    }
+
+    public bool HasPassed(DateTime? dateTime = null)
+    {
+        var date = dateTime ?? DateTime.UtcNow;
+
+        if (Date < date.Date)
+        {
+            return true;
         }
 
-        if (Date == DateTime.Today && StartTime.TimeOfDay <= DateTime.UtcNow.TimeOfDay)
+        if (Date == date.Date && StartTime.TimeOfDay <= date.TimeOfDay)
         {
-            throw new DomainException(DomainErrors.Match.AlreadyFinished);
+            return true;
         }
+
+        return false;
     }
 
     public Result<MatchApplication> ApplyForPlaying(User user)

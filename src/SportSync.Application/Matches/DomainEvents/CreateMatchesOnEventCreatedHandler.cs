@@ -5,14 +5,14 @@ using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 
-namespace SportSync.Application.Events.DomainEvents;
+namespace SportSync.Application.Matches.DomainEvents;
 
-internal sealed class EventCreatedDomainEventHandler : IDomainEventHandler<EventCreatedDomainEvent>
+internal sealed class CreateMatchesOnEventCreatedHandler : IDomainEventHandler<EventCreatedDomainEvent>
 {
     private readonly EventSettings _eventSettings;
     private readonly IMatchRepository _matchRepository;
 
-    public EventCreatedDomainEventHandler(IOptions<EventSettings> eventSettings, IMatchRepository matchRepository)
+    public CreateMatchesOnEventCreatedHandler(IOptions<EventSettings> eventSettings, IMatchRepository matchRepository)
     {
         _eventSettings = eventSettings.Value;
         _matchRepository = matchRepository;

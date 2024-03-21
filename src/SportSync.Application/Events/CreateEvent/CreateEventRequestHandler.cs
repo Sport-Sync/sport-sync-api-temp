@@ -42,7 +42,7 @@ public class CreateEventRequestHandler : IRequestHandler<CreateEventInput, Guid>
         var user = maybeUser.Value;
 
         var @event = user.CreateEvent(
-            input.Name, input.SportType, input.Address, input.Price, input.NumberOfPlayers, input.Notes);
+            input.Name, input.SportType, input.Address, input.Price, input.NumberOfPlayers, input.Notes, input.MemberIds.ToArray());
 
         var eventSchedules = input.EventTime.Select(time => EventSchedule.Create(
             time.DayOfWeek,

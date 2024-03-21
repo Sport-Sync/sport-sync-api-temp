@@ -5,16 +5,16 @@ using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Repositories;
 
-namespace SportSync.Application.Matches.AcceptMatchApplication;
+namespace SportSync.Application.Matches.DomainEvents;
 
-public class AddPlayerOnMatchApplicationAcceptedDomainEventHandler : IDomainEventHandler<MatchApplicationAcceptedDomainEvent>
+public class AddPlayerOnMatchApplicationAcceptedHandler : IDomainEventHandler<MatchApplicationAcceptedDomainEvent>
 {
     private readonly IMatchRepository _matchRepository;
-    private readonly ILogger<AddPlayerOnMatchApplicationAcceptedDomainEventHandler> _logger;
+    private readonly ILogger<AddPlayerOnMatchApplicationAcceptedHandler> _logger;
 
-    public AddPlayerOnMatchApplicationAcceptedDomainEventHandler(
+    public AddPlayerOnMatchApplicationAcceptedHandler(
         IMatchRepository matchRepository,
-        ILogger<AddPlayerOnMatchApplicationAcceptedDomainEventHandler> logger)
+        ILogger<AddPlayerOnMatchApplicationAcceptedHandler> logger)
     {
         _matchRepository = matchRepository;
         _logger = logger;

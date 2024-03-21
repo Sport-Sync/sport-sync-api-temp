@@ -22,4 +22,8 @@
 		<Using Include="SportSync.Application.Core.Abstractions.Common" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Events\DomainEvents\" />
+	</ItemGroup>
+
 </Project>
