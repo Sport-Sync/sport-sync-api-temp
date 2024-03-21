@@ -14,12 +14,12 @@ public class Event : AggregateRoot
     private readonly HashSet<EventSchedule> _schedules = new();
     private readonly HashSet<EventInvitation> _invitations = new();
 
-    private Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
+    private Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes, params Guid[] memberIds)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(creator, "The creator is required.", nameof(creator));
         Ensure.NotEmpty(creator.Id, "The creator identifier is required.", $"{nameof(creator)}{nameof(creator.Id)}");
-        Ensure.NotEmpty(address, "The address is required.", $"{nameof(address)}");
+        Ensure.NotEmpty(name, "The name is required.", $"{nameof(name)}");
         Ensure.NotEmpty(address, "The address is required.", $"{nameof(address)}");
 
         Name = name;
@@ -30,6 +30,11 @@ public class Event : AggregateRoot
         Notes = notes;
 
         _members.Add(EventMember.Create(creator.Id, Id, true));
+
+        foreach (var memberId in memberIds)
+        {
+            AddMember(memberId);
+        }
     }
 
     private Event()
@@ -51,24 +56,82 @@ public class Event : AggregateRoot
     public List<Guid> MemberUserIds => _members.Select(m => m.UserId).ToList();
 
     public static Event Create(
-        User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes)
+        User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes, params Guid[] memberIds)
     {
-        var @event = new Event(creator, name, sportType, address, price, numberOfPlayers, notes);
+        var @event = new Event(creator, name, sportType, address, price, numberOfPlayers, notes, memberIds);
 
         @event.RaiseDomainEvent(new EventCreatedDomainEvent(@event));
 
         return @event;
     }
 
+    public Result AcceptInvitation(Guid invitationId, User user, DateTime utcNow)
+    {
+        var invitation = _invitations.FirstOrDefault(i => i.Id == invitationId);
+
+        if (invitation == null)
+        {
+            return Result.Failure(DomainErrors.EventInvitation.NotFound);
+        }
+
+        if (invitation.SentToUserId != user.Id)
+        {
+            return Result.Failure(DomainErrors.User.Forbidden);
+        }
+
+        var result = invitation.Accept(utcNow);
+
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        AddMembers(user.Id);
+
+        RaiseDomainEvent(new EventInvitationAcceptedDomainEvent(invitation, user, this));
+
+        return Result.Success();
+    }
+
+    public Result RejectInvitation(Guid invitationId, User user, DateTime utcNow)
+    {
+        var invitation = _invitations.FirstOrDefault(i => i.Id == invitationId);
+
+        if (invitation == null)
+        {
+            return Result.Failure(DomainErrors.EventInvitation.NotFound);
+        }
+
+        if (invitation.SentToUserId != user.Id)
+        {
+            return Result.Failure(DomainErrors.User.Forbidden);
+        }
+
+        var result = invitation.Reject(utcNow);
+
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        RaiseDomainEvent(new EventInvitationRejectedDomainEvent(invitation, user, this));
+
+        return Result.Success();
+    }
+
     public void AddMembers(params Guid[] userIds)
     {
+        if (!userIds.Any())
+        {
+            return;
+        }
+
         foreach (Guid userId in userIds)
         {
-            if (!IsMember(userId))
-            {
-                _members.Add(EventMember.Create(userId, Id));
-            }
+            AddMember(userId);
         }
+
+        RaiseDomainEvent(new EventMembersAddedDomainEvent(this, userIds.ToList()));
     }
 
     public async Task<Result<EventInvitation>> InviteUser(User invitationSender, User invitationReceiver, IEventRepository eventRepository)
@@ -132,5 +195,13 @@ public class Event : AggregateRoot
     public bool IsAdmin(Guid userId)
     {
         return _members.Any(x => x.UserId == userId && x.IsAdmin);
+    }
+
+    private void AddMember(Guid userId)
+    {
+        if (!IsMember(userId))
+        {
+            _members.Add(EventMember.Create(userId, Id));
+        }
     }
 }

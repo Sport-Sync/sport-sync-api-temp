@@ -47,13 +47,8 @@ public class EventInvitation : Entity
         return new EventInvitation(byUser, toUser, @event);
     }
 
-    public Result Accept(User user, DateTime utcNow)
+    public Result Accept(DateTime utcNow)
     {
-        if (SentToUserId != user.Id)
-        {
-            return Result.Failure(DomainErrors.User.Forbidden);
-        }
-
         if (Accepted)
         {
             return Result.Failure(DomainErrors.EventInvitation.AlreadyAccepted);
@@ -67,18 +62,11 @@ public class EventInvitation : Entity
         Accepted = true;
         CompletedOnUtc = utcNow;
 
-        //RaiseDomainEvent(new MatchApplicationAcceptedDomainEvent(this));
-
         return Result.Success();
     }
 
-    public Result Reject(User user, DateTime utcNow)
+    public Result Reject(DateTime utcNow)
     {
-        if (SentToUserId != user.Id)
-        {
-            return Result.Failure(DomainErrors.User.Forbidden);
-        }
-
         if (Accepted)
         {
             return Result.Failure(DomainErrors.EventInvitation.AlreadyAccepted);

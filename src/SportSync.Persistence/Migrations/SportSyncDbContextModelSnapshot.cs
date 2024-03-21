@@ -437,6 +437,9 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOnUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("EntitySourceId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("datetime2");
 

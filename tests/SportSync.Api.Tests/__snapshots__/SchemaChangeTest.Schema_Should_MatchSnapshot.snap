@@ -63,19 +63,21 @@ type MatchType {
 type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
-  deleteNotification(input: DeleteNotificationInput): Result @authorize
-  completeNotification(input: CompleteNotificationInput): Result @authorize
+  deleteNotification(input: NotificationInput): Result @authorize
+  completeNotification(input: NotificationInput): Result @authorize
   setMatchAttendance(input: SetMatchAttendanceInput): SetMatchAttendanceResponse @authorize
   announceMatch(input: AnnounceMatchInput): MatchType @authorize
   sendMatchApplication(input: SendMatchApplicationInput): Result @authorize
-  acceptMatchApplication(input: AcceptMatchApplicationInput): Result @authorize
-  rejectMatchApplication(input: RejectMatchApplicationInput): Result @authorize
+  acceptMatchApplication(input: MatchApplicationInput): Result @authorize
+  rejectMatchApplication(input: MatchApplicationInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
   sendEventInvitation(input: SendEventInvitationInput): Result @authorize
+  acceptEventInvitation(input: EventInvitationInput): Result @authorize
+  rejectEventInvitation(input: EventInvitationInput): Result @authorize
   sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
-  acceptFriendshipRequest(input: AcceptFriendshipRequestInput): Result @authorize
-  rejectFriendshipRequest(input: RejectFriendshipRequestInput): Result @authorize
-  cancelFriendshipRequest(input: CancelFriendshipRequestInput): Result @authorize
+  acceptFriendshipRequest(input: FriendshipRequestInput): Result @authorize
+  rejectFriendshipRequest(input: FriendshipRequestInput): Result @authorize
+  cancelFriendshipRequest(input: FriendshipRequestInput): Result @authorize
   removeFriendship(input: RemoveFriendshipInput): Result @authorize
 }
 
@@ -152,25 +154,9 @@ type UserType {
   phone: String
 }
 
-input AcceptFriendshipRequestInput {
-  friendshipRequestId: UUID!
-}
-
-input AcceptMatchApplicationInput {
-  matchApplicationId: UUID!
-}
-
 input AnnounceMatchInput {
   matchId: UUID!
   publicAnnouncement: Boolean!
-}
-
-input CancelFriendshipRequestInput {
-  friendshipRequestId: UUID!
-}
-
-input CompleteNotificationInput {
-  notificationId: UUID!
 }
 
 input CreateEventInput {
@@ -192,8 +178,12 @@ input CreateUserInput {
   password: String!
 }
 
-input DeleteNotificationInput {
-  notificationId: UUID!
+input EventInvitationInput {
+  eventInvitationId: UUID!
+}
+
+input FriendshipRequestInput {
+  friendshipRequestId: UUID!
 }
 
 input GetAnnouncedMatchesInput {
@@ -229,12 +219,12 @@ input LoginInput {
   password: String!
 }
 
-input RejectFriendshipRequestInput {
-  friendshipRequestId: UUID!
+input MatchApplicationInput {
+  matchApplicationId: UUID!
 }
 
-input RejectMatchApplicationInput {
-  matchApplicationId: UUID!
+input NotificationInput {
+  notificationId: UUID!
 }
 
 input RemoveFriendshipInput {
@@ -292,7 +282,10 @@ enum MatchStatus {
 enum NotificationTypeEnum {
   FRIENDSHIP_REQUEST_RECEIVED
   MATCH_APPLICATION_RECEIVED
-  EVENT_INVITATION_SENT
+  EVENT_INVITATION_RECEIVED
+  EVENT_INVITATION_ACCEPTED
+  EVENT_INVITATION_REJECTED
+  MEMBER_JOINED_EVENT
 }
 
 enum SportType {

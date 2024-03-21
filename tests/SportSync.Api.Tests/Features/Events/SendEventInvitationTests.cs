@@ -23,7 +23,6 @@ public class SendEventInvitationTests : IntegrationTest
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(sender.Id);
 
-
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
@@ -53,7 +52,6 @@ public class SendEventInvitationTests : IntegrationTest
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
 
-
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
@@ -81,7 +79,6 @@ public class SendEventInvitationTests : IntegrationTest
         await Database.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
-
 
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
@@ -130,7 +127,6 @@ public class SendEventInvitationTests : IntegrationTest
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
 
-
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
@@ -158,7 +154,7 @@ public class SendEventInvitationTests : IntegrationTest
         notification.Completed.Should().BeFalse();
         notification.CompletedOnUtc.Should().BeNull();
         notification.ResourceId.Should().Be(@event.Id);
-        notification.Type.Should().Be(NotificationTypeEnum.EventInvitationSent);
+        notification.Type.Should().Be(NotificationTypeEnum.EventInvitationReceived);
         notification.ContentData.Data.Should().BeEquivalentTo(admin.FullName, @event.Name);
     }
 }

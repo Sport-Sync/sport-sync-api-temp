@@ -20,7 +20,18 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
         return Maybe<Event>.From(await DbContext.Set<Event>()
             .Include(e => e.Members)
             .Include(t => t.Schedules)
+            .Include(e => e.Invitations)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
+    }
+
+    public async Task<Maybe<Event>> GetByEventInvitationIdAsync(Guid eventInvitationId, CancellationToken cancellationToken)
+    {
+        return Maybe<Event>.From(await DbContext.Set<Event>()
+            .Include(e => e.Members)
+            .Include(t => t.Schedules)
+            .Include(e => e.Invitations)
+            .Where(x => x.Invitations.Any(i => i.Id == eventInvitationId))
+            .FirstOrDefaultAsync(cancellationToken));
     }
 
     public async Task<List<EventInvitation>> GetPendingInvitations(Guid eventId, CancellationToken cancellationToken)

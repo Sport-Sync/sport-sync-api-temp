@@ -18,7 +18,7 @@ public class CompleteNotificationOnFriendshipRequestRejectedHandler : IDomainEve
 
     public async Task Handle(FriendshipRequestRejectedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        var notification = (await _notificationRepository.GetByResourceIdAndType(
+        var notification = (await _notificationRepository.GetForEntitySource(
             domainEvent.FriendshipRequest.Id,
             NotificationTypeEnum.FriendshipRequestReceived,
             cancellationToken)).SingleOrDefault();

@@ -1,12 +1,13 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
+using SportSync.Application.Notifications.Common;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Notifications.CompleteNotification;
 
-public class CompleteNotificationRequestHandler : IRequestHandler<CompleteNotificationInput, Result>
+public class CompleteNotificationRequestHandler : IRequestHandler<NotificationInput, Result>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
@@ -25,7 +26,7 @@ public class CompleteNotificationRequestHandler : IRequestHandler<CompleteNotifi
         _dateTime = dateTime;
     }
 
-    public async Task<Result> Handle(CompleteNotificationInput request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(NotificationInput request, CancellationToken cancellationToken)
     {
         var maybeNotification = await _notificationRepository.GetByIdAsync(request.NotificationId, cancellationToken);
 

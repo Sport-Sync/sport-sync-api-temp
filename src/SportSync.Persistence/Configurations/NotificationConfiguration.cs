@@ -29,6 +29,8 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
 
         builder.Property(notification => notification.ResourceId);
 
+        builder.Property(notification => notification.EntitySourceId);
+
         builder.Property(notification => notification.CompletedOnUtc);
 
         builder.Property(notification => notification.CreatedOnUtc).IsRequired();

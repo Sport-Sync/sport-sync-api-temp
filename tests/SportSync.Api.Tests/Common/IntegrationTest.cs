@@ -69,8 +69,8 @@ public class IntegrationTest : IDisposable
                             sp.GetRequiredService<IRequestExecutorResolver>(),
                             Schema.DefaultName))
                 .AddLogging()
-                .AddScoped(_ => Database.UnitOfWork)
-                .AddScoped(_ => Database.DbContext)
+                .AddSingleton(_ => Database.UnitOfWork)
+                .AddSingleton(_ => Database.DbContext)
                 .Configure<JwtSettings>(x =>
                     {
                         x.SecurityKey = "12343tr34tt34t35t53";

@@ -1,6 +1,7 @@
 ﻿using HotChocolate.Authorization;
 using SportSync.Application.FriendshipRequests.AcceptFriendshipRequest;
 using SportSync.Application.FriendshipRequests.CancelFriendshipRequest;
+using SportSync.Application.FriendshipRequests.Common;
 using SportSync.Application.FriendshipRequests.RejectFriendshipRequest;
 using SportSync.Application.FriendshipRequests.SendFriendshipRequest;
 using SportSync.Application.Users.RemoveFriendship;
@@ -20,19 +21,19 @@ public class FriendshipMutation
     [Authorize]
     public async Task<Result> AcceptFriendshipRequest(
         [Service] AcceptFriendshipRequestHandler requestHandler,
-        AcceptFriendshipRequestInput input,
+        FriendshipRequestInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
     public async Task<Result> RejectFriendshipRequest(
         [Service] RejectFriendshipRequestHandler requestHandler,
-        RejectFriendshipRequestInput input,
+        FriendshipRequestInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
     public async Task<Result> CancelFriendshipRequest(
         [Service] CancelFriendshipRequestHandler requestHandler,
-        CancelFriendshipRequestInput input,
+        FriendshipRequestInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
 

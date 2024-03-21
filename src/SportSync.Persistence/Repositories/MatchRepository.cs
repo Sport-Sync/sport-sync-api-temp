@@ -22,6 +22,13 @@ public class MatchRepository : QueryableGenericRepository<Match, MatchType>, IMa
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 
+    public async Task<List<Match>> GetByEventId(Guid eventId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<Match>()
+            .Where(m => m.EventId == eventId)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<Player>> GetPlayers(Guid id, CancellationToken cancellationToken)
     {
         return await DbContext.Set<Player>()

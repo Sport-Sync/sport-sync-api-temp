@@ -165,7 +165,9 @@ public class AcceptFriendshipRequestTests : IntegrationTest
         var friend = Database.AddUser("Friend", "Friendman");
         var friendshipRequest = Database.AddFriendshipRequest(user, friend);
         friendshipRequest.CompletedOnUtc.Should().BeNull();
-        var notification = Database.AddNotification(user.Id, NotificationTypeEnum.FriendshipRequestReceived, friendshipRequest.Id);
+        var notification = Database
+            .AddNotification(user.Id, NotificationTypeEnum.FriendshipRequestReceived, friendshipRequest.Id).
+            WithEntitySource(friendshipRequest.Id);
 
         await Database.SaveChangesAsync();
 

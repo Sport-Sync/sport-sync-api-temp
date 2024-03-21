@@ -20,11 +20,13 @@ public class CreateNotificationOnFriendshipRequestSentHandler : IDomainEventHand
     {
         var friendshipRequest = domainEvent.FriendshipRequest;
 
-        var notification = Notification.Create(
-            friendshipRequest.FriendId,
-            NotificationTypeEnum.FriendshipRequestReceived,
-            NotificationContentData.Create(friendshipRequest.User.FullName),
-            friendshipRequest.UserId);
+        var notification =
+            Notification.Create(
+                friendshipRequest.FriendId,
+                NotificationTypeEnum.FriendshipRequestReceived,
+                NotificationContentData.Create(friendshipRequest.User.FullName),
+                friendshipRequest.UserId)
+            .WithEntitySource(friendshipRequest.Id);
 
         _notificationRepository.Insert(notification);
 
