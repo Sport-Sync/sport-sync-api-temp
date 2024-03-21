@@ -87,6 +87,10 @@ public static class DomainErrors
 
     public static class EventInvitation
     {
+        public static Error NotFound => new Error(
+            "EventInvitation.NotFound",
+            "The event invitation with the specified identifier was not found.");
+
         public static Error AlreadyAccepted => new Error(
             "EventInvitation.AlreadyAccepted",
             "The invitation has already been accepted.");

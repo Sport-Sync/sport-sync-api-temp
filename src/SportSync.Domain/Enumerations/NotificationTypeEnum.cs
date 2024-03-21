@@ -4,5 +4,8 @@ public enum NotificationTypeEnum
 {
     FriendshipRequestReceived,
     MatchApplicationReceived,
-    EventInvitationSent
+    EventInvitationReceived,
+    EventInvitationAccepted,
+    EventInvitationRejected,
+    MemberJoinedEvent,
 }

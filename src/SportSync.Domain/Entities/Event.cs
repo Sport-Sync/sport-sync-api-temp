@@ -48,6 +48,7 @@ public class Event : AggregateRoot
     public IReadOnlyCollection<EventSchedule> Schedules => _schedules.ToList();
     public IReadOnlyCollection<EventInvitation> Invitations => _invitations.ToList();
     public IReadOnlyCollection<EventMember> Members => _members.ToList();
+    public IReadOnlyCollection<EventMember> Admins => _members.Where(m => m.IsAdmin).ToList();
     public List<Guid> MemberUserIds => _members.Select(m => m.UserId).ToList();
 
     public static Event Create(
@@ -58,6 +59,60 @@ public class Event : AggregateRoot
         @event.RaiseDomainEvent(new EventCreatedDomainEvent(@event));
 
         return @event;
+    }
+
+    public Result AcceptInvitation(Guid invitationId, User user, DateTime utcNow)
+    {
+        var invitation = _invitations.FirstOrDefault(i => i.Id == invitationId);
+
+        if (invitation == null)
+        {
+            return Result.Failure(DomainErrors.EventInvitation.NotFound);
+        }
+
+        if (invitation.SentToUserId != user.Id)
+        {
+            return Result.Failure(DomainErrors.User.Forbidden);
+        }
+
+        var result = invitation.Accept(utcNow);
+
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        AddMembers(user.Id);
+
+        RaiseDomainEvent(new EventInvitationAcceptedDomainEvent(invitation, user, this));
+
+        return Result.Success();
+    }
+
+    public Result RejectInvitation(Guid invitationId, User user, DateTime utcNow)
+    {
+        var invitation = _invitations.FirstOrDefault(i => i.Id == invitationId);
+
+        if (invitation == null)
+        {
+            return Result.Failure(DomainErrors.EventInvitation.NotFound);
+        }
+
+        if (invitation.SentToUserId != user.Id)
+        {
+            return Result.Failure(DomainErrors.User.Forbidden);
+        }
+
+        var result = invitation.Reject(utcNow);
+
+        if (result.IsFailure)
+        {
+            return result;
+        }
+
+        RaiseDomainEvent(new EventInvitationRejectedDomainEvent(invitation, user, this));
+
+        return Result.Success();
     }
 
     public void AddMembers(params Guid[] userIds)

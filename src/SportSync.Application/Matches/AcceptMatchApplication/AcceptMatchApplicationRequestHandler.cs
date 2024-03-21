@@ -1,5 +1,6 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
+using SportSync.Application.Matches.Common;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Core.Primitives.Result;
@@ -8,7 +9,7 @@ using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Matches.AcceptMatchApplication;
 
-public class AcceptMatchApplicationRequestHandler : IRequestHandler<AcceptMatchApplicationInput, Result>
+public class AcceptMatchApplicationRequestHandler : IRequestHandler<MatchApplicationInput, Result>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IMatchApplicationRepository _matchApplicationRepository;
@@ -36,7 +37,7 @@ public class AcceptMatchApplicationRequestHandler : IRequestHandler<AcceptMatchA
         _dateTime = dateTime;
     }
 
-    public async Task<Result> Handle(AcceptMatchApplicationInput request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(MatchApplicationInput request, CancellationToken cancellationToken)
     {
         Maybe<User> maybeUser = await _userRepository.GetByIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 

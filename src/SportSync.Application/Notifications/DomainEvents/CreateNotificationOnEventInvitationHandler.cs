@@ -20,11 +20,13 @@ public class CreateNotificationOnEventInvitationHandler : IDomainEventHandler<Ev
     {
         var eventInvitation = domainEvent.EventInvitation;
 
-        var notification = Notification.Create(
-            eventInvitation.SentToUserId,
-            NotificationTypeEnum.EventInvitationSent,
-            NotificationContentData.Create(eventInvitation.SentByUser.FullName, domainEvent.Event.Name),
-            eventInvitation.EventId);
+        var notification = 
+            Notification.Create(
+                eventInvitation.SentToUserId,
+                NotificationTypeEnum.EventInvitationReceived,
+                NotificationContentData.Create(eventInvitation.SentByUser.FullName, domainEvent.Event.Name),
+                eventInvitation.EventId)
+            .WithEntitySource(eventInvitation.Id);
 
         _notificationRepository.Insert(notification);
 

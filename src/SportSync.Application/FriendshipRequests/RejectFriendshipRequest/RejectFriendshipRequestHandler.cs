@@ -1,5 +1,6 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
+using SportSync.Application.FriendshipRequests.Common;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Core.Primitives.Result;
@@ -8,7 +9,7 @@ using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.FriendshipRequests.RejectFriendshipRequest;
 
-public class RejectFriendshipRequestHandler : IRequestHandler<RejectFriendshipRequestInput, Result>
+public class RejectFriendshipRequestHandler : IRequestHandler<FriendshipRequestInput, Result>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
@@ -27,7 +28,7 @@ public class RejectFriendshipRequestHandler : IRequestHandler<RejectFriendshipRe
         _dateTime = dateTime;
     }
 
-    public async Task<Result> Handle(RejectFriendshipRequestInput request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(FriendshipRequestInput request, CancellationToken cancellationToken)
     {
         Maybe<FriendshipRequest> maybeFriendshipRequest = await _friendshipRequestRepository.GetByIdAsync(request.FriendshipRequestId, cancellationToken);
 

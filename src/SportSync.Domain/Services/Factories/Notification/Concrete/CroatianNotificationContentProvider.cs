@@ -13,7 +13,11 @@ public class CroatianNotificationContentProvider : INotificationContentProvider
         {
             NotificationTypeEnum.FriendshipRequestReceived => $"{contentData[0]} vam je poslao zahtjev za prijateljstvom",
             NotificationTypeEnum.MatchApplicationReceived => $"{contentData[0]} se želi pridružiti na vašu utakmicu '{contentData[1]}' dana {contentData[2]}",
-            NotificationTypeEnum.EventInvitationSent => $"{contentData[0]} vam je poslao zahtjev da se pridružite na termin '{contentData[1]}'",
+            NotificationTypeEnum.EventInvitationReceived => $"{contentData[0]} vam je poslao zahtjev da se pridružite na termin '{contentData[1]}'",
+            NotificationTypeEnum.EventInvitationAccepted => $"{contentData[0]} je prihvatio vaš poziv na termin '{contentData[1]}'",
+            NotificationTypeEnum.MemberJoinedEvent => $"{contentData[0]} je upravo postao novi član vašeg termina '{contentData[1]}'",
+            NotificationTypeEnum.EventInvitationRejected => $"{contentData[0]} je odbio vaš poziv za pridruživanje na termin '{contentData[1]}'",
+
             _ => throw new DomainException(DomainErrors.Notification.ContentNotImplemented)
         };
     }

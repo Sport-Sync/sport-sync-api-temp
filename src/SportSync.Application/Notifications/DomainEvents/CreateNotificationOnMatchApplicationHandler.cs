@@ -27,11 +27,13 @@ public class CreateNotificationOnMatchApplicationHandler : IDomainEventHandler<M
         var notifications = new List<Notification>();
         foreach (var admin in admins)
         {
-            var notification = Notification.Create(
-                admin.UserId, 
-                NotificationTypeEnum.MatchApplicationReceived,
-                NotificationContentData.Create(matchApplication.AppliedByUser.FullName, match.EventName, match.Date.ToShortDateString()),
-                matchApplication.MatchId);
+            var notification =
+                Notification.Create(
+                    admin.UserId,
+                    NotificationTypeEnum.MatchApplicationReceived,
+                    NotificationContentData.Create(matchApplication.AppliedByUser.FullName, match.EventName, match.Date.ToShortDateString()),
+                    matchApplication.MatchId)
+                .WithEntitySource(matchApplication.Id);
 
             notifications.Add(notification);
         }

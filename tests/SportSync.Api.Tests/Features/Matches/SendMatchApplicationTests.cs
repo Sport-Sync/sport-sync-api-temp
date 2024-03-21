@@ -24,7 +24,6 @@ public class SendMatchApplicationTests : IntegrationTest
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(player.Id);
 
-
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
@@ -52,7 +51,6 @@ public class SendMatchApplicationTests : IntegrationTest
         await Database.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(player.Id);
-
 
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
@@ -83,7 +81,6 @@ public class SendMatchApplicationTests : IntegrationTest
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(player.Id);
 
-
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
@@ -112,7 +109,6 @@ public class SendMatchApplicationTests : IntegrationTest
         await Database.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(applicant.Id);
-
 
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
@@ -146,7 +142,6 @@ public class SendMatchApplicationTests : IntegrationTest
         await Database.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(applicant.Id);
-
 
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"

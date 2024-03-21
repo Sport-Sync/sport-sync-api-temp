@@ -24,6 +24,7 @@ public class Notification : AggregateRoot
 
     public Guid UserId { get; set; }
     public Guid? ResourceId { get; set; }
+    public Guid? EntitySourceId { get; set; }
     public NotificationTypeEnum Type { get; set; }
     public DateTime? CompletedOnUtc { get; private set; }
     public NotificationContentData ContentData { get; set; }
@@ -33,6 +34,12 @@ public class Notification : AggregateRoot
     public static Notification Create(Guid userId, NotificationTypeEnum type, NotificationContentData details, Guid? resourceId = null)
     {
         return new Notification(userId, type, details, resourceId);
+    }
+
+    public Notification WithEntitySource(Guid entitySourceId)
+    {
+        EntitySourceId = entitySourceId;
+        return this;
     }
 
     public void Complete(DateTime utcNow)

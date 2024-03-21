@@ -5,22 +5,22 @@ using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Notifications.DomainEvents;
 
-public class CompleteNotificationOnFriendshipRequestRejectedHandler : IDomainEventHandler<FriendshipRequestRejectedDomainEvent>
+public class CompleteNotificationOnEventInvitationRejectedHandler : IDomainEventHandler<EventInvitationRejectedDomainEvent>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly IDateTime _dateTime;
 
-    public CompleteNotificationOnFriendshipRequestRejectedHandler(INotificationRepository notificationRepository, IDateTime dateTime)
+    public CompleteNotificationOnEventInvitationRejectedHandler(INotificationRepository notificationRepository, IDateTime dateTime)
     {
         _notificationRepository = notificationRepository;
         _dateTime = dateTime;
     }
 
-    public async Task Handle(FriendshipRequestRejectedDomainEvent domainEvent, CancellationToken cancellationToken)
+    public async Task Handle(EventInvitationRejectedDomainEvent domainEvent, CancellationToken cancellationToken)
     {
         var notification = (await _notificationRepository.GetForEntitySource(
-            domainEvent.FriendshipRequest.Id,
-            NotificationTypeEnum.FriendshipRequestReceived,
+            domainEvent.Invitation.Id,
+            NotificationTypeEnum.EventInvitationReceived,
             cancellationToken)).SingleOrDefault();
 
         if (notification == null)

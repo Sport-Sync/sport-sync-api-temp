@@ -13,10 +13,17 @@ public class NotificationRepository : QueryableGenericRepository<Notification, N
     {
     }
 
-    public Task<List<Notification>> GetByResourceIdAndType(Guid resourceId, NotificationTypeEnum type, CancellationToken cancellationToken)
+    public Task<List<Notification>> GetForEntitySource(Guid entitySourceId, NotificationTypeEnum type, CancellationToken cancellationToken)
     {
         return DbContext.Set<Notification>()
-            .Where(x => x.ResourceId == resourceId && x.Type == type)
+            .Where(x => x.EntitySourceId == entitySourceId && x.Type == type)
+            .ToListAsync(cancellationToken);
+    }
+
+    public Task<List<Notification>> GetForEntitySource(Guid entitySourceId, NotificationTypeEnum type, Guid userId, CancellationToken cancellationToken)
+    {
+        return DbContext.Set<Notification>()
+            .Where(x => x.EntitySourceId == entitySourceId && x.Type == type && x.UserId == userId)
             .ToListAsync(cancellationToken);
     }
 }
