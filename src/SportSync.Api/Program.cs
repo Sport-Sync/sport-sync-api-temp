@@ -42,6 +42,7 @@ public class Program
                 errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
             }))
             .AddQueryType(q => q.Name("Query"))
+            .AddType<UploadType>()
             .AddType<UserQuery>()
             .AddType<NotificationQuery>()
             .AddType<MatchQuery>()

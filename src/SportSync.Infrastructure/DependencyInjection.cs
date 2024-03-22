@@ -9,6 +9,7 @@ using Quartz;
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Cryptography;
+using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Application.Core.Settings;
 using SportSync.Domain.Services;
 using SportSync.Infrastructure.Authentication;
@@ -16,6 +17,7 @@ using SportSync.Infrastructure.Authentication.Settings;
 using SportSync.Infrastructure.Common;
 using SportSync.Infrastructure.Cryptography;
 using SportSync.Infrastructure.Jobs.Setup;
+using SportSync.Infrastructure.Storage;
 
 namespace SportSync.Infrastructure;
 
@@ -71,6 +73,8 @@ public static class DependencyInjection
         services.AddTransient<IPasswordHasher, PasswordHasher>();
 
         services.AddTransient<IPasswordHashChecker, PasswordHasher>();
+
+        services.AddTransient<IBlobStorageService, BlobStorageService>();
 
         //services.AddTransient<IEmailService, EmailService>();
 
