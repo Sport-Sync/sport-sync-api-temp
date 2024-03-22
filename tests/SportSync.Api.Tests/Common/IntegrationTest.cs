@@ -3,6 +3,7 @@ using AppAny.HotChocolate.FluentValidation;
 using FluentValidation;
 using HotChocolate;
 using HotChocolate.Execution;
+using HotChocolate.Types;
 using HotChocolate.Types.Descriptors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,7 @@ public class IntegrationTest : IDisposable
             .AddProjections()
             .AddFiltering()
             .AddQueryType(q => q.Name("Query"))
+            .AddType<UploadType>()
             .AddType<UserQuery>()
             .AddType<NotificationQuery>()
             .AddType<MatchQuery>()

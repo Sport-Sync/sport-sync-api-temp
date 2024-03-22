@@ -1,9 +1,9 @@
 ﻿using AppAny.HotChocolate.FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+using HotChocolate.Authorization;
 using SportSync.Application.Authentication;
 using SportSync.Application.Authentication.Login;
-using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Application.Users.CreateUser;
+using SportSync.Application.Users.UploadProfileImage;
 using SportSync.Domain.Core.Primitives.Result;
 
 namespace sport_sync.GraphQL.Mutations;
@@ -21,19 +21,9 @@ public class UserMutation
         [UseFluentValidation] LoginInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
-    public async Task<Result> UploadUserProfileImageFile([FromServices] IBlobStorageService blobStorageService, IFile file)
-    {
-        var fileName = file.Name;
-        var fileSize = file.Length;
-
-        await blobStorageService.UploadFile(Guid.NewGuid().ToString(), file);
-
-        return Result.Success();
-    }
-
-    public class UploadInput
-    {
-        [GraphQLType(typeof(NonNullType<UploadType>))]
-        public IFile File { get; set; }
-    }
+    [Authorize]
+    public async Task<Result> UploadUserProfileImage(
+        [Service] UploadProfileImageRequestHandler requestHandler,
+        UploadProfileImageInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

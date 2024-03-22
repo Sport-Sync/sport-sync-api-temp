@@ -63,6 +63,7 @@ type MatchType {
 type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
+  uploadUserProfileImage(input: UploadProfileImageInput): Result @authorize
   deleteNotification(input: NotificationInput): Result @authorize
   completeNotification(input: NotificationInput): Result @authorize
   setMatchAttendance(input: SetMatchAttendanceInput): SetMatchAttendanceResponse @authorize
@@ -258,6 +259,10 @@ input TimeInput {
   repeatWeekly: Boolean!
 }
 
+input UploadProfileImageInput {
+  file: Upload!
+}
+
 enum ApplyPolicy {
   BEFORE_RESOLVER
   AFTER_RESOLVER
@@ -305,3 +310,6 @@ scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time"
 scalar Decimal
 
 scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

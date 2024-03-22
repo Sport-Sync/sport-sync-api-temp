@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Events\DomainEvents\**" />
+    <EmbeddedResource Remove="Events\DomainEvents\**" />
+    <None Remove="Events\DomainEvents\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.9.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
     <PackageReference Include="HotChocolate.Abstractions" Version="13.8.1" />
@@ -21,10 +27,6 @@
 
 	<ItemGroup>
 		<Using Include="SportSync.Application.Core.Abstractions.Common" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Events\DomainEvents\" />
 	</ItemGroup>
 
 </Project>

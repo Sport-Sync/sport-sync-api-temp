@@ -1,8 +1,9 @@
 ﻿using HotChocolate.Types;
+using SportSync.Domain.Core.Primitives.Result;
 
 namespace SportSync.Application.Core.Abstractions.Storage;
 
 public interface IBlobStorageService
 {
-    Task UploadFile(string fileName, IFile file);
+    Task<Result> UploadFile(string fileName, IFile file);
 }

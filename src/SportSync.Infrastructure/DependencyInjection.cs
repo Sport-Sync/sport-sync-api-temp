@@ -18,6 +18,7 @@ using SportSync.Infrastructure.Common;
 using SportSync.Infrastructure.Cryptography;
 using SportSync.Infrastructure.Jobs.Setup;
 using SportSync.Infrastructure.Storage;
+using SportSync.Infrastructure.Storage.Settings;
 
 namespace SportSync.Infrastructure;
 
@@ -45,6 +46,7 @@ public static class DependencyInjection
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SettingsKey));
         services.Configure<EventSettings>(configuration.GetSection(EventSettings.SettingsKey));
+        services.Configure<BlobStorageSettings>(configuration.GetSection(BlobStorageSettings.SettingsKey));
 
         services.RegisterInfrastructureServices();
 

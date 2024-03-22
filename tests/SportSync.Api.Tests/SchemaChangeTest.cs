@@ -1,4 +1,5 @@
 using HotChocolate.Execution;
+using HotChocolate.Types;
 using Microsoft.Extensions.DependencyInjection;
 using Snapshooter.Xunit;
 using sport_sync.GraphQL.Mutations;
@@ -17,6 +18,7 @@ public class SchemaChangeTest
             .AddFiltering()
             .AddAuthorization()
             .AddQueryType(q => q.Name("Query"))
+            .AddType<UploadType>()
             .AddType<UserQuery>()
             .AddType<NotificationQuery>()
             .AddType<MatchQuery>()
