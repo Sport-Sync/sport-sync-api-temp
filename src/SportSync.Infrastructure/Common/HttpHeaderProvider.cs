@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using SportSync.Application.Core.Abstractions.Common;
-using SportSync.Application.Core.Constants;
 using SportSync.Domain.Core.Primitives.Maybe;
 
 namespace SportSync.Infrastructure.Common;
@@ -28,6 +27,4 @@ public class HttpHeaderProvider : IHttpHeaderProvider
 
         return Maybe<string>.None;
     }
-
-    public Maybe<string> Language() => Get(HeaderKeys.Language);
 }

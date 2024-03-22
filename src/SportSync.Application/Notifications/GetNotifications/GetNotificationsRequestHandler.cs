@@ -34,10 +34,7 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
             .Take(request.Count)
             .ToListAsync(cancellationToken);
 
-        var maybeLanguage = _httpHeaderProvider.Language();
-        var language = maybeLanguage.HasValue ? maybeLanguage.Value : LocalizationConstants.Croatian;
-
-        var contentProvider = NotificationContentFactory.GetContentProvider(language);
+        var contentProvider = NotificationContentFactory.GetContentProvider(request.Language);
 
         foreach (var notification in notifications)
         {
