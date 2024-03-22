@@ -1,4 +1,5 @@
 ﻿using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using HotChocolate.Types;
 using Microsoft.Extensions.Logging;
@@ -21,19 +22,14 @@ public class BlobStorageService : IBlobStorageService
         _settings = settings.Value;
     }
 
-    public async Task<Result> UploadFile(string fileName, IFile file)
+    public async Task<Result> UploadFile(string fileName, IFile file, CancellationToken cancellationToken)
     {
-        var s3ClientConfig = new AmazonS3Config
-        {
-            ServiceURL = _settings.Url
-        };
-        var s3Client = new AmazonS3Client(_settings.AccessKey, _settings.SecretKey, s3ClientConfig);
-        var fileTransferUtility = new TransferUtility(s3Client);
-
         try
         {
+            var s3Client = GetS3Client();
+            var fileTransferUtility = new TransferUtility(s3Client);
             await using Stream stream = file.OpenReadStream();
-            await fileTransferUtility.UploadAsync(stream, _settings.BucketName, fileName);
+            await fileTransferUtility.UploadAsync(stream, _settings.BucketName, fileName, cancellationToken);
         }
         catch (Exception ex)
         {
@@ -42,5 +38,32 @@ public class BlobStorageService : IBlobStorageService
         }
 
         return Result.Success();
+    }
+
+    public async Task<string> GetDownloadUrl(string fileName)
+    {
+        try
+        {
+            var s3Client = GetS3Client();
+
+            return await s3Client.GetPreSignedURLAsync(new GetPreSignedUrlRequest()
+            {
+                BucketName = _settings.BucketName,
+                Key = fileName,
+                Expires = DateTime.UtcNow.AddDays(1)
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while trying to generate download link for file {fileName}", fileName);
+            return string.Empty;
+        }
+    }
+
+    private AmazonS3Client GetS3Client()
+    {
+        var s3ClientConfig = new AmazonS3Config { ServiceURL = _settings.Url };
+        var s3Client = new AmazonS3Client(_settings.AccessKey, _settings.SecretKey, s3ClientConfig);
+        return s3Client;
     }
 }

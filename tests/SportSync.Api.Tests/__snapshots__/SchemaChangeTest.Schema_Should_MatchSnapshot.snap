@@ -121,9 +121,14 @@ type PlayerType {
   isAttending: Boolean
 }
 
+type ProfileImageUrlResponse {
+  imageUrl: String!
+}
+
 type Query {
   me: UserType @authorize
   phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
+  userProfileImageUrl(input: ProfileImageUrlInput): ProfileImageUrlResponse @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   matches(date: DateTime!): [MatchType] @authorize
@@ -227,6 +232,10 @@ input MatchApplicationInput {
 
 input NotificationInput {
   notificationId: UUID!
+}
+
+input ProfileImageUrlInput {
+  userId: UUID!
 }
 
 input RemoveFriendshipInput {
