@@ -63,6 +63,7 @@ type MatchType {
 type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
+  uploadUserProfileImage(input: UploadProfileImageInput): Result @authorize
   deleteNotification(input: NotificationInput): Result @authorize
   completeNotification(input: NotificationInput): Result @authorize
   setMatchAttendance(input: SetMatchAttendanceInput): SetMatchAttendanceResponse @authorize
@@ -120,9 +121,14 @@ type PlayerType {
   isAttending: Boolean
 }
 
+type ProfileImageUrlResponse {
+  imageUrl: String!
+}
+
 type Query {
   me: UserType @authorize
   phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
+  userProfileImageUrl(input: ProfileImageUrlInput): ProfileImageUrlResponse @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   matches(date: DateTime!): [MatchType] @authorize
@@ -228,6 +234,10 @@ input NotificationInput {
   notificationId: UUID!
 }
 
+input ProfileImageUrlInput {
+  userId: UUID!
+}
+
 input RemoveFriendshipInput {
   friendId: UUID!
 }
@@ -256,6 +266,10 @@ input TimeInput {
   startTime: DateTime!
   endTime: DateTime!
   repeatWeekly: Boolean!
+}
+
+input UploadProfileImageInput {
+  file: Upload!
 }
 
 enum ApplyPolicy {
@@ -305,3 +319,6 @@ scalar DateTime @specifiedBy(url: "https:\/\/www.graphql-scalars.com\/date-time"
 scalar Decimal
 
 scalar UUID @specifiedBy(url: "https:\/\/tools.ietf.org\/html\/rfc4122")
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload
