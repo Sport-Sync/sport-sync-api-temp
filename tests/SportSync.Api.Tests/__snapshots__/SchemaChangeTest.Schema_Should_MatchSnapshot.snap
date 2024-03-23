@@ -123,7 +123,7 @@ type PlayerType {
 }
 
 type ProfileImageUrlResponse {
-  imageUrl: String!
+  imageUrl: String
 }
 
 type Query {
