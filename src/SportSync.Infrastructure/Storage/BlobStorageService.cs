@@ -60,6 +60,22 @@ public class BlobStorageService : IBlobStorageService
         }
     }
 
+    public async Task<Result> RemoveFile(string fileName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var s3Client = GetS3Client();
+            await s3Client.DeleteObjectAsync(_settings.BucketName, fileName, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while trying to delete file {fileName}", fileName);
+            return Result.Failure(DomainErrors.General.UnProcessableRequest);
+        }
+
+        return Result.Success();
+    }
+
     private AmazonS3Client GetS3Client()
     {
         var s3ClientConfig = new AmazonS3Config { ServiceURL = _settings.Url };
