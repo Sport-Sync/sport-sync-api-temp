@@ -3,6 +3,7 @@ using HotChocolate.Authorization;
 using SportSync.Application.Authentication;
 using SportSync.Application.Authentication.Login;
 using SportSync.Application.Users.CreateUser;
+using SportSync.Application.Users.RemoveProfileImage;
 using SportSync.Application.Users.UploadProfileImage;
 using SportSync.Domain.Core.Primitives.Result;
 
@@ -26,4 +27,9 @@ public class UserMutation
         [Service] UploadProfileImageRequestHandler requestHandler,
         UploadProfileImageInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
+
+    [Authorize]
+    public async Task<Result> RemoveUserProfileImage(
+        [Service] RemoveProfileImageRequestHandler requestHandler,
+        CancellationToken cancellationToken) => await requestHandler.Handle(cancellationToken);
 }

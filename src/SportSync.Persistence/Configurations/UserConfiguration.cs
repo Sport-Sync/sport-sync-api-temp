@@ -42,6 +42,8 @@ namespace SportSync.Persistence.Configurations
                 .HasMaxLength(100)
                 .IsRequired();
 
+            builder.Property(user => user.HasProfileImage).HasDefaultValue(false);
+
             builder.Property(user => user.CreatedOnUtc).IsRequired();
 
             builder.Property(user => user.ModifiedOnUtc);

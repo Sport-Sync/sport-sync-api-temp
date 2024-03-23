@@ -6,28 +6,28 @@ using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Repositories;
 
-namespace SportSync.Application.Users.UploadProfileImage;
+namespace SportSync.Application.Users.RemoveProfileImage;
 
-public class UploadProfileImageRequestHandler : IRequestHandler<UploadProfileImageInput, Result>
+public class RemoveProfileImageRequestHandler : IRequestHandler<Result>
 {
     private readonly IUserRepository _userRepository;
-    private readonly IBlobStorageService _blobStorageService;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IBlobStorageService _blobStorageService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public UploadProfileImageRequestHandler(
-        IBlobStorageService blobStorageService,
-        IUserIdentifierProvider userIdentifierProvider,
-        IUserRepository userRepository,
+    public RemoveProfileImageRequestHandler(
+        IUserRepository userRepository, 
+        IUserIdentifierProvider userIdentifierProvider, 
+        IBlobStorageService blobStorageService, 
         IUnitOfWork unitOfWork)
     {
-        _blobStorageService = blobStorageService;
-        _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
+        _userIdentifierProvider = userIdentifierProvider;
+        _blobStorageService = blobStorageService;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(UploadProfileImageInput request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CancellationToken cancellationToken)
     {
         var userId = _userIdentifierProvider.UserId;
 
@@ -39,16 +39,23 @@ public class UploadProfileImageRequestHandler : IRequestHandler<UploadProfileIma
         }
 
         var user = maybeUser.Value;
+
+        if (!user.HasProfileImage)
+        {
+            return Result.Success();
+        }
+
         var fileName = string.Format(StringFormatConstants.ProfileImageFilePathFormat, userId);
 
-        var result = await _blobStorageService.UploadFile(fileName, request.File, cancellationToken);
+        var result = await _blobStorageService.RemoveFile(fileName, cancellationToken);
 
-        if (result.IsSuccess && !user.HasProfileImage)
+        if (result.IsSuccess)
         {
-            user.HasProfileImage = true;
+            user.HasProfileImage = false;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         return result;
+
     }
 }

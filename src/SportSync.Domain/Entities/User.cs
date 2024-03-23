@@ -45,6 +45,8 @@ public class User : AggregateRoot
 
     public PhoneNumber Phone { get; set; }
 
+    public bool HasProfileImage { get; set; }
+
     /// <summary>
     /// List of users who initiated the "friendship"
     /// </summary>
