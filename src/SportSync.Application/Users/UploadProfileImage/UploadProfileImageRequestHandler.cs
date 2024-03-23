@@ -21,7 +21,6 @@ public class UploadProfileImageRequestHandler : IRequestHandler<UploadProfileIma
         var userId = _userIdentifierProvider.UserId;
         var fileName = string.Format(StringFormatConstants.ProfileImageFilePathFormat, userId);
 
-
         return await _blobStorageService.UploadFile(fileName, request.File, cancellationToken);
     }
 }
