@@ -64,6 +64,7 @@ type Mutation {
   createUser(input: CreateUserInput): TokenResponse
   login(input: LoginInput): TokenResponse
   uploadUserProfileImage(input: UploadProfileImageInput): Result @authorize
+  removeUserProfileImage: Result @authorize
   deleteNotification(input: NotificationInput): Result @authorize
   completeNotification(input: NotificationInput): Result @authorize
   setMatchAttendance(input: SetMatchAttendanceInput): SetMatchAttendanceResponse @authorize
