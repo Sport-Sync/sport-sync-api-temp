@@ -3,7 +3,13 @@ using SportSync.Domain.Entities;
 
 namespace SportSync.Domain.Types;
 
-public class UserType
+public interface IPendingFriendshipRequestsInfo
+{
+    PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
+    bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
+}
+
+public class BaseUserType
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }
@@ -11,7 +17,7 @@ public class UserType
     public string Email { get; set; }
     public string Phone { get; set; }
 
-    public static Expression<Func<User, UserType>> PropertySelector = x => new UserType
+    public static Expression<Func<User, BaseUserType>> PropertySelector = x => new BaseUserType
     {
         Id = x.Id,
         FirstName = x.FirstName,
@@ -20,17 +26,16 @@ public class UserType
         Phone = x.Phone.Value
     };
 
-    public static UserType FromUser(User user) => PropertySelector.Compile()(user);
+    public static BaseUserType FromUser(User user) => PropertySelector.Compile()(user);
 }
 
-public class PhoneBookUserType : UserType
+public class UserType : BaseUserType, IPendingFriendshipRequestsInfo
 {
+    public string ImageUrl { get; set; }
+    public FriendType MutualFriends { get; set; }
     public PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
 
-    public bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
-
-
-    public PhoneBookUserType(UserType user, PendingFriendshipRequestType pendingFriendshipRequest = null)
+    public UserType(BaseUserType user, PendingFriendshipRequestType pendingFriendshipRequest = null, FriendType mutualFriends = null, string imageUrl = null)
     {
         Id = user.Id;
         FirstName = user.FirstName;
@@ -38,11 +43,23 @@ public class PhoneBookUserType : UserType
         Email = user.Email;
         Phone = user.Phone;
         PendingFriendshipRequest = pendingFriendshipRequest;
+        MutualFriends = mutualFriends;
+        ImageUrl = imageUrl;
     }
+}
 
-    public PhoneBookUserType()
+public class PhoneBookUserType : BaseUserType, IPendingFriendshipRequestsInfo
+{
+    public PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
+
+    public PhoneBookUserType(BaseUserType user, PendingFriendshipRequestType pendingFriendshipRequest = null)
     {
-
+        Id = user.Id;
+        FirstName = user.FirstName;
+        LastName = user.LastName;
+        Email = user.Email;
+        Phone = user.Phone;
+        PendingFriendshipRequest = pendingFriendshipRequest;
     }
 }
 
@@ -57,4 +74,14 @@ public class PendingFriendshipRequestType
             FriendshipRequestId = friendshipRequestId,
             SentByMe = sentByMe
         };
+}
+
+public class FriendType : BaseUserType
+{
+    public string ImageUrl { get; set; }
+
+    public FriendType(User user, string imageUrl = null) : base(user)
+    {
+        ImageUrl = imageUrl;
+    }
 }

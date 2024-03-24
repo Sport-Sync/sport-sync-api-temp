@@ -2,8 +2,6 @@
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Users.GetByPhoneNumbers;
 using SportSync.Application.Users.GetProfileImageUrl;
-using SportSync.Domain.Repositories;
-using SportSync.Domain.Types;
 
 namespace sport_sync.GraphQL.Queries;
 
@@ -11,12 +9,7 @@ namespace sport_sync.GraphQL.Queries;
 public class UserQuery
 {
     [Authorize]
-    [UseFirstOrDefault]
-    [UseProjection]
-    public IQueryable<UserType> Me(
-        [Service(ServiceKind.Synchronized)] IUserRepository repository,
-        [Service] IUserIdentifierProvider userIdentifierProvider)
-        => repository.GetQueryable(x => x.Id == userIdentifierProvider.UserId);
+    public Guid GetCurrentUserId([Service] IUserIdentifierProvider userIdentifierProvider) => userIdentifierProvider.UserId;
 
     [Authorize]
     public async Task<GetPhoneBookUsersResponse> GetPhoneBookUsers(

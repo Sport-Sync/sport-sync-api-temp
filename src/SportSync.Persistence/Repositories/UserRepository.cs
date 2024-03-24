@@ -8,10 +8,10 @@ using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Persistence.Repositories;
 
-internal sealed class UserRepository : QueryableGenericRepository<User, UserType>, IUserRepository
+internal sealed class UserRepository : QueryableGenericRepository<User, BaseUserType>, IUserRepository
 {
     public UserRepository(IDbContext dbContext)
-        : base(dbContext, UserType.PropertySelector)
+        : base(dbContext, BaseUserType.PropertySelector)
     {
     }
 
