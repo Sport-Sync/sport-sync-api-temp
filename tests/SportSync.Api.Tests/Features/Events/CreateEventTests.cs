@@ -41,8 +41,8 @@ public class CreateEventTests : IntegrationTest
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek},
                         startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
-                        startTime: ""2024-01-22T19:00:00Z"",
-                        endTime: ""2024-01-20T20:00:00Z"",
+                        startTime: ""2024-01-19T23:15:00Z"",
+                        endTime: ""2024-01-20T00:15:00Z"",
                         repeatWeekly: true
                     }}
                   ] 

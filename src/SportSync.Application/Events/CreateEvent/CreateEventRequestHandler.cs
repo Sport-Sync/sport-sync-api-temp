@@ -28,7 +28,7 @@ public class CreateEventRequestHandler : IRequestHandler<CreateEventInput, Guid>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Guid> Handle(CreateEventInput input, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateEventInput request, CancellationToken cancellationToken)
     {
         var creatorId = _userIdentifierProvider.UserId;
 
@@ -42,16 +42,16 @@ public class CreateEventRequestHandler : IRequestHandler<CreateEventInput, Guid>
         var user = maybeUser.Value;
 
         var @event = user.CreateEvent(
-            input.Name, input.SportType, input.Address, input.Price, input.NumberOfPlayers, input.Notes, input.MemberIds.ToArray());
+            request.Name, request.SportType, request.Address, request.Price, request.NumberOfPlayers, request.Notes, request.MemberIds.ToArray());
 
-        var eventSchedules = input.EventTime.Select(time => EventSchedule.Create(
+        var eventSchedules = request.EventTime.Select(time => EventSchedule.Create(
             time.DayOfWeek,
             time.StartDate,
             time.StartTime,
             time.EndTime,
             time.RepeatWeekly)).ToList();
 
-        @event.AddMembers(input.MemberIds.ToArray());
+        @event.AddMembers(request.MemberIds.ToArray());
         @event.AddSchedules(eventSchedules);
 
         _eventRepository.Insert(@event);
