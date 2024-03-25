@@ -4,7 +4,7 @@ using SportSync.Domain.Types;
 
 namespace SportSync.Application.Users.GetFriends;
 
-public class GetFriendsInput : IRequest<PagedList<UserType>>
+public class GetFriendsInput : IRequest<PagedList<FriendType>>
 {
     public string? Search { get; set; }
     public int Page { get; set; }

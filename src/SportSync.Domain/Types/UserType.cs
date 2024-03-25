@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using HotChocolate;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Types.Abstraction;
 
@@ -39,11 +40,11 @@ public class UserType
 public class UserProfileType : UserType, IPendingFriendshipRequestsInfo
 {
     public string ImageUrl { get; set; }
-    public List<UserProfileType> MutualFriends { get; set; }
+    public List<FriendType> MutualFriends { get; set; }
     public PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
     public bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
 
-    public UserProfileType(User user, PendingFriendshipRequestType pendingFriendshipRequest = null, List<UserProfileType> mutualFriends = null, string imageUrl = null)
+    public UserProfileType(User user, PendingFriendshipRequestType pendingFriendshipRequest = null, List<FriendType> mutualFriends = null, string imageUrl = null)
         : base(user)
     {
 
@@ -57,6 +58,39 @@ public class UserProfileType : UserType, IPendingFriendshipRequestsInfo
     {
         ImageUrl = imageUrl;
     }
+
+    public UserProfileType()
+    {
+        
+    }
+}
+
+public class FriendType : UserType
+{
+    public string ImageUrl { get; set; }
+    [GraphQLIgnore]
+    public bool HasProfileImage { get; set; }
+
+    public FriendType(User user, string imageUrl = null)
+        : base(user)
+    {
+        ImageUrl = imageUrl;
+    }
+
+    public FriendType()
+    {
+        
+    }
+
+    public static Expression<Func<User, FriendType>> PropertySelector = x => new FriendType
+    {
+        Id = x.Id,
+        FirstName = x.FirstName,
+        LastName = x.LastName,
+        Email = x.Email,
+        Phone = x.Phone.Value,
+        HasProfileImage = x.HasProfileImage
+    };
 }
 
 public class PhoneBookUserType : UserType, IPendingFriendshipRequestsInfo
@@ -72,5 +106,10 @@ public class PhoneBookUserType : UserType, IPendingFriendshipRequestsInfo
         Email = user.Email;
         Phone = user.Phone;
         PendingFriendshipRequest = pendingFriendshipRequest;
+    }
+
+    public PhoneBookUserType()
+    {
+        
     }
 }

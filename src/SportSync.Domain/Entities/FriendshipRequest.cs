@@ -77,4 +77,9 @@ public class FriendshipRequest : AggregateRoot
 
         return Result.Success();
     }
+
+    public bool IsSender(Guid userId)
+    {
+        return UserId == userId;
+    }
 }

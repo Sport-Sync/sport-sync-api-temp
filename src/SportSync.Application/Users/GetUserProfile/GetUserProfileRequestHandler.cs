@@ -47,12 +47,11 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
         var user = maybeUser.Value;
         var currentUser = maybeCurrentUser.Value;
 
-        var friendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUser.Id);
+        var maybePendingFriendshipRequest = await _friendshipRequestRepository.GetPendingForUsersAsync(currentUser.Id, user.Id, cancellationToken);
 
-        var pendingFriendshipRequest = friendshipRequests.FirstOrDefault(x => x.FriendId == user.Id || x.UserId == user.Id);
-        PendingFriendshipRequestType? pendingFriendshipRequestType = pendingFriendshipRequest == null
+        PendingFriendshipRequestType? pendingFriendshipRequestType = maybePendingFriendshipRequest.HasNoValue
             ? null
-            : PendingFriendshipRequestType.Create(pendingFriendshipRequest.Id, pendingFriendshipRequest.UserId == currentUser.Id);
+            : PendingFriendshipRequestType.Create(maybePendingFriendshipRequest.Value.Id, maybePendingFriendshipRequest.Value.IsSender(currentUser.Id));
 
         var mutualFriendIds = user.Friends.Where(friendId => currentUser.Friends.Contains(friendId)).ToList();
         var mutualFriends =
@@ -60,12 +59,12 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
             await _userRepository.GetByIdsAsync(mutualFriendIds, cancellationToken) :
             new List<User>();
 
-        List<UserProfileType> mutualFriendList = new();
+        List<FriendType> mutualFriendList = new();
 
         foreach (var mutualFriend in mutualFriends)
         {
             var profileImage = mutualFriend.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(mutualFriend.Id) : null;
-            mutualFriendList.Add(new UserProfileType(mutualFriend, profileImage));
+            mutualFriendList.Add(new FriendType(mutualFriend, profileImage));
         }
 
         var userProfileImage = user.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(user.Id) : null;
