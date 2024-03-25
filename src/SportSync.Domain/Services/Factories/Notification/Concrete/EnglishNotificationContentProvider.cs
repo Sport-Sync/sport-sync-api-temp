@@ -17,6 +17,8 @@ public class EnglishNotificationContentProvider : INotificationContentProvider
             NotificationTypeEnum.EventInvitationAccepted => $"{contentData[0]} has accepted your invitation to event '{contentData[1]}'",
             NotificationTypeEnum.MemberJoinedEvent => $"{contentData[0]} is the new member on your event '{contentData[1]}'",
             NotificationTypeEnum.EventInvitationRejected => $"{contentData[0]} has rejected your invitation to join event '{contentData[1]}'",
+            NotificationTypeEnum.MatchAnnouncedByFriend => $"{contentData[0]} is searching for players for match '{contentData[1]}' ({contentData[2]})",
+            NotificationTypeEnum.MatchApplicationAccepted => $"{contentData[0]} has accepted your application for match '{contentData[1]}' on day {contentData[2]}",
 
             _ => throw new DomainException(DomainErrors.Notification.ContentNotImplemented)
         };

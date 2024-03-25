@@ -10,13 +10,15 @@ namespace SportSync.Application.Matches.AnnounceMatch;
 public class AnnounceMatchRequestHandler : IRequestHandler<AnnounceMatchInput, MatchType>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IUserRepository _userRepository;
     private readonly IMatchRepository _matchRepository;
     private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public AnnounceMatchRequestHandler(
-        IMatchRepository matchRepository,
         IUserIdentifierProvider userIdentifierProvider,
+        IMatchRepository matchRepository,
+        IUserRepository userRepository,
         IEventRepository eventRepository,
         IUnitOfWork unitOfWork)
     {
@@ -24,10 +26,18 @@ public class AnnounceMatchRequestHandler : IRequestHandler<AnnounceMatchInput, M
         _userIdentifierProvider = userIdentifierProvider;
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
+        _userRepository = userRepository;
     }
 
     public async Task<MatchType> Handle(AnnounceMatchInput input, CancellationToken cancellationToken)
     {
+        var maybeUser = await _userRepository.GetByIdAsync(_userIdentifierProvider.UserId, cancellationToken);
+
+        if (maybeUser.HasNoValue)
+        {
+            throw new DomainException(DomainErrors.User.Forbidden);
+        }
+
         var maybeMatch = await _matchRepository.GetByIdAsync(input.MatchId, cancellationToken);
 
         if (maybeMatch.HasNoValue)
@@ -36,14 +46,14 @@ public class AnnounceMatchRequestHandler : IRequestHandler<AnnounceMatchInput, M
         }
 
         var match = maybeMatch.Value;
-        var currentUserId = _userIdentifierProvider.UserId;
+        var user = maybeUser.Value;
 
         if (input.PublicAnnouncement)
         {
-            await _eventRepository.EnsureUserIsAdminOnEvent(match.EventId, currentUserId, cancellationToken);
+            await _eventRepository.EnsureUserIsAdminOnEvent(match.EventId, user.Id, cancellationToken);
         }
 
-        match.Announce(currentUserId, input.PublicAnnouncement);
+        match.Announce(user, input.PublicAnnouncement);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

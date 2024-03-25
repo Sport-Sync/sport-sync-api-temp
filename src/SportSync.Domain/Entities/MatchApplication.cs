@@ -61,6 +61,7 @@ public class MatchApplication : AggregateRoot
 
         CompletedOnUtc = utcNow;
         CompletedByUserId = user.Id;
+        CompletedByUser = user;
 
         RaiseDomainEvent(new MatchApplicationAcceptedDomainEvent(this));
 
