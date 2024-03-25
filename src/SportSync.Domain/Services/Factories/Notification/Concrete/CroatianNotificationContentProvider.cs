@@ -17,6 +17,8 @@ public class CroatianNotificationContentProvider : INotificationContentProvider
             NotificationTypeEnum.EventInvitationAccepted => $"{contentData[0]} je prihvatio vaš poziv na termin '{contentData[1]}'",
             NotificationTypeEnum.MemberJoinedEvent => $"{contentData[0]} je upravo postao novi član vašeg termina '{contentData[1]}'",
             NotificationTypeEnum.EventInvitationRejected => $"{contentData[0]} je odbio vaš poziv za pridruživanje na termin '{contentData[1]}'",
+            NotificationTypeEnum.MatchAnnouncedByFriend => $"{contentData[0]} traži igrače za utakmicu '{contentData[1]}' dana {contentData[2]}",
+            NotificationTypeEnum.MatchApplicationAccepted => $"{contentData[0]} je prihvatio vašu prijavu na utakmicu '{contentData[1]}' dana {contentData[2]}",
 
             _ => throw new DomainException(DomainErrors.Notification.ContentNotImplemented)
         };
