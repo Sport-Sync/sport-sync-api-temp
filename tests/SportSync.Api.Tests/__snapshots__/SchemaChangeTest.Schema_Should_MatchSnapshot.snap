@@ -8,6 +8,15 @@ type Error {
   message: String
 }
 
+type FriendType {
+  imageUrl: String
+  id: UUID!
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+}
+
 type FriendshipRequestType {
   id: UUID!
   userId: UUID!
@@ -91,13 +100,13 @@ type NotificationType {
   completed: Boolean!
 }
 
-type PagedListOfUserType {
+type PagedListOfFriendType {
   page: Int!
   pageSize: Int!
   totalCount: Int!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
-  items: [UserType!]!
+  items: [FriendType!]!
 }
 
 type PendingFriendshipRequestType {
@@ -130,12 +139,13 @@ type Query {
   me: UserType @authorize
   phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
   userProfileImageUrl(input: ProfileImageUrlInput): ProfileImageUrlResponse @authorize
+  userProfile(input: GetUserProfileInput): UserProfileType @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   matches(date: DateTime!): [MatchType] @authorize
   matchById(input: GetMatchByIdInput): GetMatchByIdResponse @authorize
   announcedMatches(input: GetAnnouncedMatchesInput): GetAnnouncedMatchResponse @authorize
-  friends(input: GetFriendsInput): PagedListOfUserType @authorize
+  friends(input: GetFriendsInput): PagedListOfFriendType @authorize
   pendingFriendshipRequests: [FriendshipRequestType] @authorize
 }
 
@@ -151,6 +161,18 @@ type SetMatchAttendanceResponse {
 
 type TokenResponse {
   token: String!
+}
+
+type UserProfileType {
+  imageUrl: String
+  mutualFriends: [FriendType]
+  pendingFriendshipRequest: PendingFriendshipRequestType
+  hasPendingFriendshipRequest: Boolean!
+  id: UUID!
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
 }
 
 type UserType {
@@ -220,6 +242,10 @@ input GetNotificationsInput {
 
 input GetPhoneBookUsersInput {
   phoneNumbers: [String!]!
+}
+
+input GetUserProfileInput {
+  userId: UUID!
 }
 
 input LoginInput {

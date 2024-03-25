@@ -33,9 +33,7 @@ public class ProfileImageUrlRequestHandler : IRequestHandler<ProfileImageUrlInpu
             return new ProfileImageUrlResponse();
         }
 
-        var fileName = string.Format(StringFormatConstants.ProfileImageFilePathFormat, request.UserId);
-
-        var url = await _blobStorageService.GetDownloadUrl(fileName);
+        var url = await _blobStorageService.GetProfileImageUrl(request.UserId);
 
         return new ProfileImageUrlResponse { ImageUrl = url };
     }

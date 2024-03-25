@@ -14,13 +14,23 @@ public class FriendshipRequestRepository : QueryableGenericRepository<Friendship
     {
     }
     
-    public async Task<List<FriendshipRequest>> GetAllPendingForUserIdAsync(Guid userId)
+    public async Task<List<FriendshipRequest>> GetAllPendingForUserIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await DbContext.Set<FriendshipRequest>()
             .Where(friendshipRequest =>
                 (friendshipRequest.UserId == userId || friendshipRequest.FriendId == userId) &&
                 friendshipRequest.CompletedOnUtc == null)
             .ToListAsync();
+    }
+
+    public async Task<Maybe<FriendshipRequest>> GetPendingForUsersAsync(Guid firstUserId, Guid secondUserId, CancellationToken cancellationToken)
+    {
+        return Maybe<FriendshipRequest>.From(await DbContext.Set<FriendshipRequest>()
+            .Where(friendshipRequest =>
+                ((friendshipRequest.UserId == firstUserId && friendshipRequest.FriendId == secondUserId) ||
+                (friendshipRequest.UserId == secondUserId && friendshipRequest.FriendId == firstUserId)) &&
+                friendshipRequest.CompletedOnUtc == null)
+            .FirstOrDefaultAsync(cancellationToken));
     }
 
     public override async Task<Maybe<FriendshipRequest>> GetByIdAsync(Guid id, CancellationToken cancellationToken)

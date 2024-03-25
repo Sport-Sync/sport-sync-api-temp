@@ -19,6 +19,6 @@ public class FriendshipRequestType
         Rejected = x.Rejected,
         UserId = x.UserId,
         FriendId = x.FriendId,
-        Sender = UserType.FromUser(x.User)
+        Sender = new UserType(x.User)
     };
 }

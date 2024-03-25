@@ -50,7 +50,7 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
         var user = maybeUser.Value;
 
         var friendshipRequests = new List<Result<FriendshipRequest>>();
-        var existingFriendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(_userIdentifierProvider.UserId);
+        var existingFriendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 
         foreach (var friend in friends)
         {

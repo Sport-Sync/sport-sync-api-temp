@@ -51,7 +51,7 @@ public class GetPhoneBookUsersRequestHandler : IRequestHandler<GetPhoneBookUsers
                 user.FriendInviters.All(inv => inv.FriendId != currentUserId))
             .ToListAsync(cancellationToken);
 
-        var friendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUserId);
+        var friendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUserId, cancellationToken);
 
         var phoneBookUsers = new List<PhoneBookUserType>();
         
@@ -60,7 +60,7 @@ public class GetPhoneBookUsersRequestHandler : IRequestHandler<GetPhoneBookUsers
             var pendingFriendshipRequest = friendshipRequests.FirstOrDefault(x => x.FriendId == user.Id || x.UserId == user.Id);
             PendingFriendshipRequestType? pendingFriendshipRequestType = pendingFriendshipRequest == null
                 ? null
-                : PendingFriendshipRequestType.Create(pendingFriendshipRequest.Id, pendingFriendshipRequest.UserId == currentUserId);
+                : PendingFriendshipRequestType.Create(pendingFriendshipRequest.Id, pendingFriendshipRequest.IsSender(currentUserId));
             phoneBookUsers.Add(new PhoneBookUserType(user, pendingFriendshipRequestType));
         }
 

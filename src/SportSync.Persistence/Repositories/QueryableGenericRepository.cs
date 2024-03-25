@@ -27,4 +27,16 @@ public abstract class QueryableGenericRepository<TEntity, TQueryableType> : Gene
         }
         return query.Select(_propertySelector);
     }
+
+    public virtual IQueryable<TProjectionType> GetQueryable<TProjectionType>(Expression<Func<TEntity, TProjectionType>> propertySelector, Expression<Func<TEntity, bool>> where = null)
+    {
+        var query = DbContext.Set<TEntity>().AsNoTracking().AsQueryable();
+
+        if (where is not null)
+        {
+            query = query.Where(where);
+
+        }
+        return query.Select(propertySelector);
+    }
 }
