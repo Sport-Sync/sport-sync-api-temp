@@ -5,7 +5,7 @@ using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Domain.Repositories;
 
-public interface IUserRepository : IQueryableRepository<User, BaseUserType>
+public interface IUserRepository : IQueryableRepository<User, UserType>
 {
     Task<Maybe<User>> GetByIdAsync(Guid userId, CancellationToken cancellationToken);
     Task<List<User>> GetByIdsAsync(List<Guid> userIds, CancellationToken cancellationToken);

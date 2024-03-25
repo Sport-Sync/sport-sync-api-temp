@@ -5,6 +5,7 @@ using HotChocolate.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SportSync.Application.Core.Abstractions.Storage;
+using SportSync.Application.Core.Constants;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Infrastructure.Storage.Settings;
@@ -38,6 +39,13 @@ public class BlobStorageService : IBlobStorageService
         }
 
         return Result.Success();
+    }
+
+    public Task<string> GetProfileImageUrl(Guid userId)
+    {
+        var fileName = string.Format(StringFormatConstants.ProfileImageFilePathFormat, userId);
+
+        return GetDownloadUrl(fileName);
     }
 
     public async Task<string> GetDownloadUrl(string fileName)

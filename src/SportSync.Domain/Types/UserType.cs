@@ -1,15 +1,10 @@
 ﻿using System.Linq.Expressions;
 using SportSync.Domain.Entities;
+using SportSync.Domain.Types.Abstraction;
 
 namespace SportSync.Domain.Types;
 
-public interface IPendingFriendshipRequestsInfo
-{
-    PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
-    bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
-}
-
-public class BaseUserType
+public class UserType
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }
@@ -17,7 +12,21 @@ public class BaseUserType
     public string Email { get; set; }
     public string Phone { get; set; }
 
-    public static Expression<Func<User, BaseUserType>> PropertySelector = x => new BaseUserType
+    public UserType(User user)
+    {
+        Id = user.Id;
+        FirstName = user.FirstName;
+        LastName = user.LastName;
+        Email = user.Email;
+        Phone = user.Phone;
+    }
+
+    public UserType()
+    {
+
+    }
+
+    public static Expression<Func<User, UserType>> PropertySelector = x => new UserType
     {
         Id = x.Id,
         FirstName = x.FirstName,
@@ -25,34 +34,37 @@ public class BaseUserType
         Email = x.Email,
         Phone = x.Phone.Value
     };
-
-    public static BaseUserType FromUser(User user) => PropertySelector.Compile()(user);
 }
 
-public class UserType : BaseUserType, IPendingFriendshipRequestsInfo
+public class UserProfileType : UserType, IPendingFriendshipRequestsInfo
 {
     public string ImageUrl { get; set; }
-    public FriendType MutualFriends { get; set; }
+    public List<UserProfileType> MutualFriends { get; set; }
     public PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
+    public bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
 
-    public UserType(BaseUserType user, PendingFriendshipRequestType pendingFriendshipRequest = null, FriendType mutualFriends = null, string imageUrl = null)
+    public UserProfileType(User user, PendingFriendshipRequestType pendingFriendshipRequest = null, List<UserProfileType> mutualFriends = null, string imageUrl = null)
+        : base(user)
     {
-        Id = user.Id;
-        FirstName = user.FirstName;
-        LastName = user.LastName;
-        Email = user.Email;
-        Phone = user.Phone;
+
         PendingFriendshipRequest = pendingFriendshipRequest;
         MutualFriends = mutualFriends;
         ImageUrl = imageUrl;
     }
+
+    public UserProfileType(User user, string imageUrl = null)
+        : base(user)
+    {
+        ImageUrl = imageUrl;
+    }
 }
 
-public class PhoneBookUserType : BaseUserType, IPendingFriendshipRequestsInfo
+public class PhoneBookUserType : UserType, IPendingFriendshipRequestsInfo
 {
     public PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
+    public bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
 
-    public PhoneBookUserType(BaseUserType user, PendingFriendshipRequestType pendingFriendshipRequest = null)
+    public PhoneBookUserType(UserType user, PendingFriendshipRequestType pendingFriendshipRequest = null)
     {
         Id = user.Id;
         FirstName = user.FirstName;
@@ -60,28 +72,5 @@ public class PhoneBookUserType : BaseUserType, IPendingFriendshipRequestsInfo
         Email = user.Email;
         Phone = user.Phone;
         PendingFriendshipRequest = pendingFriendshipRequest;
-    }
-}
-
-public class PendingFriendshipRequestType
-{
-    public Guid FriendshipRequestId { get; set; }
-    public bool SentByMe { get; set; }
-
-    public static PendingFriendshipRequestType Create(Guid friendshipRequestId, bool sentByMe) =>
-        new()
-        {
-            FriendshipRequestId = friendshipRequestId,
-            SentByMe = sentByMe
-        };
-}
-
-public class FriendType : BaseUserType
-{
-    public string ImageUrl { get; set; }
-
-    public FriendType(User user, string imageUrl = null) : base(user)
-    {
-        ImageUrl = imageUrl;
     }
 }
