@@ -36,7 +36,7 @@ public class RejectMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
 
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -70,7 +70,7 @@ public class RejectMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
         
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -106,7 +106,7 @@ public class RejectMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
 
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -142,7 +142,7 @@ public class RejectMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
 
         var application = Database.AddMatchApplication(applicant, match);
 

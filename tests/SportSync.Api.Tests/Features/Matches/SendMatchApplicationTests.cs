@@ -18,7 +18,7 @@ public class SendMatchApplicationTests : IntegrationTest
 
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { player.Id });
-        match.Announce(admin.Id, true);
+        match.Announce(admin, true);
 
         await Database.SaveChangesAsync();
 
@@ -75,7 +75,7 @@ public class SendMatchApplicationTests : IntegrationTest
         var player = Database.AddUser("Player");
 
         var match = Database.AddMatch(admin, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin.Id, false);
+        match.Announce(admin, false);
 
         await Database.SaveChangesAsync();
 
@@ -104,7 +104,7 @@ public class SendMatchApplicationTests : IntegrationTest
         var applicant = Database.AddUser("Player");
 
         var match = Database.AddMatch(admin, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin.Id, true);
+        match.Announce(admin, true);
 
         await Database.SaveChangesAsync();
 
@@ -137,7 +137,7 @@ public class SendMatchApplicationTests : IntegrationTest
 
         var match = Database.AddMatch(admin, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
         Database.AddFriendship(admin, applicant);
-        match.Announce(admin.Id, false);
+        match.Announce(admin, false);
 
         await Database.SaveChangesAsync();
 
@@ -171,7 +171,7 @@ public class SendMatchApplicationTests : IntegrationTest
 
         var match = Database.AddMatch(admin1, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
 
-        match.Announce(admin1.Id, true);
+        match.Announce(admin1, true);
 
         await Database.SaveChangesAsync();
 

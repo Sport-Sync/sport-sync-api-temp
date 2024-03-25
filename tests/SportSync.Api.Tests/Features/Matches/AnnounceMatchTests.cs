@@ -4,7 +4,6 @@ using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
-using SportSync.Domain.Types;
 using MatchType = SportSync.Domain.Types.MatchType;
 
 namespace SportSync.Api.Tests.Features.Matches;
@@ -15,6 +14,11 @@ public class AnnounceMatchTests : IntegrationTest
     [Fact]
     public async Task Announce_ShouldFail_WhenMatchNotFound()
     {
+        var requestUser = Database.AddUser();
+        UserIdentifierMock.Setup(x => x.UserId).Returns(requestUser.Id);
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
@@ -29,7 +33,7 @@ public class AnnounceMatchTests : IntegrationTest
     [Theory]
     [InlineData(true, false)]
     [InlineData(false, true)]
-    public async Task AnnounceByNonAdmin_ShouldSucced_OnlyForFriendList(bool publicAnnouncement, bool shouldSucceed)
+    public async Task AnnounceByNonAdmin_ShouldSucceed_OnlyForFriendList(bool publicAnnouncement, bool shouldSucceed)
     {
         var requestUser = Database.AddUser();
         var admin = Database.AddUser("second", "user", "user@gmail.com");
@@ -58,6 +62,46 @@ public class AnnounceMatchTests : IntegrationTest
         {
             result.ShouldHaveError(DomainErrors.User.Forbidden);
         }
+    }
+
+    [Fact]
+    public async Task AnnounceToFriendList_ShouldCreateNotifications_ForFriendsThatAreNotPlayersAlready()
+    {
+        var requestUser = Database.AddUser();
+        var friend = Database.AddUser();
+        var friendPlayer = Database.AddUser();
+        var match = Database.AddMatch(requestUser, startDate: DateTime.Today.AddDays(1));
+        
+        Database.AddFriendship(requestUser, friendPlayer);
+        Database.AddFriendship(requestUser, friend);
+
+        match.AddPlayers(new List<Guid>() { friendPlayer.Id });
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(requestUser.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: false}}){{
+                        eventName
+                    }}
+                }}"));
+
+        var matchResponse = result.ToResponseObject<MatchType>("announceMatch");
+        matchResponse.Should().NotBeNull();
+
+        var announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
+        announcement.UserId.Should().Be(requestUser.Id);
+        announcement.AnnouncementType.Should().Be(MatchAnnouncementType.FriendList);
+
+        var notification = Database.DbContext.Set<Notification>().FirstOrDefault(n => n.UserId == friend.Id);
+        notification.Should().NotBeNull();
+        notification.Type.Should().Be(NotificationTypeEnum.MatchAnnouncedByFriend);
+        notification.Completed.Should().BeFalse();
+        notification.ResourceId.Should().Be(match.Id);
+
+        Database.DbContext.Set<Notification>().FirstOrDefault(n => n.UserId == friendPlayer.Id).Should().BeNull();
     }
 
     [Fact]
@@ -149,7 +193,7 @@ public class AnnounceMatchTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin.Id, true);
+        match.Announce(admin, true);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -174,8 +218,8 @@ public class AnnounceMatchTests : IntegrationTest
         var admin = Database.AddUser();
         var user = Database.AddUser("second", "user", "user@gmail.com");
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin.Id, false);
-        match.Announce(user.Id, false);
+        match.Announce(admin, false);
+        match.Announce(user, false);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -201,7 +245,7 @@ public class AnnounceMatchTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin.Id, false);
+        match.Announce(admin, false);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -226,7 +270,7 @@ public class AnnounceMatchTests : IntegrationTest
         var admin = Database.AddUser();
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
         var user = Database.AddUser("second", "user", "user@gmail.com");
-        match.Announce(user.Id, false);
+        match.Announce(user, false);
 
         await Database.UnitOfWork.SaveChangesAsync();
 

@@ -8,4 +8,5 @@ public enum NotificationTypeEnum
     EventInvitationAccepted,
     EventInvitationRejected,
     MemberJoinedEvent,
+    MatchAnnouncedByFriend
 }

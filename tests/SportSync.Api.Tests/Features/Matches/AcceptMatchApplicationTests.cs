@@ -37,7 +37,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
 
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -71,7 +71,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
         
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -107,7 +107,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
 
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -143,7 +143,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent.Id, true);
+        match.Announce(adminOnEvent, true);
 
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -192,7 +192,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var admin2 = Database.AddUser("admin");
         var match = Database.AddMatch(adminThatHasCompleted, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminThatHasCompleted.Id, true);
+        match.Announce(adminThatHasCompleted, true);
 
         await Database.SaveChangesAsync();
 

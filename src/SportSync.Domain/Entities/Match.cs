@@ -120,7 +120,7 @@ public class Match : AggregateRoot
         player.Attending = attending;
     }
 
-    public MatchAnnouncement Announce(Guid userId, bool publicly)
+    public MatchAnnouncement Announce(User user, bool publicly)
     {
         EnsureItIsNotDone();
 
@@ -134,15 +134,20 @@ public class Match : AggregateRoot
             _announcements.RemoveWhere(x => x.AnnouncementType == MatchAnnouncementType.FriendList);
         }
 
-        if (!publicly && _announcements.Any(x => x.UserId == userId))
+        if (!publicly && _announcements.Any(x => x.UserId == user.Id))
         {
             throw new DomainException(DomainErrors.MatchAnnouncement.AlreadyAnnouncedBySameUser);
         }
 
         var type = publicly ? MatchAnnouncementType.Public : MatchAnnouncementType.FriendList;
-        var announcement = new MatchAnnouncement(this, userId, type);
+        var announcement = new MatchAnnouncement(this, user.Id, type);
 
         _announcements.Add(announcement);
+
+        if (!publicly)
+        {
+            RaiseDomainEvent(new MatchAnnouncedToFriendsDomainEvent(this, user));
+        }
 
         return announcement;
     }
