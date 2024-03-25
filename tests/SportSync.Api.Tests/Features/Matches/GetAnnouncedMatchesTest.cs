@@ -2,6 +2,7 @@
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Application.Matches.GetAnnouncedMatches;
+using SportSync.Domain.Entities;
 
 namespace SportSync.Api.Tests.Features.Matches;
 
@@ -80,5 +81,43 @@ public class GetAnnouncedMatchesTest : IntegrationTest
         response.Matches.Count.Should().Be(2);
         response.Matches.FirstOrDefault(x => x.Id == publicMatch.Id).Should().NotBeNull();
         response.Matches.FirstOrDefault(x => x.Id == privateFromFriendMatch.Id).Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetAnnouncedMatches_ShouldReturnMatchOnlyOnce_WhenItHasMultipleAnnouncements()
+    {
+        var tomorrow = DateTime.Today.AddDays(1);
+        var requestUser = Database.AddUser();
+        var friendOne = Database.AddUser();
+        var friendTwo = Database.AddUser();
+
+        var match = Database.AddMatch(friendOne, startDate: tomorrow);
+
+        match.AddPlayers(new List<Guid>() { friendTwo.Id });
+        match.Announce(friendOne.Id, false);
+        match.Announce(friendTwo.Id, false);
+
+        Database.AddFriendship(requestUser, friendOne);
+        Database.AddFriendship(requestUser, friendTwo);
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        Database.DbContext.Set<MatchAnnouncement>().Where(x => x.MatchId == match.Id).Count().Should().Be(2);
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(requestUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                query {{
+                    announcedMatches(input: {{date: ""{tomorrow.Date}""}}){{
+                        matches{{
+                            eventName, numberOfPlayersExpected, id
+                        }}
+                    }}
+                }}"));
+
+        var response = result.ToResponseObject<GetAnnouncedMatchResponse>("announcedMatches");
+        response.Matches.Count.Should().Be(1);
+        response.Matches.FirstOrDefault(x => x.Id == match.Id).Should().NotBeNull();
     }
 }
