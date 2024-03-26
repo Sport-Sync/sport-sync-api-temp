@@ -94,8 +94,8 @@ public class GetAnnouncedMatchesTest : IntegrationTest
         var match = Database.AddMatch(friendOne, startDate: tomorrow);
 
         match.AddPlayers(new List<Guid>() { friendTwo.Id });
-        match.Announce(friendOne.Id, false);
-        match.Announce(friendTwo.Id, false);
+        match.Announce(friendOne, false);
+        match.Announce(friendTwo, false);
 
         Database.AddFriendship(requestUser, friendOne);
         Database.AddFriendship(requestUser, friendTwo);
