@@ -59,12 +59,12 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
             await _userRepository.GetByIdsAsync(mutualFriendIds, cancellationToken) :
             new List<User>();
 
-        List<FriendType> mutualFriendList = new();
+        List<UserType> mutualFriendList = new();
 
         foreach (var mutualFriend in mutualFriends)
         {
             var profileImage = mutualFriend.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(mutualFriend.Id) : null;
-            mutualFriendList.Add(new FriendType(mutualFriend, profileImage));
+            mutualFriendList.Add(new UserType(mutualFriend, profileImage));
         }
 
         var userProfileImage = user.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(user.Id) : null;
