@@ -46,16 +46,16 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
         var skip = request.Page == 1 ? 0 :
             firstPageSize + ((request.Page - 2) * request.PageSize);
 
-        var friendsPage = await users
+        var usersPage = await users
             .Skip(skip)
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        foreach (var friend in friendsPage.Where(f => f.HasProfileImage))
+        foreach (var user in usersPage.Where(f => f.HasProfileImage))
         {
-            friend.ImageUrl = await _blobStorageService.GetProfileImageUrl(friend.Id);
+            user.ImageUrl = await _blobStorageService.GetProfileImageUrl(user.Id);
         }
 
-        return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount, firstPageSize);
+        return new PagedList<UserType>(usersPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }
 }
