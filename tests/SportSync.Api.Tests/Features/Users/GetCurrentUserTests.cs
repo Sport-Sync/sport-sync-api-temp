@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
+using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Types;
 
 namespace SportSync.Api.Tests.Features.Users;
@@ -28,7 +29,7 @@ public class GetCurrentUserTests : IntegrationTest
     }
 
     [Fact]
-    public async Task QueryMe_ShouldReturnNullUser_WhenNotFoundById()
+    public async Task QueryMe_ShouldReturnNotFound_WhenNotFoundById()
     {
         UserIdentifierMock.Setup(x => x.UserId).Returns(Guid.NewGuid);
 
@@ -39,8 +40,6 @@ public class GetCurrentUserTests : IntegrationTest
                 }
             }"));
 
-        var userResponse = result.ToResponseObject<UserType>("me");
-
-        userResponse.Should().BeNull();
+        result.ShouldHaveError(DomainErrors.User.NotFound);
     }
 }

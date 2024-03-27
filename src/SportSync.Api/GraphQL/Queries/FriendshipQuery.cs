@@ -10,9 +10,8 @@ namespace sport_sync.GraphQL.Queries;
 [ExtendObjectType("Query")]
 public class FriendshipQuery
 {
-
     [Authorize]
-    public async Task<PagedList<FriendType>> GetFriends(
+    public async Task<PagedList<UserType>> GetFriends(
         [Service] GetFriendsRequestHandler requestHandler,
         GetFriendsInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
