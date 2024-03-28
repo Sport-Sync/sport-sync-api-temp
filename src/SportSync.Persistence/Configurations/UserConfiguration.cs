@@ -54,6 +54,9 @@ namespace SportSync.Persistence.Configurations
 
             builder.HasQueryFilter(user => !user.Deleted);
 
+            builder.HasIndex(user => user.FirstName);
+            builder.HasIndex(user => user.LastName);
+
             builder.ToTable("Users");
         }
     }
