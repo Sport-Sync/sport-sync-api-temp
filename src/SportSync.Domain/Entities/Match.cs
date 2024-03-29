@@ -27,8 +27,8 @@ public class Match : AggregateRoot
         Price = @event.Price;
         NumberOfPlayersExpected = @event.NumberOfPlayers;
         Notes = @event.Notes;
-        StartTime = schedule.StartTime;
-        EndTime = schedule.EndTime;
+        StartTime = new DateTimeOffset(date.Date.Add(schedule.StartTime.TimeOfDay));
+        EndTime = new DateTimeOffset(date.Date.Add(schedule.EndTime.TimeOfDay));
         Date = date;
         Status = MatchStatus.Pending;
     }
@@ -46,8 +46,8 @@ public class Match : AggregateRoot
         Price = match.Price;
         NumberOfPlayersExpected = match.NumberOfPlayersExpected;
         Notes = match.Notes;
-        StartTime = match.StartTime;
-        EndTime = match.EndTime;
+        StartTime = new DateTimeOffset(date.Date.Add(match.StartTime.TimeOfDay));
+        EndTime = new DateTimeOffset(date.Date.Add(match.EndTime.TimeOfDay));
         Date = date;
     }
 
@@ -59,8 +59,8 @@ public class Match : AggregateRoot
     public Guid EventId { get; set; }
     public Guid ScheduleId { get; set; }
     public DateTime Date { get; set; }
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
+    public DateTimeOffset StartTime { get; set; }
+    public DateTimeOffset EndTime { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
     public MatchStatus Status { get; set; }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SportSync.Domain.Entities;
-using SportSync.Persistence.Converters;
 
 namespace SportSync.Persistence.Configurations;
 
@@ -32,13 +31,9 @@ internal class MatchConfiguration : IEntityTypeConfiguration<Match>
 
         builder.Property(match => match.Date).IsRequired();
 
-        builder.Property(match => match.StartTime)
-            .HasConversion<TimeOnlyConverter>()
-            .IsRequired();
+        builder.Property(match => match.StartTime).IsRequired();
 
-        builder.Property(match => match.EndTime)
-            .HasConversion<TimeOnlyConverter>()
-            .IsRequired();
+        builder.Property(match => match.EndTime).IsRequired();
 
         builder.Property(match => match.CreatedOnUtc).IsRequired();
 
