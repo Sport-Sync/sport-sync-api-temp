@@ -5,6 +5,7 @@ using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
+using static SportSync.Domain.Core.Utility.TimeZoneUtility;
 
 namespace SportSync.Domain.Entities;
 
@@ -27,8 +28,8 @@ public class Match : AggregateRoot
         Price = @event.Price;
         NumberOfPlayersExpected = @event.NumberOfPlayers;
         Notes = @event.Notes;
-        StartTime = new DateTimeOffset(date.Date.Add(schedule.StartTime.TimeOfDay));
-        EndTime = new DateTimeOffset(date.Date.Add(schedule.EndTime.TimeOfDay));
+        StartTime = GetLocalDateTime(date.Date, schedule.StartTime);
+        EndTime = GetLocalDateTime(date.Date, schedule.EndTime);
         Date = date;
         Status = MatchStatus.Pending;
     }
@@ -46,8 +47,8 @@ public class Match : AggregateRoot
         Price = match.Price;
         NumberOfPlayersExpected = match.NumberOfPlayersExpected;
         Notes = match.Notes;
-        StartTime = new DateTimeOffset(date.Date.Add(match.StartTime.TimeOfDay));
-        EndTime = new DateTimeOffset(date.Date.Add(match.EndTime.TimeOfDay));
+        StartTime = GetLocalDateTime(date.Date, match.StartTime);
+        EndTime = GetLocalDateTime(date.Date, match.EndTime);
         Date = date;
     }
 
@@ -172,16 +173,16 @@ public class Match : AggregateRoot
         }
     }
 
-    public bool HasPassed(DateTime? dateTime = null)
+    public bool HasPassed()
     {
-        var date = dateTime ?? DateTime.UtcNow;
+        var dateTimeOffset = GetLocalDateTime(DateTime.UtcNow);
 
-        if (Date < date.Date)
+        if (Date < dateTimeOffset.Date)
         {
             return true;
         }
 
-        if (Date == date.Date && StartTime.TimeOfDay <= date.TimeOfDay)
+        if (Date == dateTimeOffset.Date && StartTime.TimeOfDay <= dateTimeOffset.TimeOfDay)
         {
             return true;
         }
