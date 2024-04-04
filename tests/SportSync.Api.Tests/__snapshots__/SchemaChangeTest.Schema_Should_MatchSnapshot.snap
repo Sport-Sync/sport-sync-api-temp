@@ -119,6 +119,7 @@ type PlayerType {
   userId: UUID!
   firstName: String
   lastName: String
+  imageUrl: String
   isAttending: Boolean
 }
 
