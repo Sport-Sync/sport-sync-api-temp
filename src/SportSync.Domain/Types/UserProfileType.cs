@@ -8,6 +8,7 @@ public class UserProfileType : UserType, IPendingFriendshipRequestsInfo
     public List<UserType> MutualFriends { get; set; }
     public PendingFriendshipRequestType PendingFriendshipRequest { get; set; }
     public bool HasPendingFriendshipRequest => PendingFriendshipRequest != null;
+    public bool IsFriendWithCurrentUser { get; set; }
 
     public UserProfileType(User user, PendingFriendshipRequestType pendingFriendshipRequest = null, List<UserType> mutualFriends = null, string imageUrl = null)
         : base(user, imageUrl)

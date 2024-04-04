@@ -35,6 +35,43 @@ public class GetUserProfileTests : IntegrationTest
         result.ShouldHaveError(DomainErrors.User.NotFound);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task GetUserProfile_ShouldReturn_IsUserFriendWithCurrentUser(bool areFriends)
+    {
+        var currentUser = Database.AddUser();
+        var requestProfile = Database.AddUser("Michael", "Scott");
+        await Database.SaveChangesAsync();
+
+        if (areFriends)
+        {
+            currentUser.AddFriend(requestProfile);
+            await Database.SaveChangesAsync();
+        }
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(currentUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                query{{
+                    userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
+                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest, isFriendWithCurrentUser
+                        pendingFriendshipRequest{{
+                            friendshipRequestId, 
+                            sentByMe
+                        }},
+                        mutualFriends{{
+                            id, firstName, lastName, imageUrl
+                        }}
+                    }}
+                }}"));
+
+        var profileResponse = result.ToResponseObject<UserProfileType>("userProfile");
+
+        profileResponse.IsFriendWithCurrentUser.Should().Be(areFriends);
+    }
+
     [Fact]
     public async Task GetUserProfile_ShouldReturn_PendingFriendshipRequestSentByCurrentUser()
     {

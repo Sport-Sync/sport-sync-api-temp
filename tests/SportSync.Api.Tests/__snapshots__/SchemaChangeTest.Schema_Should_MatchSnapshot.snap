@@ -160,6 +160,7 @@ type UserProfileType {
   mutualFriends: [UserType]
   pendingFriendshipRequest: PendingFriendshipRequestType
   hasPendingFriendshipRequest: Boolean!
+  isFriendWithCurrentUser: Boolean!
   id: UUID!
   firstName: String
   lastName: String

@@ -2,6 +2,7 @@
 using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
+using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
@@ -47,7 +48,10 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
         var user = maybeUser.Value;
         var currentUser = maybeCurrentUser.Value;
 
-        var maybePendingFriendshipRequest = await _friendshipRequestRepository.GetPendingForUsersAsync(currentUser.Id, user.Id, cancellationToken);
+        var friendWithCurrentUser = currentUser.IsFriendWith(user);
+
+        var maybePendingFriendshipRequest = friendWithCurrentUser ? Maybe<FriendshipRequest>.None :
+            await _friendshipRequestRepository.GetPendingForUsersAsync(currentUser.Id, user.Id, cancellationToken);
 
         PendingFriendshipRequestType? pendingFriendshipRequestType = maybePendingFriendshipRequest.HasNoValue
             ? null
@@ -70,6 +74,7 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
         var userProfileImage = user.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(user.Id) : null;
 
         var userProfile = new UserProfileType(user, pendingFriendshipRequestType, mutualFriendList, userProfileImage);
+        userProfile.IsFriendWithCurrentUser = friendWithCurrentUser;
 
         return userProfile;
     }
