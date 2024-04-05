@@ -119,6 +119,7 @@ type PlayerType {
   userId: UUID!
   firstName: String
   lastName: String
+  imageUrl: String
   isAttending: Boolean
 }
 
@@ -159,6 +160,7 @@ type UserProfileType {
   mutualFriends: [UserType]
   pendingFriendshipRequest: PendingFriendshipRequestType
   hasPendingFriendshipRequest: Boolean!
+  isFriendWithCurrentUser: Boolean!
   id: UUID!
   firstName: String
   lastName: String

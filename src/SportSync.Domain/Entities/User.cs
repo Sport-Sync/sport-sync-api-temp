@@ -92,7 +92,7 @@ public class User : AggregateRoot
             return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.InvalidSameUserId);
         }
 
-        if (CheckIfFriends(friend))
+        if (IsFriendWith(friend))
         {
             return Result.Failure<FriendshipRequest>(DomainErrors.FriendshipRequest.AlreadyFriends);
         }
@@ -106,7 +106,7 @@ public class User : AggregateRoot
 
     public Result<Friendship> AddFriend(User friend)
     {
-        if (CheckIfFriends(friend))
+        if (IsFriendWith(friend))
         {
             return Result.Failure<Friendship>(DomainErrors.FriendshipRequest.AlreadyFriends);
         }
@@ -153,7 +153,7 @@ public class User : AggregateRoot
         return Result.Success();
     }
 
-    private bool CheckIfFriends(User friend)
+    private bool IsFriendWith(User friend)
     {
         return Friends.Any(id => id == friend.Id);
     }

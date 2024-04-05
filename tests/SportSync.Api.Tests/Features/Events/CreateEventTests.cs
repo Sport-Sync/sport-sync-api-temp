@@ -19,6 +19,11 @@ public class CreateEventTests : IntegrationTest
         await Database.SaveChangesAsync();
         UserIdentifierMock.Setup(x => x.UserId).Returns(creator.Id);
 
+        var startTime1 = eventDateTimeTomorrow.Date + new TimeSpan(19, 0, 0);
+        var endTime1 = eventDateTimeTomorrow.Date + new TimeSpan(20, 0, 0);
+        var startTime2 = eventDateTimeDayAfterTommorow.Date + new TimeSpan(19, 0, 0);
+        var endTime2 = eventDateTimeDayAfterTommorow.Date + new TimeSpan(20, 0, 0);
+
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                             mutation{{
@@ -34,15 +39,15 @@ public class CreateEventTests : IntegrationTest
                     {{
                         dayOfWeek: {eventDateTimeTomorrow.DayOfWeek},
                         startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
-                        startTime: ""2024-01-20T12:59:39.967Z"",
-                        endTime: ""2024-01-20T13:59:39.967Z"",
+                        startTime: ""{startTime1.ToIsoString()}"",
+                        endTime: ""{endTime1.ToIsoString()}"",
                         repeatWeekly: false
                     }},
                     {{
                         dayOfWeek: {eventDateTimeDayAfterTommorow.DayOfWeek},
                         startDate: ""{eventDateTimeDayAfterTommorow.ToIsoString()}"",
-                        startTime: ""2024-01-19T23:15:00Z"",
-                        endTime: ""2024-01-20T00:15:00Z"",
+                        startTime: ""{startTime2.ToIsoString()}"",
+                        endTime: ""{endTime2.ToIsoString()}"",
                         repeatWeekly: true
                     }}
                   ] 
