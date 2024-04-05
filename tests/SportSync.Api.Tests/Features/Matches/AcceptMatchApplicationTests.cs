@@ -134,6 +134,129 @@ public class AcceptMatchApplicationTests : IntegrationTest
     }
 
     [Fact]
+    public async Task AcceptMatchApplication_ShouldFail_WhenPlayerLimitHasBeenReached()
+    {
+        var completedTime = DateTime.UtcNow;
+        DateTimeProviderMock.Setup(d => d.UtcNow).Returns(completedTime);
+        var user = Database.AddUser();
+        var applicant = Database.AddUser("applicant");
+        var applicant2 = Database.AddUser("applicant2");
+        var adminOnEvent = Database.AddUser("admin");
+        var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
+        match.AddPlayers(new List<Guid>() { user.Id });
+        match.Announce(adminOnEvent, true, 1, string.Empty);
+
+        var application = Database.AddMatchApplication(applicant, match);
+        var secondApplication = Database.AddMatchApplication(applicant2, match);
+
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(adminOnEvent.Id);
+
+        var initialApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
+        initialApplication.Accepted.Should().BeFalse();
+        initialApplication.Rejected.Should().BeFalse();
+        initialApplication.CompletedOnUtc.Should().BeNull();
+        initialApplication.CompletedByUserId.Should().BeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().BeNull();
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{application.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeSuccessResult("acceptMatchApplication");
+
+        var result2 = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{secondApplication.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result2.ShouldBeFailureResult("acceptMatchApplication", DomainErrors.MatchApplication.PlayersLimitReached);
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().NotBeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant2.Id && x.MatchId == match.Id)
+            .Should().BeNull();
+    }
+
+    [Fact]
+    public async Task AcceptMatchApplication_ShouldDeleteAnnouncement_WhenPlayerLimitHasBeenReached()
+    {
+        var completedTime = DateTime.UtcNow;
+        DateTimeProviderMock.Setup(d => d.UtcNow).Returns(completedTime);
+        var user = Database.AddUser();
+        var applicant = Database.AddUser("applicant");
+        var applicant2 = Database.AddUser("applicant2");
+        var adminOnEvent = Database.AddUser("admin");
+        var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
+        match.AddPlayers(new List<Guid>() { user.Id });
+        match.Announce(adminOnEvent, true, 2, string.Empty);
+
+        var application = Database.AddMatchApplication(applicant, match);
+        var secondApplication = Database.AddMatchApplication(applicant2, match);
+
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(adminOnEvent.Id);
+
+        var initialApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
+        initialApplication.Accepted.Should().BeFalse();
+        initialApplication.Rejected.Should().BeFalse();
+        initialApplication.CompletedOnUtc.Should().BeNull();
+        initialApplication.CompletedByUserId.Should().BeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().BeNull();
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{application.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeSuccessResult("acceptMatchApplication");
+
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).Deleted.Should().BeFalse();
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).AcceptedPlayersCount.Should().Be(1);
+
+        var result2 = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{secondApplication.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result2.ShouldBeSuccessResult("acceptMatchApplication");
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().NotBeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant2.Id && x.MatchId == match.Id)
+            .Should().NotBeNull();
+
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).Should().BeNull();
+    }
+
+    [Fact]
     public async Task AcceptMatchApplication_ShouldSucceed_WhenUserIsAdmin()
     {
         var completedTime = DateTime.UtcNow;
@@ -160,6 +283,8 @@ public class AcceptMatchApplicationTests : IntegrationTest
         Database.DbContext.Set<Player>()
             .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
             .Should().BeNull();
+        
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).AcceptedPlayersCount.Should().Be(0);
 
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
@@ -179,6 +304,8 @@ public class AcceptMatchApplicationTests : IntegrationTest
         Database.DbContext.Set<Player>()
             .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
             .Should().NotBeNull();
+     
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).AcceptedPlayersCount.Should().Be(1);
     }
 
     [Fact]

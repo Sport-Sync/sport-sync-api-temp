@@ -61,7 +61,7 @@ public class MatchApplication : AggregateRoot
 
         if (matchAnnouncement.AcceptedPlayersCount >= matchAnnouncement.PlayerLimit)
         {
-            return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
+            return Result.Failure(DomainErrors.MatchApplication.PlayersLimitReached);
         }
 
         Accepted = true;
