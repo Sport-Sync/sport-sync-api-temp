@@ -18,13 +18,12 @@ internal class MatchAnnouncementConfiguration : IEntityTypeConfiguration<MatchAn
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Match>()
-            .WithMany(x => x.Announcements)
-            .HasForeignKey(announcement => announcement.MatchId)
+            .WithOne(x => x.Announcement)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(announcement => announcement.NumberOfPlayersLimit).IsRequired();
-        builder.Property(announcement => announcement.NumberOfPlayersAccepted)
+        builder.Property(announcement => announcement.PlayerLimit).IsRequired();
+        builder.Property(announcement => announcement.AcceptedPlayersCount)
             .IsRequired()
             .HasDefaultValue(0);
 

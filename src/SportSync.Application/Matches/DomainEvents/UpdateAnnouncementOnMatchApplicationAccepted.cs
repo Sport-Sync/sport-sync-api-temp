@@ -26,14 +26,14 @@ public class UpdateAnnouncementOnMatchApplicationAccepted : IDomainEventHandler<
 
         var announcement = maybeAnnouncement.Value;
 
-        announcement.NumberOfPlayersAccepted++;
+        announcement.AcceptedPlayersCount++;
 
-        if (announcement.NumberOfPlayersAccepted > announcement.NumberOfPlayersLimit)
+        if (announcement.AcceptedPlayersCount > announcement.PlayerLimit)
         {
             throw new DomainException(DomainErrors.MatchApplication.PlayersLimitReached);
         }
 
-        if (announcement.NumberOfPlayersAccepted == announcement.NumberOfPlayersLimit)
+        if (announcement.AcceptedPlayersCount == announcement.PlayerLimit)
         {
             announcement.Delete();
         }

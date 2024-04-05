@@ -53,7 +53,7 @@ public class AnnounceMatchRequestHandler : IRequestHandler<AnnounceMatchInput, M
             await _eventRepository.EnsureUserIsAdminOnEvent(match.EventId, user.Id, cancellationToken);
         }
 
-        match.Announce(user, request.PublicAnnouncement, request.NumberOfPlayers, request.Description);
+        match.Announce(user, request.PublicAnnouncement, request.PlayerLimit, request.Description);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

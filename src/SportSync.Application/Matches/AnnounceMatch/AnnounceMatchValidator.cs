@@ -6,7 +6,7 @@ public class AnnounceMatchValidator : AbstractValidator<AnnounceMatchInput>
 {
     public AnnounceMatchValidator()
     {
-        RuleFor(x => x.NumberOfPlayers)
+        RuleFor(x => x.PlayerLimit)
             .GreaterThan(0)
             .WithMessage("Number of players needs to be at least 1")
             .LessThan(20)

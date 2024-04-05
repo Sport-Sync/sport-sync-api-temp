@@ -57,9 +57,9 @@ public class MatchApplication : AggregateRoot
             return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
         }
 
-        var matchAnnouncement = match.Announcements.Single();
+        var matchAnnouncement = match.Announcement;
 
-        if (matchAnnouncement.NumberOfPlayersAccepted >= matchAnnouncement.NumberOfPlayersLimit)
+        if (matchAnnouncement.AcceptedPlayersCount >= matchAnnouncement.PlayerLimit)
         {
             return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
         }

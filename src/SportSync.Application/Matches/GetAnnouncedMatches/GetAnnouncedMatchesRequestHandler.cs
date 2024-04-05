@@ -50,8 +50,8 @@ public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMat
         var userApplications = await _matchApplicationRepository.GetByUserIdAsync(userId, cancellationToken);
         var userApplicationMap = userApplications.ToLookup(x => x.MatchId);
 
-        var publicAnnouncements = announcedMatches.Where(x => x.PubliclyAnnounced).Select(x => new { Match = x, Announcement = x.Announcements.Single() });
-        var privateAnnouncements = announcedMatches.Where(x => !x.PubliclyAnnounced).Select(x => new { Match = x, Announcement = x.Announcements.Single() });
+        var publicAnnouncements = announcedMatches.Where(x => x.PubliclyAnnounced).Select(x => new { Match = x, x.Announcement });
+        var privateAnnouncements = announcedMatches.Where(x => !x.PubliclyAnnounced).Select(x => new { Match = x, x.Announcement });
 
         response.Matches.AddRange(publicAnnouncements.Select(x => 
             new MatchAnnouncementType(x.Announcement, x.Match, userApplicationMap.Contains(x.Match.Id), x.Match.IsPlayer(userId))));

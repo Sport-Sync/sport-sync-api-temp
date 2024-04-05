@@ -18,7 +18,7 @@ type FriendshipRequestType {
 }
 
 type GetAnnouncedMatchResponse {
-  matches: [MatchType!]!
+  matches: [MatchAnnouncementType!]!
 }
 
 type GetDatesByDayOfWeekResponse {
@@ -37,6 +37,23 @@ type GetNotificationsResponse {
 
 type GetPhoneBookUsersResponse {
   users: [PhoneBookUserType!]!
+}
+
+type MatchAnnouncementType {
+  id: UUID!
+  matchId: UUID!
+  date: DateTime!
+  startTime: DateTime!
+  endTime: DateTime!
+  eventName: String
+  sportType: SportType!
+  address: String
+  price: Decimal!
+  playerLimit: Int!
+  acceptedPlayersCount: Int!
+  description: String
+  currentUserAlreadyApplied: Boolean!
+  currentUserIsPlayer: Boolean!
 }
 
 type MatchAttendanceType {
@@ -69,6 +86,7 @@ type Mutation {
   completeNotification(input: NotificationInput): Result @authorize
   setMatchAttendance(input: SetMatchAttendanceInput): SetMatchAttendanceResponse @authorize
   announceMatch(input: AnnounceMatchInput): MatchType @authorize
+  sendAnnouncementToFriends(input: AnnounceMatchInput): MatchType @authorize
   sendMatchApplication(input: SendMatchApplicationInput): Result @authorize
   acceptMatchApplication(input: MatchApplicationInput): Result @authorize
   rejectMatchApplication(input: MatchApplicationInput): Result @authorize
@@ -181,6 +199,8 @@ type UserType {
 input AnnounceMatchInput {
   matchId: UUID!
   publicAnnouncement: Boolean!
+  playerLimit: Int!
+  description: String
 }
 
 input CreateEventInput {

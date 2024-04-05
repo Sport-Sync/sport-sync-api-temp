@@ -135,7 +135,7 @@ public class User : AggregateRoot
 
     public Result NotifyFriendsAboutMatchAnnouncement(Match match)
     {
-        if (!match.Announcements.Any())
+        if (!match.Announced)
         {
             return Result.Failure(DomainErrors.MatchAnnouncement.NotAnnounced);
         }

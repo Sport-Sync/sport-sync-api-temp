@@ -18,7 +18,7 @@ public class MatchRepository : QueryableGenericRepository<Match, MatchType>, IMa
         return Maybe<Match>.From(await DbContext.Set<Match>()
             .Include(t => t.Players)
                 .ThenInclude(p => p.User)
-            .Include(t => t.Announcements)
+            .Include(t => t.Announcement)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
 
@@ -73,10 +73,10 @@ public class MatchRepository : QueryableGenericRepository<Match, MatchType>, IMa
     public async Task<List<Match>> GetAnnouncedMatches(DateTime date, CancellationToken cancellationToken)
     {
         return await DbContext.Set<Match>()
-            .Include(t => t.Announcements)
+            .Include(t => t.Announcement)
             .Include(t => t.Players)
                 .ThenInclude(p => p.User)
-            .Where(t => t.Date.Date == date.Date && t.Announcements.Any())
+            .Where(t => t.Date.Date == date.Date && t.Announcement != null)
             .ToListAsync(cancellationToken);
     }
 }
