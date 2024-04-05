@@ -52,6 +52,7 @@ type MatchAnnouncementType {
   playerLimit: Int!
   acceptedPlayersCount: Int!
   description: String
+  typeOfAnnouncement: MatchAnnouncementTypeEnum!
   currentUserAlreadyApplied: Boolean!
   currentUserIsPlayer: Boolean!
 }
@@ -335,6 +336,11 @@ enum DayOfWeek {
   THURSDAY
   FRIDAY
   SATURDAY
+}
+
+enum MatchAnnouncementTypeEnum {
+  FRIEND_LIST
+  PUBLIC
 }
 
 enum MatchStatus {

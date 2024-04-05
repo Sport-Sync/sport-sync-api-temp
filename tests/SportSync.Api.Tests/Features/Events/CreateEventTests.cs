@@ -88,7 +88,6 @@ public class CreateEventTests : IntegrationTest
     public async Task CreateEvent_ShouldCreateMatches_WithCESTimeZoneOffset()
     {
         var eventDateTimeTomorrow = DateTime.Today.AddDays(1);
-        var eventDateTimeDayAfterTommorow = DateTime.Today.AddDays(2);
         var creator = Database.AddUser();
         var member = Database.AddUser("Marko");
         await Database.SaveChangesAsync();
@@ -109,8 +108,8 @@ public class CreateEventTests : IntegrationTest
                     {{
                         dayOfWeek: {eventDateTimeTomorrow.DayOfWeek},
                         startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
-                        startTime: ""2024-03-29T18:00:00.0000000+01:00"",
-                        endTime: ""2024-03-29T19:00:00.0000000-02:00"",
+                        startTime: ""{eventDateTimeTomorrow.Date:yyyy-MM-dd}T18:00:00.0000000+01:00"",
+                        endTime: ""{eventDateTimeTomorrow.Date:yyyy-MM-dd}T19:00:00.0000000-02:00"",
                         repeatWeekly: false
                     }}
                   ] 
@@ -121,12 +120,33 @@ public class CreateEventTests : IntegrationTest
         eventCreatedId.Should().NotBeEmpty();
 
         var matches = Database.DbContext.Set<Match>().Where(x => x.EventId == eventCreatedId).ToList();
-        matches.Count().Should().Be(15);
+        matches.Count().Should().Be(1);
         matches.All(x => x.Status == MatchStatus.Pending).Should().BeTrue();
 
         // will probably fail after DaylightSavingTime changes in CEST time zone!
         // TODO: Find a way to inject IDateTime to CreateEventValidator (or simply move that validation to Eeveent obbject)
-        //matches[0].StartTime.Should().Be()
+
+        var CESToffset = DateTime.UtcNow.IsDaylightSavingTime() ? 2 : 1;
+
+        matches[0].StartTime.Should().Be(
+            new DateTimeOffset(
+                eventDateTimeTomorrow.Year,
+                eventDateTimeTomorrow.Month,
+                eventDateTimeTomorrow.Day,
+                17 + CESToffset,
+                0,
+                0, TimeSpan.FromHours(CESToffset)
+            ));
+
+        matches[0].EndTime.Should().Be(
+            new DateTimeOffset(
+                eventDateTimeTomorrow.Year,
+                eventDateTimeTomorrow.Month,
+                eventDateTimeTomorrow.Day,
+                21 + CESToffset,
+                0,
+                0, TimeSpan.FromHours(CESToffset)
+            ));
     }
 
     [Fact]

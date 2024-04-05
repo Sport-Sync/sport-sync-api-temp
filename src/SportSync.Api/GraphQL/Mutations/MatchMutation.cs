@@ -4,6 +4,7 @@ using SportSync.Application.Matches.AcceptMatchApplication;
 using SportSync.Application.Matches.AnnounceMatch;
 using SportSync.Application.Matches.Common;
 using SportSync.Application.Matches.RejectMatchApplication;
+using SportSync.Application.Matches.SendAnnouncementToFriends;
 using SportSync.Application.Matches.SendMatchApplication;
 using SportSync.Application.Matches.SetMatchAttendance;
 using SportSync.Domain.Core.Primitives.Result;
@@ -27,9 +28,9 @@ public class MatchMutation
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    public async Task<MatchType> SendAnnouncementToFriends(
-        [Service] AnnounceMatchRequestHandler requestHandler,
-        [UseFluentValidation] AnnounceMatchInput input,
+    public async Task<Result> SendAnnouncementToFriends(
+        [Service] SendAnnouncementToFriendsRequestHandler requestHandler,
+        SendAnnouncementToFriendsInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]

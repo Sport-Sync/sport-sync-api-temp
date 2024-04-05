@@ -22,7 +22,7 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{Guid.NewGuid()}"", publicAnnouncement: true}}){{
+                    announceMatch(input: {{matchId: ""{Guid.NewGuid()}"", playerLimit: 1, publicAnnouncement: true}}){{
                         eventName
                     }}
                 }}"));
@@ -45,7 +45,7 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: {publicAnnouncement.ToString().ToLower()}}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: {publicAnnouncement.ToString().ToLower()}}}){{
                         eventName
                     }}
                 }}"));
@@ -83,7 +83,7 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: false}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: false}}){{
                         eventName
                     }}
                 }}"));
@@ -117,7 +117,7 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: true}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: true}}){{
                         eventName
                     }}
                 }}"));
@@ -140,7 +140,7 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: true}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: true}}){{
                         eventName, status
                     }}
                 }}"));
@@ -173,7 +173,7 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: {publicly.ToString().ToLower()}}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: {publicly.ToString().ToLower()}}}){{
                         eventName, status
                     }}
                 }}"));
@@ -201,7 +201,7 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: {publicly.ToString().ToLower()}}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: {publicly.ToString().ToLower()}}}){{
                         eventName, status
                     }}
                 }}"));
@@ -213,13 +213,117 @@ public class AnnounceMatchTests : IntegrationTest
     }
 
     [Fact]
-    public async Task Announce_ShouldRemovePrivateAnnouncement_WhenAnnouncingPublicly()
+    public async Task Announce_ShouldUpdatePlayersAnnouncerFlag_ForNonAdmin()
     {
         var admin = Database.AddUser();
         var user = Database.AddUser("second", "user", "user@gmail.com");
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin, false, 3, string.Empty);
-        match.Announce(user, false, 3, string.Empty);
+        match.AddPlayer(user.Id);
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        var player = Database.DbContext.Set<Player>().Single(x => x.UserId == user.Id);
+        player.HasAnnouncedMatch.Should().BeFalse();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
+        await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 2, publicAnnouncement: false}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+        player = Database.DbContext.Set<Player>().Single(x => x.UserId == user.Id);
+        player.HasAnnouncedMatch.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Announce_ShouldUpdatePlayersAnnouncerFlag_ForAdmin(bool publicly)
+    {
+        var admin = Database.AddUser();
+        var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
+        
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        var player = Database.DbContext.Set<Player>().Single(x => x.UserId == admin.Id);
+        player.HasAnnouncedMatch.Should().BeFalse();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
+        await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 2, publicAnnouncement: {publicly.ToString().ToLower()}}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+        player = Database.DbContext.Set<Player>().Single(x => x.UserId == admin.Id);
+        player.HasAnnouncedMatch.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Announce_ShouldUpdatePrivateAnnouncement_WhenAnnouncingPublicly()
+    {
+        var admin = Database.AddUser();
+        var user = Database.AddUser("second", "user", "user@gmail.com");
+        var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
+        match.AddPlayer(user.Id);
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 2, publicAnnouncement: false, description: ""We need some good players!!!""}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+        var announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
+        announcement.PlayerLimit.Should().Be(2);
+        announcement.AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
+        announcement.Description.Should().Be("We need some good players!!!");
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
+        var result2 = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 5, publicAnnouncement: true, description: ""We are fine with bad ones as well.""}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+        var matchResponse = result2.ToResponseObject<MatchType>("announceMatch");
+        matchResponse.Should().NotBeNull();
+
+        announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
+        announcement.PlayerLimit.Should().Be(5);
+        announcement.AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.Public);
+        announcement.Description.Should().Be("We are fine with bad ones as well.");
+    }
+
+    [Theory]
+    [InlineData(5, 1, true)]
+    [InlineData(5, 4, true)]
+    [InlineData(3, 2, true)]
+    [InlineData(5, 5, false)]
+    [InlineData(3, 3, false)]
+    [InlineData(3, 4, false)]
+    [InlineData(1, 2, false)]
+    public async Task Announce_ShouldFail_WhenAnnouncingPubliclyOnExistingPrivateAnnouncementWithLimitLowerThanAlreadyAccepted(
+        int limit, int alreadyAccepted, bool shouldSucceed)
+    {
+        var admin = Database.AddUser();
+        var user = Database.AddUser("second", "user", "user@gmail.com");
+        var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
+        match.AddPlayer(user.Id);
+        
+        var announcmenet = match.Announce(user, false, limit, string.Empty);
+        announcmenet.AcceptedPlayersCount = alreadyAccepted;
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -227,17 +331,50 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: true}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: {limit}, publicAnnouncement: true, description: ""We are fine with bad ones as well.""}}){{
                         eventName, status
                     }}
                 }}"));
 
-        var matchResponse = result.ToResponseObject<MatchType>("announceMatch");
-        matchResponse.Should().NotBeNull();
+        if (shouldSucceed)
+        {
+            var matchResponse = result.ToResponseObject<MatchType>("announceMatch");
+            matchResponse.Should().NotBeNull();
 
-        var announcements = Database.DbContext.Set<MatchAnnouncement>().Where(x => x.MatchId == match.Id);
-        announcements.Count().Should().Be(1);
-        announcements.Single().AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.Public);
+            var announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
+            announcement.PlayerLimit.Should().Be(limit);
+            announcement.AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.Public);
+            announcement.AcceptedPlayersCount.Should().Be(alreadyAccepted);
+        }
+        else
+        {
+            result.ShouldHaveError(DomainErrors.MatchAnnouncement.PlayerLimitLessThanAlreadyAccepted);
+
+            var announcementFail = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
+            announcementFail.PlayerLimit.Should().Be(limit);
+            announcementFail.AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
+        }
+    }
+
+    [Fact]
+    public async Task Announce_ShouldFail_WhenUserIsNotAPlayer()
+    {
+        var admin = Database.AddUser();
+        var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
+        var user = Database.AddUser("second", "user", "user@gmail.com");
+
+        await Database.UnitOfWork.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                mutation {{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: false}}){{
+                        eventName, status
+                    }}
+                }}"));
+
+        result.ShouldHaveError(DomainErrors.MatchAnnouncement.UserIsNotPlayer);
     }
 
     [Fact]
@@ -253,43 +390,38 @@ public class AnnounceMatchTests : IntegrationTest
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: false}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: false}}){{
                         eventName, status
                     }}
                 }}"));
 
-        result.ShouldHaveError(DomainErrors.MatchAnnouncement.AlreadyAnnouncedBySameUser);
+        result.ShouldHaveError(DomainErrors.MatchAnnouncement.AlreadyAnnounced);
 
         var announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
         announcement.UserId.Should().Be(admin.Id);
     }
 
     [Fact]
-    public async Task Announce_ShouldSucceed_WhenAlreadyAnnouncedByDifferentUser()
+    public async Task Announce_ShouldFail_WhenAlreadyAnnouncedPrivatelyByDifferentUser()
     {
         var admin = Database.AddUser();
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
         var user = Database.AddUser("second", "user", "user@gmail.com");
+        
+        match.AddPlayer(user.Id);
         match.Announce(user, false, 3, string.Empty);
-
+        
         await Database.UnitOfWork.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(admin.Id);
         var result = await ExecuteRequestAsync(
             q => q.SetQuery(@$"
                 mutation {{
-                    announceMatch(input: {{matchId: ""{match.Id}"", publicAnnouncement: false}}){{
+                    announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: false}}){{
                         eventName, status
                     }}
                 }}"));
 
-        var matchResponse = result.ToResponseObject<MatchType>("announceMatch");
-        matchResponse.Should().NotBeNull();
-
-        var announcements = Database.DbContext.Set<MatchAnnouncement>().Where(x => x.MatchId == match.Id);
-        announcements.Count().Should().Be(2);
-
-        announcements.Single(x => x.UserId == user.Id).AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
-        announcements.Single(x => x.UserId == admin.Id).AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
+        result.ShouldHaveError(DomainErrors.MatchAnnouncement.AlreadyAnnounced);
     }
 }

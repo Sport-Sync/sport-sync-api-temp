@@ -154,10 +154,6 @@ public static class DomainErrors
             "MatchAnnouncement.AlreadyAnnounced",
             "The match is already announced.");
 
-        public static Error AlreadyAnnouncedBySameUser => new Error(
-            "MatchAnnouncement.AlreadyAnnouncedBySameUser",
-            "The match is already announced by same user.");
-
         public static Error NotAnnounced => new Error(
             "MatchAnnouncement.NotAnnounced",
             "The match is not announced.");

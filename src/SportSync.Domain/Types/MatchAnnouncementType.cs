@@ -39,4 +39,9 @@ public class MatchAnnouncementType
         CurrentUserIsPlayer = currentUserIsPlayer;
         TypeOfAnnouncement = matchAnnouncement.AnnouncementType;
     }
+
+    public MatchAnnouncementType()
+    {
+        
+    }
 }

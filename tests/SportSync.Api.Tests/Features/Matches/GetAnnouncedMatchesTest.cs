@@ -32,14 +32,17 @@ public class GetAnnouncedMatchesTest : IntegrationTest
                 query {{
                     announcedMatches(input: {{date: ""{tomorrow.Date}""}}){{
                         matches{{
-                            eventName, numberOfPlayersExpected, id
+                            matchId
                         }}
                     }}
                 }}"));
 
+        Database.DbContext.Set<Player>().First(x => x.UserId == creatorUser.Id && x.MatchId == privateMatch.Id).HasAnnouncedMatch.Should().BeTrue();
+        Database.DbContext.Set<Player>().First(x => x.UserId == creatorUser.Id && x.MatchId == publicMatch.Id).HasAnnouncedMatch.Should().BeTrue();
+
         var response = result.ToResponseObject<GetAnnouncedMatchResponse>("announcedMatches");
         response.Matches.Count.Should().Be(1);
-        response.Matches.Single().Id.Should().Be(publicMatch.Id);
+        response.Matches.Single().MatchId.Should().Be(publicMatch.Id);
     }
 
     [Fact]
@@ -72,38 +75,41 @@ public class GetAnnouncedMatchesTest : IntegrationTest
                 query {{
                     announcedMatches(input: {{date: ""{tomorrow.Date}""}}){{
                         matches{{
-                            eventName, numberOfPlayersExpected, id
+                            matchId
                         }}
                     }}
                 }}"));
 
         var response = result.ToResponseObject<GetAnnouncedMatchResponse>("announcedMatches");
         response.Matches.Count.Should().Be(2);
-        response.Matches.FirstOrDefault(x => x.Id == publicMatch.Id).Should().NotBeNull();
-        response.Matches.FirstOrDefault(x => x.Id == privateFromFriendMatch.Id).Should().NotBeNull();
+        response.Matches.FirstOrDefault(x => x.MatchId == publicMatch.Id).Should().NotBeNull();
+        response.Matches.FirstOrDefault(x => x.MatchId == privateFromFriendMatch.Id).Should().NotBeNull();
     }
 
     [Fact]
-    public async Task GetAnnouncedMatches_ShouldReturnMatchOnlyOnce_WhenItHasMultipleAnnouncements()
+    public async Task GetAnnouncedMatches_ShouldReturn_OnlyForFriendsWithAnnouncerFlagTrue()
     {
         var tomorrow = DateTime.Today.AddDays(1);
         var requestUser = Database.AddUser();
-        var friendOne = Database.AddUser();
-        var friendTwo = Database.AddUser();
+        var nonFriendUser = Database.AddUser("creator", "user", "user@gmail.com");
+        var friendUser = Database.AddUser("friend", "user", "user@gmail.com");
 
-        var match = Database.AddMatch(friendOne, startDate: tomorrow);
+        var privateMatchNonFriend = Database.AddMatch(nonFriendUser, startDate: tomorrow);
+        var privateMatchFriend = Database.AddMatch(friendUser, startDate: tomorrow);
+        var privateMatchBothUsers = Database.AddMatch(nonFriendUser, startDate: tomorrow);
+        var privateMatchBothUsersAnnouncedByFriend = Database.AddMatch(nonFriendUser, startDate: tomorrow);
 
-        match.AddPlayers(new List<Guid>() { friendTwo.Id });
-        match.Announce(friendOne, false, 3, string.Empty);
-        match.Announce(friendTwo, false, 3, string.Empty);
+        privateMatchBothUsers.AddPlayer(friendUser.Id);
+        privateMatchBothUsersAnnouncedByFriend.AddPlayer(friendUser.Id);
 
-        Database.AddFriendship(requestUser, friendOne);
-        Database.AddFriendship(requestUser, friendTwo);
+        privateMatchNonFriend.Announce(nonFriendUser, false, 2, string.Empty);
+        privateMatchFriend.Announce(friendUser, false, 3, string.Empty);
+        privateMatchBothUsers.Announce(nonFriendUser, false, 4, string.Empty);
+        privateMatchBothUsersAnnouncedByFriend.Announce(friendUser, false, 6, string.Empty);
+
+        Database.AddFriendship(requestUser, friendUser);
 
         await Database.UnitOfWork.SaveChangesAsync();
-
-        Database.DbContext.Set<MatchAnnouncement>().Where(x => x.MatchId == match.Id).Count().Should().Be(2);
-
         UserIdentifierMock.Setup(x => x.UserId).Returns(requestUser.Id);
 
         var result = await ExecuteRequestAsync(
@@ -111,13 +117,16 @@ public class GetAnnouncedMatchesTest : IntegrationTest
                 query {{
                     announcedMatches(input: {{date: ""{tomorrow.Date}""}}){{
                         matches{{
-                            eventName, numberOfPlayersExpected, id
+                            matchId, playerLimit
                         }}
                     }}
                 }}"));
 
         var response = result.ToResponseObject<GetAnnouncedMatchResponse>("announcedMatches");
-        response.Matches.Count.Should().Be(1);
-        response.Matches.FirstOrDefault(x => x.Id == match.Id).Should().NotBeNull();
+        response.Matches.Count.Should().Be(2);
+        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchFriend.Id).Should().NotBeNull();
+        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchFriend.Id).PlayerLimit.Should().Be(3);
+        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchBothUsersAnnouncedByFriend.Id).Should().NotBeNull();
+        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchBothUsersAnnouncedByFriend.Id).PlayerLimit.Should().Be(6);
     }
 }
