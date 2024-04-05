@@ -50,7 +50,7 @@ public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMat
 
         foreach (var match in privateAnnouncements)
         {
-            var announcingUserIds = match.Announcements.Select(x => x.UserId);
+            var announcingUserIds = match.Players.Where(x => x.HasAnnouncedMatch).Select(x => x.UserId);
             if (user.Friends.Any(friendId => announcingUserIds.Contains(friendId)))
             {
                 response.Matches.Add(MatchType.FromMatch(match));

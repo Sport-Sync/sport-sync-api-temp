@@ -2,12 +2,13 @@
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
+using SportSync.Domain.Core.Primitives.Result;
+using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
-using MatchType = SportSync.Domain.Types.MatchType;
 
-namespace SportSync.Application.Matches.AnnounceMatch;
+namespace SportSync.Application.Matches.SendAnnouncementToFriends;
 
-public class AnnounceMatchRequestHandler : IRequestHandler<AnnounceMatchInput, MatchType>
+public class SendAnnouncementToFriendsRequestHandler : IRequestHandler<SendAnnouncementToFriendsInput, Result>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
@@ -15,21 +16,21 @@ public class AnnounceMatchRequestHandler : IRequestHandler<AnnounceMatchInput, M
     private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AnnounceMatchRequestHandler(
-        IUserIdentifierProvider userIdentifierProvider,
-        IMatchRepository matchRepository,
-        IUserRepository userRepository,
-        IEventRepository eventRepository,
+    public SendAnnouncementToFriendsRequestHandler(
+        IUserIdentifierProvider userIdentifierProvider, 
+        IUserRepository userRepository, 
+        IMatchRepository matchRepository, 
+        IEventRepository eventRepository, 
         IUnitOfWork unitOfWork)
     {
-        _matchRepository = matchRepository;
         _userIdentifierProvider = userIdentifierProvider;
+        _userRepository = userRepository;
+        _matchRepository = matchRepository;
         _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
-        _userRepository = userRepository;
     }
 
-    public async Task<MatchType> Handle(AnnounceMatchInput request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SendAnnouncementToFriendsInput request, CancellationToken cancellationToken)
     {
         var maybeUser = await _userRepository.GetByIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 
@@ -48,15 +49,15 @@ public class AnnounceMatchRequestHandler : IRequestHandler<AnnounceMatchInput, M
         var match = maybeMatch.Value;
         var user = maybeUser.Value;
 
-        if (request.PublicAnnouncement)
-        {
-            await _eventRepository.EnsureUserIsAdminOnEvent(match.EventId, user.Id, cancellationToken);
-        }
+        var notifyResult = user.NotifyFriendsAboutMatchAnnouncement(match);
 
-        match.Announce(user, request.PublicAnnouncement, request.NumberOfPlayers, request.Description);
+        if (notifyResult.IsFailure)
+        {
+            return notifyResult;
+        }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return MatchType.FromMatch(match);
+        return Result.Success();
     }
 }

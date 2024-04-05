@@ -21,8 +21,8 @@ public class GetAnnouncedMatchesTest : IntegrationTest
         publicMatch.AddPlayer(creatorUser.Id);
         privateMatch.AddPlayer(creatorUser.Id);
 
-        publicMatch.Announce(creatorUser, true);
-        privateMatch.Announce(creatorUser, false);
+        publicMatch.Announce(creatorUser, true, 3, string.Empty);
+        privateMatch.Announce(creatorUser, false, 3, string.Empty);
 
         await Database.UnitOfWork.SaveChangesAsync();
         UserIdentifierMock.Setup(x => x.UserId).Returns(requestUser.Id);
@@ -58,9 +58,9 @@ public class GetAnnouncedMatchesTest : IntegrationTest
         privateMatch.AddPlayers(new List<Guid>() { creatorUser.Id });
         privateFromFriendMatch.AddPlayers(new List<Guid>() { friendUser.Id });
 
-        publicMatch.Announce(creatorUser, true);
-        privateMatch.Announce(creatorUser, false);
-        privateFromFriendMatch.Announce(friendUser, false);
+        publicMatch.Announce(creatorUser, true, 3, string.Empty);
+        privateMatch.Announce(creatorUser, false, 3, string.Empty);
+        privateFromFriendMatch.Announce(friendUser, false, 3, string.Empty);
 
         Database.AddFriendship(requestUser, friendUser);
 
@@ -94,8 +94,8 @@ public class GetAnnouncedMatchesTest : IntegrationTest
         var match = Database.AddMatch(friendOne, startDate: tomorrow);
 
         match.AddPlayers(new List<Guid>() { friendTwo.Id });
-        match.Announce(friendOne, false);
-        match.Announce(friendTwo, false);
+        match.Announce(friendOne, false, 3, string.Empty);
+        match.Announce(friendTwo, false, 3, string.Empty);
 
         Database.AddFriendship(requestUser, friendOne);
         Database.AddFriendship(requestUser, friendTwo);

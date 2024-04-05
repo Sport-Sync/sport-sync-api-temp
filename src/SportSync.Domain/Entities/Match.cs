@@ -120,13 +120,23 @@ public class Match : AggregateRoot
         player.Attending = attending;
     }
 
-    public MatchAnnouncement Announce(User user, bool publicly)
+    public MatchAnnouncement Announce(User user, bool publicly, int numberOfPlayers, string description)
     {
         EnsureItIsNotDone();
+
+        if (!IsPlayer(user.Id))
+        {
+            throw new DomainException(DomainErrors.MatchAnnouncement.UserIsNotPlayer);
+        }
 
         if (PubliclyAnnounced)
         {
             throw new DomainException(DomainErrors.MatchAnnouncement.AlreadyPubliclyAnnounced);
+        }
+
+        if (Announced && !publicly)
+        {
+            throw new DomainException(DomainErrors.MatchAnnouncement.AlreadyAnnounced);
         }
 
         if (publicly)
@@ -134,15 +144,13 @@ public class Match : AggregateRoot
             _announcements.RemoveWhere(x => x.AnnouncementType == MatchAnnouncementType.FriendList);
         }
 
-        if (!publicly && _announcements.Any(x => x.UserId == user.Id))
-        {
-            throw new DomainException(DomainErrors.MatchAnnouncement.AlreadyAnnouncedBySameUser);
-        }
-
         var type = publicly ? MatchAnnouncementType.Public : MatchAnnouncementType.FriendList;
-        var announcement = new MatchAnnouncement(this, user.Id, type);
+        var announcement = new MatchAnnouncement(this, user.Id, type, numberOfPlayers, description);
 
         _announcements.Add(announcement);
+
+        var player = Players.First(x => x.UserId == user.Id);
+        player.SetAsMatchAnnouncer();
 
         if (!publicly)
         {

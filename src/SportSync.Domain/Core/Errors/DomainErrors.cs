@@ -110,6 +110,10 @@ public static class DomainErrors
             "MatchApplication.NotFound",
             "The match application with the specified identifier was not found.");
 
+        public static Error PlayersLimitReached => new Error(
+            "MatchApplication.PlayersLimitReached",
+            "The limit of players needed for this match has already been reached.");
+
         public static Error AlreadyAccepted => new Error(
             "MatchApplication.AlreadyAccepted",
             "The application has already been accepted.");
@@ -138,13 +142,29 @@ public static class DomainErrors
 
     public static class MatchAnnouncement
     {
+        public static Error UserIsNotPlayer => new Error(
+            "MatchAnnouncement.UserIsNotPlayer",
+            "Current user is not a player on this match.");
+
         public static Error AlreadyPubliclyAnnounced => new Error(
             "MatchAnnouncement.AlreadyPubliclyAnnounced",
             "The match is already publicly announced.");
 
+        public static Error AlreadyAnnounced => new Error(
+            "MatchAnnouncement.AlreadyAnnounced",
+            "The match is already announced.");
+
         public static Error AlreadyAnnouncedBySameUser => new Error(
             "MatchAnnouncement.AlreadyAnnouncedBySameUser",
             "The match is already announced by same user.");
+
+        public static Error NotAnnounced => new Error(
+            "MatchAnnouncement.NotAnnounced",
+            "The match is not announced.");
+
+        public static Error NotFound => new Error(
+            "MatchAnnouncement.NotFound",
+            "The match announcement with the specified identifier was not found.");
     }
 
     public static class Email

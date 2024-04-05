@@ -45,7 +45,7 @@ public class MatchApplication : AggregateRoot
         return new MatchApplication(user, match);
     }
 
-    public Result Accept(User user, DateTime utcNow)
+    public Result Accept(User user, Match match, DateTime utcNow)
     {
         if (Accepted)
         {
@@ -53,6 +53,13 @@ public class MatchApplication : AggregateRoot
         }
 
         if (Rejected)
+        {
+            return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
+        }
+
+        var matchAnnouncement = match.Announcements.Single();
+
+        if (matchAnnouncement.NumberOfPlayersAccepted >= matchAnnouncement.NumberOfPlayersLimit)
         {
             return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
         }

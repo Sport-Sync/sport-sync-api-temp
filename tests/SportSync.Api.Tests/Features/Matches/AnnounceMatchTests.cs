@@ -193,7 +193,7 @@ public class AnnounceMatchTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin, true);
+        match.Announce(admin, true, 3, string.Empty);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -218,8 +218,8 @@ public class AnnounceMatchTests : IntegrationTest
         var admin = Database.AddUser();
         var user = Database.AddUser("second", "user", "user@gmail.com");
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin, false);
-        match.Announce(user, false);
+        match.Announce(admin, false, 3, string.Empty);
+        match.Announce(user, false, 3, string.Empty);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -245,7 +245,7 @@ public class AnnounceMatchTests : IntegrationTest
     {
         var admin = Database.AddUser();
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
-        match.Announce(admin, false);
+        match.Announce(admin, false, 3, string.Empty);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -270,7 +270,7 @@ public class AnnounceMatchTests : IntegrationTest
         var admin = Database.AddUser();
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
         var user = Database.AddUser("second", "user", "user@gmail.com");
-        match.Announce(user, false);
+        match.Announce(user, false, 3, string.Empty);
 
         await Database.UnitOfWork.SaveChangesAsync();
 

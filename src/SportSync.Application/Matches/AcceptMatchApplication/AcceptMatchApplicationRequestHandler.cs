@@ -53,7 +53,7 @@ public class AcceptMatchApplicationRequestHandler : IRequestHandler<MatchApplica
             return Result.Failure(DomainErrors.MatchApplication.NotFound);
         }
 
-        Maybe<Domain.Entities.Match> maybeMatch = await _matchRepository.GetByIdAsync(maybeMatchApplication.Value.MatchId, cancellationToken);
+        Maybe<Match> maybeMatch = await _matchRepository.GetByIdAsync(maybeMatchApplication.Value.MatchId, cancellationToken);
 
         if (maybeMatch.HasNoValue)
         {
@@ -66,7 +66,7 @@ public class AcceptMatchApplicationRequestHandler : IRequestHandler<MatchApplica
 
         await _eventRepository.EnsureUserIsAdminOnEvent(match.EventId, user.Id, cancellationToken);
 
-        var acceptResult = matchApplication.Accept(user, _dateTime.UtcNow);
+        var acceptResult = matchApplication.Accept(user, match, _dateTime.UtcNow);
 
         if (acceptResult.IsFailure)
         {

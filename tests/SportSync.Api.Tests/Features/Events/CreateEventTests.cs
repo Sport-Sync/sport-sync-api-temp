@@ -80,6 +80,51 @@ public class CreateEventTests : IntegrationTest
     }
 
     [Fact]
+    public async Task CreateEvent_ShouldCreateMatches_WithCESTimeZoneOffset()
+    {
+        var eventDateTimeTomorrow = DateTime.Today.AddDays(1);
+        var eventDateTimeDayAfterTommorow = DateTime.Today.AddDays(2);
+        var creator = Database.AddUser();
+        var member = Database.AddUser("Marko");
+        await Database.SaveChangesAsync();
+        UserIdentifierMock.Setup(x => x.UserId).Returns(creator.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                            mutation{{
+                createEvent(input: {{
+                  name: ""Fuca petkom"",
+                  memberIds: [""{member.Id}""],
+                  address: ""Aleja ruža 12"",
+                  numberOfPlayers: 12,
+                  notes: """",
+                  price: 5,
+                  sportType:Football,
+                  eventTime:[
+                    {{
+                        dayOfWeek: {eventDateTimeTomorrow.DayOfWeek},
+                        startDate: ""{eventDateTimeTomorrow.ToIsoString()}"",
+                        startTime: ""2024-03-29T18:00:00.0000000+01:00"",
+                        endTime: ""2024-03-29T19:00:00.0000000-02:00"",
+                        repeatWeekly: false
+                    }}
+                  ] 
+                }})
+            }}"));
+
+        var eventCreatedId = result.ToResponseObject<Guid>("createEvent");
+        eventCreatedId.Should().NotBeEmpty();
+
+        var matches = Database.DbContext.Set<Match>().Where(x => x.EventId == eventCreatedId).ToList();
+        matches.Count().Should().Be(15);
+        matches.All(x => x.Status == MatchStatus.Pending).Should().BeTrue();
+
+        // will probably fail after DaylightSavingTime changes in CEST time zone!
+        // TODO: Find a way to inject IDateTime to CreateEventValidator (or simply move that validation to Eeveent obbject)
+        //matches[0].StartTime.Should().Be()
+    }
+
+    [Fact]
     public async Task CreateEvent_ShouldFail_WhenStartDateIsTodayButTimePassed()
     {
         var eventDateTimeToday = DateTime.Today;
