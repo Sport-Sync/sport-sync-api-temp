@@ -18,16 +18,30 @@ internal class MatchAnnouncementConfiguration : IEntityTypeConfiguration<MatchAn
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne<Match>()
-            .WithMany(x => x.Announcements)
-            .HasForeignKey(announcement => announcement.MatchId)
+            .WithOne(x => x.Announcement)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-        
+
+        builder.Property(announcement => announcement.PlayerLimit).IsRequired();
+        builder.Property(announcement => announcement.AcceptedPlayersCount)
+            .IsRequired()
+            .HasDefaultValue(0);
+
+        builder.HasIndex(x => x.MatchId).IsUnique();
+
+        builder.Property(announcement => announcement.Description);
+
         builder.Property(announcement => announcement.AnnouncementType);
 
         builder.Property(announcement => announcement.CreatedOnUtc).IsRequired();
 
         builder.Property(announcement => announcement.ModifiedOnUtc);
+
+        builder.Property(match => match.DeletedOnUtc);
+
+        builder.Property(match => match.Deleted).HasDefaultValue(false);
+
+        builder.HasQueryFilter(match => !match.Deleted);
 
         builder.ToTable("MatchAnnouncements");
     }

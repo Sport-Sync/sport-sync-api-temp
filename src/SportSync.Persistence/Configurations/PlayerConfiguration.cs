@@ -24,6 +24,7 @@ internal class PlayerConfiguration : IEntityTypeConfiguration<Player>
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(player => player.Attending);
+        builder.Property(player => player.HasAnnouncedMatch).HasDefaultValue(false);
 
         builder.Property(player => player.CreatedOnUtc).IsRequired();
         builder.Property(player => player.ModifiedOnUtc);

@@ -7,7 +7,7 @@ using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Matches.DomainEvents;
 
-internal sealed class CreateMatchesOnEventCreatedHandler : IDomainEventHandler<EventCreatedDomainEvent>
+public class CreateMatchesOnEventCreatedHandler : IDomainEventHandler<EventCreatedDomainEvent>
 {
     private readonly EventSettings _eventSettings;
     private readonly IMatchRepository _matchRepository;

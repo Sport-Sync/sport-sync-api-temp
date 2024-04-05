@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240405103458_RenameAnnouncementColumns")]
+    partial class RenameAnnouncementColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -726,7 +729,7 @@ namespace SportSync.Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.OwnsOne("SportSync.Domain.Entities.Notification.ContentData#SportSync.Domain.ValueObjects.NotificationContentData", "ContentData", b1 =>
+                    b.OwnsOne("SportSync.Domain.ValueObjects.NotificationContentData", "ContentData", b1 =>
                         {
                             b1.Property<Guid>("NotificationId")
                                 .HasColumnType("uniqueidentifier");
@@ -740,7 +743,7 @@ namespace SportSync.Persistence.Migrations
 
                             b1.HasKey("NotificationId");
 
-                            b1.ToTable("Notifications", (string)null);
+                            b1.ToTable("Notifications");
 
                             b1.WithOwner()
                                 .HasForeignKey("NotificationId");
@@ -768,7 +771,7 @@ namespace SportSync.Persistence.Migrations
 
             modelBuilder.Entity("SportSync.Domain.Entities.User", b =>
                 {
-                    b.OwnsOne("SportSync.Domain.Entities.User.Phone#SportSync.Domain.ValueObjects.PhoneNumber", "Phone", b1 =>
+                    b.OwnsOne("SportSync.Domain.ValueObjects.PhoneNumber", "Phone", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uniqueidentifier");
@@ -785,7 +788,7 @@ namespace SportSync.Persistence.Migrations
                                 .IsUnique()
                                 .HasFilter("[Phone] IS NOT NULL");
 
-                            b1.ToTable("Users", (string)null);
+                            b1.ToTable("Users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

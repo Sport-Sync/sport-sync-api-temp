@@ -133,6 +133,26 @@ public class User : AggregateRoot
             Result.Failure<Friendship>(DomainErrors.FriendshipRequest.FriendNotFound);
     }
 
+    public Result NotifyFriendsAboutMatchAnnouncement(Match match)
+    {
+        if (!match.Announced)
+        {
+            return Result.Failure(DomainErrors.MatchAnnouncement.NotAnnounced);
+        }
+
+        if (!match.IsPlayer(Id))
+        {
+            return Result.Failure(DomainErrors.MatchAnnouncement.UserIsNotPlayer);
+        }
+
+        var player = match.Players.First(x => x.UserId == Id);
+        player.SetAsMatchAnnouncer();
+
+        RaiseDomainEvent(new MatchAnnouncedToFriendsDomainEvent(match, this));
+
+        return Result.Success();
+    }
+
     public bool IsFriendWith(User friend)
     {
         return Friends.Any(id => id == friend.Id);

@@ -37,7 +37,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent, true);
+        match.Announce(adminOnEvent, true, 3, string.Empty);
 
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -71,12 +71,12 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent, true);
+        match.Announce(adminOnEvent, true, 3, string.Empty);
         
         var application = Database.AddMatchApplication(applicant, match);
 
         await Database.SaveChangesAsync();
-        application.Accept(adminOnEvent, completedTime);
+        application.Accept(adminOnEvent, match, completedTime);
         await Database.SaveChangesAsync();
 
         UserIdentifierMock.Setup(x => x.UserId).Returns(adminOnEvent.Id);
@@ -107,7 +107,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent, true);
+        match.Announce(adminOnEvent, true, 3, string.Empty);
 
         var application = Database.AddMatchApplication(applicant, match);
 
@@ -134,18 +134,20 @@ public class AcceptMatchApplicationTests : IntegrationTest
     }
 
     [Fact]
-    public async Task AcceptMatchApplication_ShouldSucceed_WhenUserIsAdmin()
+    public async Task AcceptMatchApplication_ShouldFail_WhenPlayerLimitHasBeenReached()
     {
         var completedTime = DateTime.UtcNow;
         DateTimeProviderMock.Setup(d => d.UtcNow).Returns(completedTime);
         var user = Database.AddUser();
         var applicant = Database.AddUser("applicant");
+        var applicant2 = Database.AddUser("applicant2");
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent, true);
+        match.Announce(adminOnEvent, true, 1, string.Empty);
 
         var application = Database.AddMatchApplication(applicant, match);
+        var secondApplication = Database.AddMatchApplication(applicant2, match);
 
         await Database.SaveChangesAsync();
 
@@ -170,6 +172,129 @@ public class AcceptMatchApplicationTests : IntegrationTest
                         }}}}"));
 
         result.ShouldBeSuccessResult("acceptMatchApplication");
+
+        var result2 = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{secondApplication.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result2.ShouldBeFailureResult("acceptMatchApplication", DomainErrors.MatchApplication.PlayersLimitReached);
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().NotBeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant2.Id && x.MatchId == match.Id)
+            .Should().BeNull();
+    }
+
+    [Fact]
+    public async Task AcceptMatchApplication_ShouldDeleteAnnouncement_WhenPlayerLimitHasBeenReached()
+    {
+        var completedTime = DateTime.UtcNow;
+        DateTimeProviderMock.Setup(d => d.UtcNow).Returns(completedTime);
+        var user = Database.AddUser();
+        var applicant = Database.AddUser("applicant");
+        var applicant2 = Database.AddUser("applicant2");
+        var adminOnEvent = Database.AddUser("admin");
+        var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
+        match.AddPlayers(new List<Guid>() { user.Id });
+        match.Announce(adminOnEvent, true, 2, string.Empty);
+
+        var application = Database.AddMatchApplication(applicant, match);
+        var secondApplication = Database.AddMatchApplication(applicant2, match);
+
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(adminOnEvent.Id);
+
+        var initialApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
+        initialApplication.Accepted.Should().BeFalse();
+        initialApplication.Rejected.Should().BeFalse();
+        initialApplication.CompletedOnUtc.Should().BeNull();
+        initialApplication.CompletedByUserId.Should().BeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().BeNull();
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{application.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeSuccessResult("acceptMatchApplication");
+
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).Deleted.Should().BeFalse();
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).AcceptedPlayersCount.Should().Be(1);
+
+        var result2 = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{secondApplication.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result2.ShouldBeSuccessResult("acceptMatchApplication");
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().NotBeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant2.Id && x.MatchId == match.Id)
+            .Should().NotBeNull();
+
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task AcceptMatchApplication_ShouldSucceed_WhenUserIsAdmin()
+    {
+        var completedTime = DateTime.UtcNow;
+        DateTimeProviderMock.Setup(d => d.UtcNow).Returns(completedTime);
+        var user = Database.AddUser();
+        var applicant = Database.AddUser("applicant");
+        var adminOnEvent = Database.AddUser("admin");
+        var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
+        match.AddPlayers(new List<Guid>() { user.Id });
+        match.Announce(adminOnEvent, true, 3, string.Empty);
+
+        var application = Database.AddMatchApplication(applicant, match);
+
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(adminOnEvent.Id);
+
+        var initialApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
+        initialApplication.Accepted.Should().BeFalse();
+        initialApplication.Rejected.Should().BeFalse();
+        initialApplication.CompletedOnUtc.Should().BeNull();
+        initialApplication.CompletedByUserId.Should().BeNull();
+
+        Database.DbContext.Set<Player>()
+            .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
+            .Should().BeNull();
+        
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).AcceptedPlayersCount.Should().Be(0);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{application.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeSuccessResult("acceptMatchApplication");
         var matchApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
         matchApplication.Accepted.Should().BeTrue();
         matchApplication.Rejected.Should().BeFalse();
@@ -179,6 +304,8 @@ public class AcceptMatchApplicationTests : IntegrationTest
         Database.DbContext.Set<Player>()
             .FirstOrDefault(x => x.UserId == applicant.Id && x.MatchId == match.Id)
             .Should().NotBeNull();
+     
+        Database.DbContext.Set<MatchAnnouncement>().FirstOrDefault(x => x.MatchId == match.Id).AcceptedPlayersCount.Should().Be(1);
     }
 
     [Fact]
@@ -192,7 +319,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var admin2 = Database.AddUser("admin");
         var match = Database.AddMatch(adminThatHasCompleted, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminThatHasCompleted, true);
+        match.Announce(adminThatHasCompleted, true, 3, string.Empty);
 
         await Database.SaveChangesAsync();
 
@@ -254,7 +381,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var adminOnEvent = Database.AddUser("admin");
         var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
         match.AddPlayers(new List<Guid>() { user.Id });
-        match.Announce(adminOnEvent, true);
+        match.Announce(adminOnEvent, true, 3, string.Empty);
 
         var application = Database.AddMatchApplication(applicant, match);
 

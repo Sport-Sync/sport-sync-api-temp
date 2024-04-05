@@ -2,23 +2,27 @@
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.Types;
 using MatchType = SportSync.Domain.Types.MatchType;
 
 namespace SportSync.Application.Matches.GetAnnouncedMatches;
 
 public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMatchesInput, GetAnnouncedMatchResponse>
 {
-    private readonly IMatchRepository _matchRepository;
-    private readonly IUserRepository _userRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IMatchRepository _matchRepository;
+    private readonly IMatchApplicationRepository _matchApplicationRepository;
+    private readonly IUserRepository _userRepository;
 
     public GetAnnouncedMatchesRequestHandler(
-        IMatchRepository matchRepository,
         IUserIdentifierProvider userIdentifierProvider,
+        IMatchRepository matchRepository,
+        IMatchApplicationRepository matchApplicationRepository,
         IUserRepository userRepository)
     {
-        _matchRepository = matchRepository;
         _userIdentifierProvider = userIdentifierProvider;
+        _matchRepository = matchRepository;
+        _matchApplicationRepository = matchApplicationRepository;
         _userRepository = userRepository;
     }
 
@@ -43,17 +47,30 @@ public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMat
             return response;
         }
 
-        var publicAnnouncements = announcedMatches.Where(x => x.PubliclyAnnounced);
-        var privateAnnouncements = announcedMatches.Where(x => !x.PubliclyAnnounced);
+        var userApplications = await _matchApplicationRepository.GetByUserIdAsync(userId, cancellationToken);
+        var userApplicationMap = userApplications.ToLookup(x => x.MatchId);
 
-        response.Matches.AddRange(publicAnnouncements.Select(MatchType.FromMatch));
+        var publicAnnouncements = announcedMatches.Where(x => x.PubliclyAnnounced).Select(x => new { Match = x, x.Announcement });
+        var privateAnnouncements = announcedMatches.Where(x => !x.PubliclyAnnounced).Select(x => new { Match = x, x.Announcement });
 
-        foreach (var match in privateAnnouncements)
+        response.Matches.AddRange(publicAnnouncements.Select(x => 
+            new MatchAnnouncementType(x.Announcement, x.Match, userApplicationMap.Contains(x.Match.Id), x.Match.IsPlayer(userId))));
+
+        foreach (var announcementSelector in privateAnnouncements)
         {
-            var announcingUserIds = match.Announcements.Select(x => x.UserId);
+            var match = announcementSelector.Match;
+            var announcement = announcementSelector.Announcement;
+
+            if (match.IsPlayer(userId))
+            {
+                response.Matches.Add(new MatchAnnouncementType(announcement, match, userApplicationMap.Contains(match.Id), true));
+                continue;
+            }
+
+            var announcingUserIds = match.Players.Where(x => x.HasAnnouncedMatch).Select(x => x.UserId);
             if (user.Friends.Any(friendId => announcingUserIds.Contains(friendId)))
             {
-                response.Matches.Add(MatchType.FromMatch(match));
+                response.Matches.Add(new MatchAnnouncementType(announcement, match, userApplicationMap.Contains(match.Id), false));
             }
         }
 

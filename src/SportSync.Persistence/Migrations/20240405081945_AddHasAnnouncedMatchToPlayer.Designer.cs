@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240405081945_AddHasAnnouncedMatchToPlayer")]
+    partial class AddHasAnnouncedMatchToPlayer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,8 +180,8 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOnUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTimeOffset>("EndTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
@@ -192,8 +195,8 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTimeOffset>("StartTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
@@ -293,8 +296,8 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime?>("DeletedOnUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTimeOffset>("EndTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
@@ -322,8 +325,8 @@ namespace SportSync.Persistence.Migrations
                     b.Property<int>("SportType")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("StartTime")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -343,11 +346,6 @@ namespace SportSync.Persistence.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("AcceptedPlayersCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
 
                     b.Property<int>("AnnouncementType")
                         .HasColumnType("int");
@@ -372,7 +370,12 @@ namespace SportSync.Persistence.Migrations
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("PlayerLimit")
+                    b.Property<int>("NumberOfPlayersAccepted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("NumberOfPlayersLimit")
                         .HasColumnType("int");
 
                     b.Property<Guid>("UserId")
@@ -726,7 +729,7 @@ namespace SportSync.Persistence.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.OwnsOne("SportSync.Domain.Entities.Notification.ContentData#SportSync.Domain.ValueObjects.NotificationContentData", "ContentData", b1 =>
+                    b.OwnsOne("SportSync.Domain.ValueObjects.NotificationContentData", "ContentData", b1 =>
                         {
                             b1.Property<Guid>("NotificationId")
                                 .HasColumnType("uniqueidentifier");
@@ -740,7 +743,7 @@ namespace SportSync.Persistence.Migrations
 
                             b1.HasKey("NotificationId");
 
-                            b1.ToTable("Notifications", (string)null);
+                            b1.ToTable("Notifications");
 
                             b1.WithOwner()
                                 .HasForeignKey("NotificationId");
@@ -768,7 +771,7 @@ namespace SportSync.Persistence.Migrations
 
             modelBuilder.Entity("SportSync.Domain.Entities.User", b =>
                 {
-                    b.OwnsOne("SportSync.Domain.Entities.User.Phone#SportSync.Domain.ValueObjects.PhoneNumber", "Phone", b1 =>
+                    b.OwnsOne("SportSync.Domain.ValueObjects.PhoneNumber", "Phone", b1 =>
                         {
                             b1.Property<Guid>("UserId")
                                 .HasColumnType("uniqueidentifier");
@@ -785,7 +788,7 @@ namespace SportSync.Persistence.Migrations
                                 .IsUnique()
                                 .HasFilter("[Phone] IS NOT NULL");
 
-                            b1.ToTable("Users", (string)null);
+                            b1.ToTable("Users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");

@@ -20,6 +20,7 @@ public class Player : Entity, ISoftDeletableEntity
     public Guid UserId { get; set; }
     public User User { get; set; }
     public bool? Attending { get; set; }
+    public bool HasAnnouncedMatch { get; set; }
 
     public DateTime? DeletedOnUtc { get; set; }
     public bool Deleted { get; }
@@ -27,5 +28,10 @@ public class Player : Entity, ISoftDeletableEntity
     public static Player Create(Guid userId, Guid matchId)
     {
         return new Player(userId, matchId);
+    }
+
+    public void SetAsMatchAnnouncer()
+    {
+        HasAnnouncedMatch = true;
     }
 }

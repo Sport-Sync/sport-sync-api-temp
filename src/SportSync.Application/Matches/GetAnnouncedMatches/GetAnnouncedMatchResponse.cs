@@ -1,8 +1,8 @@
-﻿using MatchType = SportSync.Domain.Types.MatchType;
+﻿using SportSync.Domain.Types;
 
 namespace SportSync.Application.Matches.GetAnnouncedMatches;
 
 public class GetAnnouncedMatchResponse
 {
-    public List<MatchType> Matches { get; set; } = new();
+    public List<MatchAnnouncementType> Matches { get; set; } = new();
 }
