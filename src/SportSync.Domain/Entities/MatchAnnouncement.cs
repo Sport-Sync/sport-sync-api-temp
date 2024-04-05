@@ -7,7 +7,7 @@ namespace SportSync.Domain.Entities;
 
 public class MatchAnnouncement : Entity, ISoftDeletableEntity
 {
-    public MatchAnnouncement(Match match, Guid userId, MatchAnnouncementType announcementType, int numberOfPlayersLimit, string description)
+    public MatchAnnouncement(Match match, Guid userId, MatchAnnouncementTypeEnum announcementType, int numberOfPlayersLimit, string description)
         : base(Guid.NewGuid())
     {
         Ensure.NotEmpty(userId, "The user identifier is required.", $"{nameof(userId)}");
@@ -27,7 +27,7 @@ public class MatchAnnouncement : Entity, ISoftDeletableEntity
 
     public Guid UserId { get; set; }
     public Guid MatchId { get; set; }
-    public MatchAnnouncementType AnnouncementType { get; set; }
+    public MatchAnnouncementTypeEnum AnnouncementType { get; set; }
     public int NumberOfPlayersLimit { get; set; }
     public int NumberOfPlayersAccepted { get; set; }
     public string Description { get; set; }

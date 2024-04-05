@@ -1,6 +1,6 @@
 ﻿namespace SportSync.Domain.Enumerations;
 
-public enum MatchAnnouncementType
+public enum MatchAnnouncementTypeEnum
 {
     FriendList,
     Public

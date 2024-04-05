@@ -153,7 +153,7 @@ public class User : AggregateRoot
         return Result.Success();
     }
 
-    private bool IsFriendWith(User friend)
+    public bool IsFriendWith(User friend)
     {
         return Friends.Any(id => id == friend.Id);
     }

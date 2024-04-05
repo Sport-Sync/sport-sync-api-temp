@@ -56,7 +56,7 @@ public class AnnounceMatchTests : IntegrationTest
 
             var announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
             announcement.UserId.Should().Be(requestUser.Id);
-            announcement.AnnouncementType.Should().Be(MatchAnnouncementType.FriendList);
+            announcement.AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
         }
         else
         {
@@ -93,7 +93,7 @@ public class AnnounceMatchTests : IntegrationTest
 
         var announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
         announcement.UserId.Should().Be(requestUser.Id);
-        announcement.AnnouncementType.Should().Be(MatchAnnouncementType.FriendList);
+        announcement.AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
 
         var notification = Database.DbContext.Set<Notification>().FirstOrDefault(n => n.UserId == friend.Id);
         notification.Should().NotBeNull();
@@ -150,7 +150,7 @@ public class AnnounceMatchTests : IntegrationTest
             result.ToResponseObject<MatchType>("announceMatch");
             var announcement = Database.DbContext.Set<MatchAnnouncement>().Single(x => x.MatchId == match.Id);
             announcement.UserId.Should().Be(admin.Id);
-            announcement.AnnouncementType.Should().Be(MatchAnnouncementType.Public);
+            announcement.AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.Public);
         }
         else
         {
@@ -160,9 +160,9 @@ public class AnnounceMatchTests : IntegrationTest
     }
 
     [Theory]
-    [InlineData(true, MatchAnnouncementType.Public)]
-    [InlineData(false, MatchAnnouncementType.FriendList)]
-    public async Task Announce_ShouldSucceed_AndSetProperStatus(bool publicly, MatchAnnouncementType expectedType)
+    [InlineData(true, MatchAnnouncementTypeEnum.Public)]
+    [InlineData(false, MatchAnnouncementTypeEnum.FriendList)]
+    public async Task Announce_ShouldSucceed_AndSetProperStatus(bool publicly, MatchAnnouncementTypeEnum expectedType)
     {
         var admin = Database.AddUser("second", "user", "user@gmail.com");
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1));
@@ -237,7 +237,7 @@ public class AnnounceMatchTests : IntegrationTest
 
         var announcements = Database.DbContext.Set<MatchAnnouncement>().Where(x => x.MatchId == match.Id);
         announcements.Count().Should().Be(1);
-        announcements.Single().AnnouncementType.Should().Be(MatchAnnouncementType.Public);
+        announcements.Single().AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.Public);
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public class AnnounceMatchTests : IntegrationTest
         var announcements = Database.DbContext.Set<MatchAnnouncement>().Where(x => x.MatchId == match.Id);
         announcements.Count().Should().Be(2);
 
-        announcements.Single(x => x.UserId == user.Id).AnnouncementType.Should().Be(MatchAnnouncementType.FriendList);
-        announcements.Single(x => x.UserId == admin.Id).AnnouncementType.Should().Be(MatchAnnouncementType.FriendList);
+        announcements.Single(x => x.UserId == user.Id).AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
+        announcements.Single(x => x.UserId == admin.Id).AnnouncementType.Should().Be(MatchAnnouncementTypeEnum.FriendList);
     }
 }

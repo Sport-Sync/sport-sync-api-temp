@@ -75,7 +75,7 @@ public class Match : AggregateRoot
     public IReadOnlyCollection<MatchAnnouncement> Announcements => _announcements.ToList();
 
     public bool Announced => _announcements.Any();
-    public bool PubliclyAnnounced => _announcements.Any(x => x.AnnouncementType == MatchAnnouncementType.Public);
+    public bool PubliclyAnnounced => _announcements.Any(x => x.AnnouncementType == MatchAnnouncementTypeEnum.Public);
 
     public static Match Create(Event @event, DateTime date, EventSchedule schedule)
     {
@@ -142,10 +142,10 @@ public class Match : AggregateRoot
 
         if (publicly)
         {
-            _announcements.RemoveWhere(x => x.AnnouncementType == MatchAnnouncementType.FriendList);
+            _announcements.RemoveWhere(x => x.AnnouncementType == MatchAnnouncementTypeEnum.FriendList);
         }
 
-        var type = publicly ? MatchAnnouncementType.Public : MatchAnnouncementType.FriendList;
+        var type = publicly ? MatchAnnouncementTypeEnum.Public : MatchAnnouncementTypeEnum.FriendList;
         var announcement = new MatchAnnouncement(this, user.Id, type, numberOfPlayers, description);
 
         _announcements.Add(announcement);
@@ -238,7 +238,7 @@ public class Match : AggregateRoot
 
         var privateAnnouncements =
             Announcements
-            .Where(a => a.AnnouncementType == MatchAnnouncementType.FriendList)
+            .Where(a => a.AnnouncementType == MatchAnnouncementTypeEnum.FriendList)
             .ToList();
 
         var announcerIds = privateAnnouncements.Select(x => x.UserId);

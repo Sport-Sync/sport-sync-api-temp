@@ -3,7 +3,6 @@ using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives.Result;
-using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Matches.SendAnnouncementToFriends;
@@ -13,20 +12,17 @@ public class SendAnnouncementToFriendsRequestHandler : IRequestHandler<SendAnnou
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
     private readonly IMatchRepository _matchRepository;
-    private readonly IEventRepository _eventRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public SendAnnouncementToFriendsRequestHandler(
-        IUserIdentifierProvider userIdentifierProvider, 
-        IUserRepository userRepository, 
-        IMatchRepository matchRepository, 
-        IEventRepository eventRepository, 
+        IUserIdentifierProvider userIdentifierProvider,
+        IUserRepository userRepository,
+        IMatchRepository matchRepository,
         IUnitOfWork unitOfWork)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
         _matchRepository = matchRepository;
-        _eventRepository = eventRepository;
         _unitOfWork = unitOfWork;
     }
 

@@ -18,4 +18,11 @@ public class MatchApplicationRepository : GenericRepository<MatchApplication>, I
             .Where(t => t.MatchId == matchId)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<List<MatchApplication>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<MatchApplication>()
+            .Where(t => t.AppliedByUserId == userId)
+            .ToListAsync(cancellationToken);
+    }
 }
