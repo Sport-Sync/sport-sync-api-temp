@@ -126,7 +126,9 @@ public class CreateEventTests : IntegrationTest
         // will probably fail after DaylightSavingTime changes in CEST time zone!
         // TODO: Find a way to inject IDateTime to CreateEventValidator (or simply move that validation to Eeveent obbject)
 
-        var CESToffset = DateTime.UtcNow.IsDaylightSavingTime() ? 2 : 1;
+        var dateTime = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
+
+        var CESToffset = dateTime.IsDaylightSavingTime() ? 2 : 1;
 
         matches[0].StartTime.Should().Be(
             new DateTimeOffset(
