@@ -120,7 +120,7 @@ public class Match : AggregateRoot
         player.Attending = attending;
     }
 
-    public MatchAnnouncement Announce(User user, bool announcingPublicly, int numberOfPlayers, string description)
+    public MatchAnnouncement Announce(User user, bool announcingPublicly, int numberOfPlayers, string description = null)
     {
         EnsureItIsNotDone();
 

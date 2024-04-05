@@ -1,7 +1,6 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Errors;
-using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Repositories;
 
@@ -32,14 +31,14 @@ public class SendAnnouncementToFriendsRequestHandler : IRequestHandler<SendAnnou
 
         if (maybeUser.HasNoValue)
         {
-            throw new DomainException(DomainErrors.User.Forbidden);
+            return Result.Failure(DomainErrors.User.Forbidden);
         }
 
         var maybeMatch = await _matchRepository.GetByIdAsync(request.MatchId, cancellationToken);
 
         if (maybeMatch.HasNoValue)
         {
-            throw new DomainException(DomainErrors.Match.NotFound);
+            return Result.Failure(DomainErrors.Match.NotFound);
         }
 
         var match = maybeMatch.Value;
