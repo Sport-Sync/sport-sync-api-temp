@@ -141,7 +141,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: true}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -174,7 +174,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: {publicly.ToString().ToLower()}}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -202,7 +202,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: {publicly.ToString().ToLower()}}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -230,7 +230,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 2, publicAnnouncement: false}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -256,7 +256,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 2, publicAnnouncement: {publicly.ToString().ToLower()}}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -279,7 +279,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 2, publicAnnouncement: false, description: ""We need some good players!!!""}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -293,7 +293,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 5, publicAnnouncement: true, description: ""We are fine with bad ones as well.""}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -332,7 +332,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: {limit}, publicAnnouncement: true, description: ""We are fine with bad ones as well.""}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -370,7 +370,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: false}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -391,7 +391,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: false}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 
@@ -418,7 +418,7 @@ public class AnnounceMatchTests : IntegrationTest
             q => q.SetQuery(@$"
                 mutation {{
                     announceMatch(input: {{matchId: ""{match.Id}"", playerLimit: 1, publicAnnouncement: false}}){{
-                        eventName, status
+                        eventName
                     }}
                 }}"));
 

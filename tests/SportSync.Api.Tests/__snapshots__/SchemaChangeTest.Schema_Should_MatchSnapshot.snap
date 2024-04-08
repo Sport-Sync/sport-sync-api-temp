@@ -31,6 +31,10 @@ type GetMatchByIdResponse {
   isCurrentUserAdmin: Boolean!
 }
 
+type GetMatchesResponse {
+  matches: [MatchType!]!
+}
+
 type GetNotificationsResponse {
   notifications: [NotificationType!]!
 }
@@ -71,10 +75,10 @@ type MatchType {
   endTime: DateTime!
   eventName: String
   sportType: SportType!
-  status: MatchStatus!
   address: String
   price: Decimal!
   numberOfPlayersExpected: Int!
+  hasFinished: Boolean!
   notes: String
 }
 
@@ -154,7 +158,7 @@ type Query {
   users(input: GetUsersInput): PagedListOfUserType @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
-  matches(date: DateTime!): [MatchType] @authorize
+  matches(input: GetMatchesInput): GetMatchesResponse @authorize
   matchById(input: GetMatchByIdInput): GetMatchByIdResponse @authorize
   announcedMatches(input: GetAnnouncedMatchesInput): GetAnnouncedMatchResponse @authorize
   friends(input: GetFriendsInput): PagedListOfUserType @authorize
@@ -251,6 +255,10 @@ input GetMatchByIdInput {
   matchId: UUID!
 }
 
+input GetMatchesInput {
+  date: DateTime!
+}
+
 input GetNotificationsInput {
   count: Int!
   language: String!
@@ -345,12 +353,6 @@ enum DayOfWeek {
 enum MatchAnnouncementTypeEnum {
   FRIEND_LIST
   PUBLIC
-}
-
-enum MatchStatus {
-  PENDING
-  FINISHED
-  CANCELED
 }
 
 enum NotificationTypeEnum {

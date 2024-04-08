@@ -1,10 +1,9 @@
 ﻿using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
-using MatchType = SportSync.Domain.Types.MatchType;
 
 namespace SportSync.Domain.Repositories;
 
-public interface IMatchRepository : IQueryableRepository<Match, MatchType>
+public interface IMatchRepository
 {
     Task<Maybe<Match>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<Maybe<MatchAnnouncement>> GetAnnouncementByMatchIdAsync(Guid announcementId, CancellationToken cancellationToken);
@@ -13,5 +12,6 @@ public interface IMatchRepository : IQueryableRepository<Match, MatchType>
     Task<List<EventMember>> GetAdmins(Guid matchId, CancellationToken cancellationToken);
     Task<List<(Match LastMatch, int PendingMatchesCount)>> GetLastRepeatableMatches();
     Task<List<Match>> GetAnnouncedMatches(DateTime date, CancellationToken cancellationToken);
+    Task<List<Match>> GetUserMatchesOnDate(DateTime date, Guid userId, CancellationToken cancellationToken);
     void InsertRange(IReadOnlyCollection<Match> matches);
 }

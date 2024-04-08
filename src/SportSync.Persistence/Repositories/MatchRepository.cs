@@ -3,13 +3,12 @@ using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
-using MatchType = SportSync.Domain.Types.MatchType;
 
 namespace SportSync.Persistence.Repositories;
 
-public class MatchRepository : QueryableGenericRepository<Match, MatchType>, IMatchRepository
+public class MatchRepository : GenericRepository<Match>, IMatchRepository
 {
-    public MatchRepository(IDbContext dbContext) : base(dbContext, MatchType.PropertySelector)
+    public MatchRepository(IDbContext dbContext) : base(dbContext)
     {
     }
 
@@ -78,5 +77,16 @@ public class MatchRepository : QueryableGenericRepository<Match, MatchType>, IMa
                 .ThenInclude(p => p.User)
             .Where(t => t.Date.Date == date.Date && t.Announcement != null)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<Match>> GetUserMatchesOnDate(DateTime date, Guid userId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<Match>()
+            .Include(t => t.Announcement)
+            .Include(t => t.Players)
+                .ThenInclude(p => p.User)
+            .Where(x => x.Players.Any(c => c.UserId == userId && date.Date == x.Date.Date))
+            .ToListAsync(cancellationToken);
+        
     }
 }

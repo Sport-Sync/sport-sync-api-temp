@@ -1,11 +1,9 @@
 ﻿using AppAny.HotChocolate.FluentValidation;
 using HotChocolate.Authorization;
-using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Events.GetDatesByDayOfWeek;
 using SportSync.Application.Matches.GetAnnouncedMatches;
 using SportSync.Application.Matches.GetMatchById;
-using SportSync.Domain.Repositories;
-using MatchType = SportSync.Domain.Types.MatchType;
+using SportSync.Application.Matches.GetMatches;
 
 namespace sport_sync.GraphQL.Queries;
 
@@ -19,11 +17,10 @@ public class MatchQuery
 
     [Authorize]
     [UseProjection]
-    public IQueryable<MatchType> GetMatches(
-        [Service] IMatchRepository repository,
-        [Service] IUserIdentifierProvider userIdentifierProvider,
-        DateTime date)
-        => repository.GetQueryable(x => x.Players.Any(c => c.UserId == userIdentifierProvider.UserId && date.Date == x.Date.Date));
+    public async Task<GetMatchesResponse> GetMatches(
+        [Service] GetMatchesRequestHandler requestHandler,
+        GetMatchesInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
     [UseProjection]

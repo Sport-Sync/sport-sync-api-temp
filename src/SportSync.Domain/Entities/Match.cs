@@ -27,8 +27,8 @@ public class Match : AggregateRoot
         Price = @event.Price;
         NumberOfPlayersExpected = @event.NumberOfPlayers;
         Notes = @event.Notes;
-        StartTime = GetLocalDateTime(date.Date, schedule.StartTime);
-        EndTime = GetLocalDateTime(date.Date, schedule.EndTime);
+        StartTime = GetLocalDateTimeOffset(date.Date, schedule.StartTime);
+        EndTime = GetLocalDateTimeOffset(date.Date, schedule.EndTime);
         Date = date;
         Status = MatchStatus.Pending;
     }
@@ -46,8 +46,8 @@ public class Match : AggregateRoot
         Price = match.Price;
         NumberOfPlayersExpected = match.NumberOfPlayersExpected;
         Notes = match.Notes;
-        StartTime = GetLocalDateTime(date.Date, match.StartTime);
-        EndTime = GetLocalDateTime(date.Date, match.EndTime);
+        StartTime = GetLocalDateTimeOffset(date.Date, match.StartTime);
+        EndTime = GetLocalDateTimeOffset(date.Date, match.EndTime);
         Date = date;
     }
 
@@ -182,7 +182,7 @@ public class Match : AggregateRoot
 
     public bool HasPassed()
     {
-        var dateTimeOffset = GetLocalDateTime(DateTime.UtcNow);
+        var dateTimeOffset = GetLocalDateTimeOffset(DateTime.UtcNow);
 
         if (Date < dateTimeOffset.Date)
         {
