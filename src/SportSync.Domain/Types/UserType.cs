@@ -24,6 +24,7 @@ public class UserType
         Email = user.Email;
         Phone = user.Phone;
         ImageUrl = imageUrl;
+        HasProfileImage = user.HasProfileImage;
     }
 
     public UserType(User user)
@@ -33,6 +34,7 @@ public class UserType
         LastName = user.LastName;
         Email = user.Email;
         Phone = user.Phone;
+        HasProfileImage = user.HasProfileImage;
     }
 
     public UserType()

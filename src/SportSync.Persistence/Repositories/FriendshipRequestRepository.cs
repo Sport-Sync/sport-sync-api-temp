@@ -3,24 +3,31 @@ using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
-using SportSync.Domain.Types;
 
 namespace SportSync.Persistence.Repositories;
 
-public class FriendshipRequestRepository : QueryableGenericRepository<FriendshipRequest, FriendshipRequestType>, IFriendshipRequestRepository
+public class FriendshipRequestRepository : GenericRepository<FriendshipRequest>, IFriendshipRequestRepository
 {
     public FriendshipRequestRepository(IDbContext dbContext)
-        : base(dbContext, FriendshipRequestType.PropertySelector)
+        : base(dbContext)
     {
     }
-    
+
+    public async Task<List<FriendshipRequest>> GetPendingForFriendIdAsync(Guid friendId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<FriendshipRequest>()
+            .Include(fr => fr.User)
+            .Where(friendshipRequest => friendshipRequest.FriendId == friendId && friendshipRequest.CompletedOnUtc == null)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<FriendshipRequest>> GetAllPendingForUserIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await DbContext.Set<FriendshipRequest>()
             .Where(friendshipRequest =>
                 (friendshipRequest.UserId == userId || friendshipRequest.FriendId == userId) &&
                 friendshipRequest.CompletedOnUtc == null)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Maybe<FriendshipRequest>> GetPendingForUsersAsync(Guid firstUserId, Guid secondUserId, CancellationToken cancellationToken)

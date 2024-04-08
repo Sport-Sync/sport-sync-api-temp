@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using SportSync.Domain.Entities;
+﻿using SportSync.Domain.Entities;
 
 namespace SportSync.Domain.Types;
 
@@ -12,13 +11,13 @@ public class FriendshipRequestType
     public bool Rejected { get; set; }
     public UserType Sender { get; set; }
 
-    public static Expression<Func<FriendshipRequest, FriendshipRequestType>> PropertySelector = x => new FriendshipRequestType
+    public static FriendshipRequestType FromFriendshipRequest(FriendshipRequest friendshipRequest) => new()
     {
-        Id = x.Id,
-        Accepted = x.Accepted,
-        Rejected = x.Rejected,
-        UserId = x.UserId,
-        FriendId = x.FriendId,
-        Sender = new UserType(x.User)
+        Id = friendshipRequest.Id,
+        Accepted = friendshipRequest.Accepted,
+        Rejected = friendshipRequest.Rejected,
+        UserId = friendshipRequest.UserId,
+        FriendId = friendshipRequest.FriendId,
+        Sender = new UserType(friendshipRequest.User)
     };
 }
