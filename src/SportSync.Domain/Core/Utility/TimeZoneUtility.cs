@@ -6,10 +6,9 @@ public static class TimeZoneUtility
 
     public static DateTimeOffset GetLocalDateTime(DateTime date, DateTimeOffset timeOffset)
     {
-        var utcDateTime = DateTime.SpecifyKind(date.Date.Add(timeOffset.UtcDateTime.TimeOfDay), DateTimeKind.Utc);
-        var timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(_timeZone);
+        var dateTimeOffset = new DateTimeOffset(date.Year, date.Month, date.Day, timeOffset.Hour, timeOffset.Minute, timeOffset.Second, timeOffset.Offset);
 
-        return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, timeZoneInfo);
+        return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dateTimeOffset, _timeZone);
     }
 
     public static DateTimeOffset GetLocalDateTime(DateTime utcDateTime)

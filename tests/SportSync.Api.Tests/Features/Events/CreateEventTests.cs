@@ -129,7 +129,7 @@ public class CreateEventTests : IntegrationTest
         var dateTime = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc);
 
         var CESToffset = dateTime.IsDaylightSavingTime() ? 2 : 1;
-
+        
         matches[0].StartTime.Should().Be(
             new DateTimeOffset(
                 eventDateTimeTomorrow.Year,
