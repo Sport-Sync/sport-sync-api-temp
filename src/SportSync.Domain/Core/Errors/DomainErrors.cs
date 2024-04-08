@@ -158,10 +158,6 @@ public static class DomainErrors
             "MatchAnnouncement.NotAnnounced",
             "The match is not announced.");
 
-        public static Error NotFound => new Error(
-            "MatchAnnouncement.NotFound",
-            "The match announcement with the specified identifier was not found.");
-
         public static Error PlayerLimitLessThanAlreadyAccepted => new Error(
             "MatchAnnouncement.PlayerLimitLessThanAlreadyAccepted",
             "Player limit needs to be greater than the number of players already accepted.");

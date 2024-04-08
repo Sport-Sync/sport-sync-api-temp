@@ -43,16 +43,19 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
 
     public async Task EnsureUserIsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken)
     {
-        var user = await DbContext.Set<Event>()
+        if (await IsAdminOnEvent(eventId, userId, cancellationToken) != true)
+        {
+            throw new DomainException(DomainErrors.User.Forbidden);
+        }
+    }
+
+    public async Task<bool> IsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<Event>()
             .Where(x => x.Id == eventId)
             .SelectMany(x => x.Members)
             .Where(m => m.IsAdmin)
             .Select(m => m.UserId)
-            .FirstOrDefaultAsync(id => id == userId, cancellationToken);
-
-        if (user == Guid.Empty)
-        {
-            throw new DomainException(DomainErrors.User.Forbidden);
-        }
+            .CountAsync(id => id == userId, cancellationToken) > 0;
     }
 }

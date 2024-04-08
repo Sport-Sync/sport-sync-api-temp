@@ -5,7 +5,6 @@ namespace SportSync.Domain.Types;
 
 public class MatchAnnouncementType
 {
-    public Guid Id { get; set; }
     public Guid MatchId { get; set; }
     public DateTime Date { get; set; }
     public DateTime StartTime { get; set; }
@@ -23,7 +22,6 @@ public class MatchAnnouncementType
 
     public MatchAnnouncementType(MatchAnnouncement matchAnnouncement, Match match, bool currentUserAlreadyApplied, bool currentUserIsPlayer)
     {
-        Id = matchAnnouncement.Id;
         MatchId = matchAnnouncement.MatchId;
         Address = match.Address;
         Date = match.Date;

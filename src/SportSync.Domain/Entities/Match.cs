@@ -5,6 +5,7 @@ using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Enumerations;
+using SportSync.Domain.Repositories;
 using static SportSync.Domain.Core.Utility.TimeZoneUtility;
 
 namespace SportSync.Domain.Entities;
@@ -75,6 +76,7 @@ public class Match : AggregateRoot
 
     public bool Announced => Announcement != null;
     public bool PubliclyAnnounced => Announced && Announcement.AnnouncementType == MatchAnnouncementTypeEnum.Public;
+    public bool PrivatelyAnnounced => Announced && Announcement.AnnouncementType == MatchAnnouncementTypeEnum.FriendList;
 
     public static Match Create(Event @event, DateTime date, EventSchedule schedule)
     {
@@ -158,6 +160,38 @@ public class Match : AggregateRoot
         }
 
         return Announcement;
+    }
+
+    public async Task<Result> CancelAnnouncement(Guid userId, IEventRepository eventRepository, CancellationToken cancellationToken)
+    {
+        if (!Announced)
+        {
+            return Result.Failure(DomainErrors.MatchAnnouncement.NotAnnounced);
+        }
+
+        if (!IsPlayer(userId))
+        {
+            return Result.Failure(DomainErrors.MatchAnnouncement.UserIsNotPlayer);
+        }
+
+        var userIsAdmin = await eventRepository.IsAdminOnEvent(EventId, userId, cancellationToken);
+
+        if (PrivatelyAnnounced)
+        {
+            if (Announcement.UserId != userId && !userIsAdmin)
+            {
+                return Result.Failure(DomainErrors.User.Forbidden);
+            }
+        }
+
+        if (PubliclyAnnounced && !userIsAdmin)
+        {
+            return Result.Failure(DomainErrors.User.Forbidden);
+        }
+
+        Announcement.Delete();
+
+        return Result.Success();
     }
 
     public void EnsureItIsNotDone()

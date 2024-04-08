@@ -10,4 +10,5 @@ public interface IEventRepository
     Task<List<EventInvitation>> GetPendingInvitations(Guid eventId, CancellationToken cancellationToken);
     void Insert(Event @event);
     Task EnsureUserIsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken);
+    Task<bool> IsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken);
 }

@@ -44,7 +44,6 @@ type GetPhoneBookUsersResponse {
 }
 
 type MatchAnnouncementType {
-  id: UUID!
   matchId: UUID!
   date: DateTime!
   startTime: DateTime!
@@ -91,6 +90,7 @@ type Mutation {
   completeNotification(input: NotificationInput): Result @authorize
   setMatchAttendance(input: SetMatchAttendanceInput): SetMatchAttendanceResponse @authorize
   announceMatch(input: AnnounceMatchInput): MatchType @authorize
+  cancelMatchAnnouncement(input: CancelMatchAnnouncementInput): Result @authorize
   sendAnnouncementToFriends(input: SendAnnouncementToFriendsInput): Result @authorize
   sendMatchApplication(input: SendMatchApplicationInput): Result @authorize
   acceptMatchApplication(input: MatchApplicationInput): Result @authorize
@@ -206,6 +206,10 @@ input AnnounceMatchInput {
   publicAnnouncement: Boolean!
   playerLimit: Int!
   description: String
+}
+
+input CancelMatchAnnouncementInput {
+  matchId: UUID!
 }
 
 input CreateEventInput {

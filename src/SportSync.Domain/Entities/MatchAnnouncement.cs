@@ -2,7 +2,6 @@
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives;
-using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.Enumerations;
 

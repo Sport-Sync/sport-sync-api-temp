@@ -6,7 +6,7 @@ namespace SportSync.Domain.Repositories;
 public interface IMatchRepository
 {
     Task<Maybe<Match>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-    Task<Maybe<MatchAnnouncement>> GetAnnouncementByMatchIdAsync(Guid announcementId, CancellationToken cancellationToken);
+    Task<Maybe<MatchAnnouncement>> GetAnnouncementByMatchIdAsync(Guid matchId, CancellationToken cancellationToken);
     Task<List<Match>> GetByEventId(Guid eventId, CancellationToken cancellationToken);
     Task<List<Player>> GetPlayers(Guid id, CancellationToken cancellationToken);
     Task<List<EventMember>> GetAdmins(Guid matchId, CancellationToken cancellationToken);
