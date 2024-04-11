@@ -11,7 +11,7 @@ namespace SportSync.Persistence.Configurations
             builder.HasKey(user => user.Id);
             builder.Property(user => user.Id).ValueGeneratedNever();
 
-            builder.HasIndex(x => x.Email).IsUnique();
+            builder.HasIndex(x => x.Email).IsUnique().HasFilter("Deleted = 0");
 
             builder.Property<string>("_passwordHash")
                 .HasField("_passwordHash")
@@ -35,7 +35,7 @@ namespace SportSync.Persistence.Configurations
                     .HasMaxLength(20)
                     .IsRequired();
 
-                phoneBuilder.HasIndex(phone => phone.Value).IsUnique();
+                phoneBuilder.HasIndex(phone => phone.Value).IsUnique().HasFilter("Deleted = 0");
             });
 
             builder.Property(user => user.Email)

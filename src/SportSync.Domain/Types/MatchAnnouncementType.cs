@@ -20,22 +20,22 @@ public class MatchAnnouncementType
     public bool CurrentUserAlreadyApplied { get; set; }
     public bool CurrentUserIsPlayer { get; set; }
 
-    public MatchAnnouncementType(MatchAnnouncement matchAnnouncement, Match match, bool currentUserAlreadyApplied, bool currentUserIsPlayer)
+    public MatchAnnouncementType(Match match, bool currentUserAlreadyApplied, bool currentUserIsPlayer)
     {
-        MatchId = matchAnnouncement.MatchId;
+        MatchId = match.Announcement.MatchId;
         Address = match.Address;
         Date = match.Date;
         StartTime = match.StartTime.DateTime.ToUniversalTime();
         EndTime = match.EndTime.DateTime.ToUniversalTime();
         SportType = match.SportType;
-        PlayerLimit = matchAnnouncement.PlayerLimit;
-        AcceptedPlayersCount = matchAnnouncement.AcceptedPlayersCount;
+        PlayerLimit = match.Announcement.PlayerLimit;
+        AcceptedPlayersCount = match.Announcement.AcceptedPlayersCount;
         Price = match.Price;
-        Description = matchAnnouncement.Description;
+        Description = match.Announcement.Description;
         EventName = match.EventName;
         CurrentUserAlreadyApplied = currentUserAlreadyApplied;
         CurrentUserIsPlayer = currentUserIsPlayer;
-        TypeOfAnnouncement = matchAnnouncement.AnnouncementType;
+        TypeOfAnnouncement = match.Announcement.AnnouncementType;
     }
 
     public MatchAnnouncementType()
