@@ -157,7 +157,7 @@ type Query {
   me: UserType @authorize
   phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
   userProfileImageUrl(input: ProfileImageUrlInput): ProfileImageUrlResponse @authorize
-  userProfile(input: GetUserProfileInput): UserProfileType @authorize
+  userProfile(input: GetUserProfileInput): UserProfileResponse @authorize
   users(input: GetUsersInput): PagedListOfUserType @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
@@ -182,17 +182,12 @@ type TokenResponse {
   token: String!
 }
 
-type UserProfileType {
-  mutualFriends: [UserType]
+type UserProfileResponse {
+  user: UserType!
+  mutualFriends: [UserType!]!
   pendingFriendshipRequest: PendingFriendshipRequestType
   hasPendingFriendshipRequest: Boolean!
   isFriendWithCurrentUser: Boolean!
-  id: UUID!
-  firstName: String
-  lastName: String
-  email: String
-  phone: String
-  imageUrl: String
 }
 
 type UserType {

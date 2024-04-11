@@ -9,7 +9,7 @@ using SportSync.Domain.Types;
 
 namespace SportSync.Application.Users.GetUserProfile;
 
-public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput, UserProfileType>
+public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput, UserProfileResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
@@ -29,7 +29,7 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
     }
 
 
-    public async Task<UserProfileType> Handle(GetUserProfileInput request, CancellationToken cancellationToken)
+    public async Task<UserProfileResponse> Handle(GetUserProfileInput request, CancellationToken cancellationToken)
     {
         var maybeUser = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
 
@@ -73,9 +73,13 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
 
         var userProfileImage = user.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(user.Id) : null;
 
-        var userProfile = new UserProfileType(user, pendingFriendshipRequestType, mutualFriendList, userProfileImage);
-        userProfile.IsFriendWithCurrentUser = friendWithCurrentUser;
+        var userProfileResponse = new UserProfileResponse(user, userProfileImage)
+        {
+            IsFriendWithCurrentUser = friendWithCurrentUser,
+            PendingFriendshipRequest = pendingFriendshipRequestType,
+            MutualFriends = mutualFriendList
+        };
 
-        return userProfile;
+        return userProfileResponse;
     }
 }

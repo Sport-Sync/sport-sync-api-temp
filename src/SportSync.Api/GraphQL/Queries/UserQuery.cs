@@ -30,7 +30,7 @@ public class UserQuery
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    public async Task<UserProfileType> GetUserProfile(
+    public async Task<UserProfileResponse> GetUserProfile(
         [Service] GetUserProfileRequestHandler requestHandler,
         GetUserProfileInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);

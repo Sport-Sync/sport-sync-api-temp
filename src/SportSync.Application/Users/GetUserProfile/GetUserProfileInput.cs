@@ -1,8 +1,6 @@
-﻿using SportSync.Domain.Types;
+﻿namespace SportSync.Application.Users.GetUserProfile;
 
-namespace SportSync.Application.Users.GetUserProfile;
-
-public class GetUserProfileInput : IRequest<UserProfileType>
+public class GetUserProfileInput : IRequest<UserProfileResponse>
 {
     public Guid UserId { get; set; }
 }
