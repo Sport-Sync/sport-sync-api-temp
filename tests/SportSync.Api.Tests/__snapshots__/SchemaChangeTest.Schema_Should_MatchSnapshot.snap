@@ -26,9 +26,10 @@ type GetDatesByDayOfWeekResponse {
 }
 
 type GetMatchByIdResponse {
+  isCurrentUserAdmin: Boolean!
   match: MatchType!
   attendance: MatchAttendanceType!
-  isCurrentUserAdmin: Boolean!
+  pendingApplicants: [UserType!]!
 }
 
 type GetMatchesResponse {
@@ -74,6 +75,8 @@ type MatchType {
   endTime: DateTime!
   eventName: String
   sportType: SportType!
+  typeOfAnnouncement: MatchAnnouncementTypeEnum
+  isAnnounced: Boolean!
   address: String
   price: Decimal!
   numberOfPlayersExpected: Int!

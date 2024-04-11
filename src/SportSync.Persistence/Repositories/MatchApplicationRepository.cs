@@ -19,6 +19,14 @@ public class MatchApplicationRepository : GenericRepository<MatchApplication>, I
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<MatchApplication>> GetByMatchIdWithIncludedUserAsync(Guid matchId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<MatchApplication>()
+            .Where(t => t.MatchId == matchId)
+            .Include(m => m.AppliedByUser)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<List<MatchApplication>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await DbContext.Set<MatchApplication>()

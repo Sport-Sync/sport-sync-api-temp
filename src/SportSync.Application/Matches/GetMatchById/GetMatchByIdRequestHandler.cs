@@ -11,12 +11,18 @@ namespace SportSync.Application.Matches.GetMatchById;
 public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, GetMatchByIdResponse>
 {
     private readonly IMatchRepository _matchRepository;
+    private readonly IMatchApplicationRepository _matchApplicationRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserProfileImageService _userProfileImageService;
 
-    public GetMatchByIdRequestHandler(IMatchRepository matchRepository, IUserIdentifierProvider userIdentifierProvider, IUserProfileImageService userProfileImageService)
+    public GetMatchByIdRequestHandler(
+        IMatchRepository matchRepository,
+        IMatchApplicationRepository matchApplicationRepository,
+        IUserIdentifierProvider userIdentifierProvider,
+        IUserProfileImageService userProfileImageService)
     {
         _matchRepository = matchRepository;
+        _matchApplicationRepository = matchApplicationRepository;
         _userIdentifierProvider = userIdentifierProvider;
         _userProfileImageService = userProfileImageService;
     }
@@ -47,14 +53,22 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
         var playersNotAttending = match.Players.Where(p => p.Attending == false).Select(PlayerType.FromPlayer).ToArray();
         var playersNotResponded = match.Players.Where(p => p.Attending == null).Select(PlayerType.FromPlayer).ToArray();
 
+        var matchApplications = await _matchApplicationRepository.GetByMatchIdWithIncludedUserAsync(match.Id, cancellationToken);
+        var pendingApplicants = matchApplications
+            .Where(x => !x.Completed)
+            .Select(x => new UserType(x.AppliedByUser))
+            .ToArray();
+
         await _userProfileImageService.PopulateImageUrl(playersAttending);
         await _userProfileImageService.PopulateImageUrl(playersNotAttending);
         await _userProfileImageService.PopulateImageUrl(playersNotResponded);
+        await _userProfileImageService.PopulateImageUrl(pendingApplicants);
 
         var response = new GetMatchByIdResponse
         {
             Match = MatchType.FromMatch(match),
             IsCurrentUserAdmin = isCurrentUserAdmin,
+            PendingApplicants = pendingApplicants.ToList(),
             Attendance = new MatchAttendanceType()
             {
                 IsCurrentUserAttending = isCurrentUserAttending,

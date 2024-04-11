@@ -40,6 +40,8 @@ public class MatchApplication : AggregateRoot
 
     public DateTime? CompletedOnUtc { get; private set; }
 
+    public bool Completed => CompletedOnUtc != null;
+
     public static MatchApplication Create(User user, Match match)
     {
         return new MatchApplication(user, match);

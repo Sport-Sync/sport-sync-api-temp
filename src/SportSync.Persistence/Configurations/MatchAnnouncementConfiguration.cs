@@ -27,7 +27,7 @@ internal class MatchAnnouncementConfiguration : IEntityTypeConfiguration<MatchAn
             .IsRequired()
             .HasDefaultValue(0);
 
-        builder.HasIndex(x => x.MatchId).IsUnique();
+        builder.HasIndex(x => x.MatchId).IsUnique().HasFilter("Deleted = 0");
 
         builder.Property(announcement => announcement.Description);
 

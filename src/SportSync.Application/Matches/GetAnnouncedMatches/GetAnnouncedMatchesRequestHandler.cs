@@ -50,27 +50,24 @@ public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMat
         var userApplications = await _matchApplicationRepository.GetByUserIdAsync(userId, cancellationToken);
         var userApplicationMap = userApplications.ToLookup(x => x.MatchId);
 
-        var publicAnnouncements = announcedMatches.Where(x => x.PubliclyAnnounced).Select(x => new { Match = x, x.Announcement });
-        var privateAnnouncements = announcedMatches.Where(x => !x.PubliclyAnnounced).Select(x => new { Match = x, x.Announcement });
+        var publicAnnouncements = announcedMatches.Where(x => x.PubliclyAnnounced);
+        var privateAnnouncements = announcedMatches.Where(x => !x.PubliclyAnnounced);
 
         response.Matches.AddRange(publicAnnouncements.Select(x => 
-            new MatchAnnouncementType(x.Announcement, x.Match, userApplicationMap.Contains(x.Match.Id), x.Match.IsPlayer(userId))));
+            new MatchAnnouncementType(x, userApplicationMap.Contains(x.Id), x.IsPlayer(userId))));
 
-        foreach (var announcementSelector in privateAnnouncements)
+        foreach (var match in privateAnnouncements)
         {
-            var match = announcementSelector.Match;
-            var announcement = announcementSelector.Announcement;
-
             if (match.IsPlayer(userId))
             {
-                response.Matches.Add(new MatchAnnouncementType(announcement, match, userApplicationMap.Contains(match.Id), true));
+                response.Matches.Add(new MatchAnnouncementType(match, userApplicationMap.Contains(match.Id), true));
                 continue;
             }
 
             var announcingUserIds = match.Players.Where(x => x.HasAnnouncedMatch).Select(x => x.UserId);
             if (user.Friends.Any(friendId => announcingUserIds.Contains(friendId)))
             {
-                response.Matches.Add(new MatchAnnouncementType(announcement, match, userApplicationMap.Contains(match.Id), false));
+                response.Matches.Add(new MatchAnnouncementType(match, userApplicationMap.Contains(match.Id), false));
             }
         }
 

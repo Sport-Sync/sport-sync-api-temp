@@ -11,12 +11,15 @@ public class MatchType
     public DateTime EndTime { get; set; }
     public string EventName { get; set; }
     public SportType SportType { get; set; }
-    //public MatchStatus Status { get; set; }
+    public MatchAnnouncementTypeEnum? TypeOfAnnouncement { get; set; }
+    public bool IsAnnounced { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayersExpected { get; set; }
     public bool HasFinished { get; set; }
     public string Notes { get; set; }
+
+    //public MatchStatus Status { get; set; }
 
     public static MatchType FromMatch(Match match) => new()
     {
@@ -30,7 +33,9 @@ public class MatchType
         Price = match.Price,
         Notes = match.Notes,
         EventName = match.EventName,
-        HasFinished = match.HasPassed()
+        HasFinished = match.HasPassed(),
+        TypeOfAnnouncement = match.Announcement?.AnnouncementType,
+        IsAnnounced = match.Announced
         //Status = match.Status
     };
 }
