@@ -37,10 +37,19 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
             throw new DomainException(DomainErrors.User.Forbidden);
         }
 
-        var users = _userRepository.GetQueryable<UserType>(
-            UserType.PropertySelector,
-            u => (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
+        var allUsersQuery = _userRepository.GetQueryable<UserType>(
+                UserType.PropertySelector,
+                u => u.Id != userId && (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
             .OrderBy(u => u.FirstName);
+
+        var friendListQuery = _userRepository.GetQueryable<UserType>(
+                UserType.PropertySelector,
+                u => u.Id != userId && 
+                     (u.FriendInvitees.Any(x => x.UserId == userId) || u.FriendInviters.Any(x => x.FriendId == userId)) &&
+                     (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
+            .OrderBy(u => u.FirstName);
+
+        var users = request.SearchType == UsersSearchType.AllUsers ? allUsersQuery : friendListQuery;
 
         var totalCount = await users.CountAsync(cancellationToken);
 
