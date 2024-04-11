@@ -12,13 +12,13 @@ public class GetCurrentUserRequestHandler : IRequestHandler<UserType>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
-    private readonly IUserImageService _userImageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
-    public GetCurrentUserRequestHandler(IUserIdentifierProvider userIdentifierProvider, IUserRepository userRepository, IUserImageService userImageService)
+    public GetCurrentUserRequestHandler(IUserIdentifierProvider userIdentifierProvider, IUserRepository userRepository, IUserProfileImageService userProfileImageService)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
-        _userImageService = userImageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<UserType> Handle(CancellationToken cancellationToken)
@@ -30,7 +30,7 @@ public class GetCurrentUserRequestHandler : IRequestHandler<UserType>
             throw new DomainException(DomainErrors.User.NotFound);
         }
 
-        await _userImageService.PopulateImageUrl(user);
+        await _userProfileImageService.PopulateImageUrl(user);
 
         return user;
     }

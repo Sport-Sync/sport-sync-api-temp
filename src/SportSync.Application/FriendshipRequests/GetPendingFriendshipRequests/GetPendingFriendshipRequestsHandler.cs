@@ -9,16 +9,16 @@ public class GetPendingFriendshipRequestsHandler : IRequestHandler<List<Friendsh
 {
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IUserImageService _userImageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
     public GetPendingFriendshipRequestsHandler(
         IFriendshipRequestRepository friendshipRequestRepository,
         IUserIdentifierProvider userIdentifierProvider,
-        IUserImageService userImageService)
+        IUserProfileImageService userProfileImageService)
     {
         _friendshipRequestRepository = friendshipRequestRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _userImageService = userImageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<List<FriendshipRequestType>> Handle(CancellationToken cancellationToken)
@@ -27,7 +27,7 @@ public class GetPendingFriendshipRequestsHandler : IRequestHandler<List<Friendsh
 
         var friendshipRequestTypes = pendingFriendshipRequests.Select(FriendshipRequestType.FromFriendshipRequest);
 
-        await _userImageService.PopulateImageUrl(friendshipRequestTypes.ToArray());
+        await _userProfileImageService.PopulateImageUrl(friendshipRequestTypes.ToArray());
 
         return friendshipRequestTypes.ToList();
     }

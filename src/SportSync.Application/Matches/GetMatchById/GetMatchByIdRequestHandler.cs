@@ -12,13 +12,13 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
 {
     private readonly IMatchRepository _matchRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IUserImageService _userImageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
-    public GetMatchByIdRequestHandler(IMatchRepository matchRepository, IUserIdentifierProvider userIdentifierProvider, IUserImageService userImageService)
+    public GetMatchByIdRequestHandler(IMatchRepository matchRepository, IUserIdentifierProvider userIdentifierProvider, IUserProfileImageService userProfileImageService)
     {
         _matchRepository = matchRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _userImageService = userImageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<GetMatchByIdResponse> Handle(GetMatchByIdInput request, CancellationToken cancellationToken)
@@ -47,9 +47,9 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
         var playersNotAttending = match.Players.Where(p => p.Attending == false).Select(PlayerType.FromPlayer).ToArray();
         var playersNotResponded = match.Players.Where(p => p.Attending == null).Select(PlayerType.FromPlayer).ToArray();
 
-        await _userImageService.PopulateImageUrl(playersAttending);
-        await _userImageService.PopulateImageUrl(playersNotAttending);
-        await _userImageService.PopulateImageUrl(playersNotResponded);
+        await _userProfileImageService.PopulateImageUrl(playersAttending);
+        await _userProfileImageService.PopulateImageUrl(playersNotAttending);
+        await _userProfileImageService.PopulateImageUrl(playersNotResponded);
 
         var response = new GetMatchByIdResponse
         {

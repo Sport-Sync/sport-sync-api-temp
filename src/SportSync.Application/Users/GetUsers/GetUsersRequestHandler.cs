@@ -14,16 +14,16 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
-    private readonly IUserImageService _userImageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
     public GetUsersRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IUserRepository userRepository,
-        IUserImageService userImageService)
+        IUserProfileImageService userProfileImageService)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
-        _userImageService = userImageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<PagedList<UserType>> Handle(GetUsersInput request, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        await _userImageService.PopulateImageUrl(usersPage);
+        await _userProfileImageService.PopulateImageUrl(usersPage);
 
         return new PagedList<UserType>(usersPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }

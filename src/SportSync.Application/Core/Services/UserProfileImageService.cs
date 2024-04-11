@@ -3,11 +3,11 @@ using SportSync.Domain.Types;
 
 namespace SportSync.Application.Core.Services;
 
-public class UserImageService : IUserImageService
+public class UserProfileImageService : IUserProfileImageService
 {
     private readonly IBlobStorageService _blobStorageService;
 
-    public UserImageService(IBlobStorageService blobStorageService)
+    public UserProfileImageService(IBlobStorageService blobStorageService)
     {
         _blobStorageService = blobStorageService;
     }

@@ -14,16 +14,16 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
-    private readonly IUserImageService _userImageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
     public GetFriendsRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IUserRepository userRepository,
-        IUserImageService userImageService)
+        IUserProfileImageService userProfileImageService)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
-        _userImageService = userImageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<PagedList<UserType>> Handle(GetFriendsInput request, CancellationToken cancellationToken)
@@ -55,7 +55,7 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        await _userImageService.PopulateImageUrl(friendsPage);
+        await _userProfileImageService.PopulateImageUrl(friendsPage);
 
         return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }

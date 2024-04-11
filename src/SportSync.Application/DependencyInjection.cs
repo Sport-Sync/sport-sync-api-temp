@@ -16,8 +16,7 @@ namespace SportSync.Application
         {
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.RegisterRequestHandlers();
-
-            services.AddScoped<IUserImageService, UserImageService>();
+            services.RegisterApplicationServices();
 
             return services;
         }
@@ -38,6 +37,13 @@ namespace SportSync.Application
             {
                 services.AddScoped(handlerType);
             }
+
+            return services;
+        }
+
+        public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUserProfileImageService, UserProfileImageService>();
 
             return services;
         }
