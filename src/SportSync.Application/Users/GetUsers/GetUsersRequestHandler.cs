@@ -54,7 +54,7 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        await _userImageService.PopulateImageUrls(usersPage);
+        await _userImageService.PopulateImageUrl(usersPage);
 
         return new PagedList<UserType>(usersPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }

@@ -1,5 +1,5 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Storage;
+using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
@@ -12,13 +12,13 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
 {
     private readonly IMatchRepository _matchRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IBlobStorageService _blobStorageService;
+    private readonly IUserImageService _userImageService;
 
-    public GetMatchByIdRequestHandler(IMatchRepository matchRepository, IUserIdentifierProvider userIdentifierProvider, IBlobStorageService blobStorageService)
+    public GetMatchByIdRequestHandler(IMatchRepository matchRepository, IUserIdentifierProvider userIdentifierProvider, IUserImageService userImageService)
     {
         _matchRepository = matchRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _blobStorageService = blobStorageService;
+        _userImageService = userImageService;
     }
 
     public async Task<GetMatchByIdResponse> Handle(GetMatchByIdInput request, CancellationToken cancellationToken)
@@ -43,13 +43,13 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
         var isCurrentUserAdmin = admins.Any(a => a.UserId == currentUserId);
         var isCurrentUserAttending = match.Players.First(p => p.UserId == currentUserId).Attending;
 
-        var playersAttending = match.Players.Where(p => p.Attending == true).Select(PlayerType.FromPlayer).ToList();
-        var playersNotAttending = match.Players.Where(p => p.Attending == false).Select(PlayerType.FromPlayer).ToList();
-        var playersNotResponded = match.Players.Where(p => p.Attending == null).Select(PlayerType.FromPlayer).ToList();
+        var playersAttending = match.Players.Where(p => p.Attending == true).Select(PlayerType.FromPlayer).ToArray();
+        var playersNotAttending = match.Players.Where(p => p.Attending == false).Select(PlayerType.FromPlayer).ToArray();
+        var playersNotResponded = match.Players.Where(p => p.Attending == null).Select(PlayerType.FromPlayer).ToArray();
 
-        await PopulateImageUrls(playersAttending);
-        await PopulateImageUrls(playersNotAttending);
-        await PopulateImageUrls(playersNotResponded);
+        await _userImageService.PopulateImageUrl(playersAttending);
+        await _userImageService.PopulateImageUrl(playersNotAttending);
+        await _userImageService.PopulateImageUrl(playersNotResponded);
 
         var response = new GetMatchByIdResponse
         {
@@ -65,14 +65,5 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
         };
 
         return response;
-    }
-
-    private async Task PopulateImageUrls(List<PlayerType> players)
-    {
-        foreach (var player in players)
-        {
-            var profileImage = player.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(player.UserId) : null;
-            player.ImageUrl = profileImage;
-        }
     }
 }

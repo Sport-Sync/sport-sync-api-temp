@@ -55,7 +55,7 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        await _userImageService.PopulateImageUrls(friendsPage);
+        await _userImageService.PopulateImageUrl(friendsPage);
 
         return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }

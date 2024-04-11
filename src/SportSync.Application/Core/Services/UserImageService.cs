@@ -12,7 +12,7 @@ public class UserImageService : IUserImageService
         _blobStorageService = blobStorageService;
     }
 
-    public async Task PopulateImageUrls(params UserType[] users)
+    public async Task PopulateImageUrl(params UserType[] users)
     {
         foreach (var user in users.Where(f => f.HasProfileImage))
         {
@@ -20,11 +20,19 @@ public class UserImageService : IUserImageService
         }
     }
 
-    public async Task PopulateImageUrls(params FriendshipRequestType[] friendshipRequestTypes)
+    public async Task PopulateImageUrl(params FriendshipRequestType[] friendshipRequestTypes)
     {
         foreach (var friendshipRequest in friendshipRequestTypes.Where(f => f.Sender.HasProfileImage))
         {
             friendshipRequest.Sender.ImageUrl = await _blobStorageService.GetProfileImageUrl(friendshipRequest.Sender.Id);
+        }
+    }
+
+    public async Task PopulateImageUrl(params PlayerType[] playerTypes)
+    {
+        foreach (var player in playerTypes.Where(f => f.HasProfileImage))
+        {
+            player.ImageUrl = await _blobStorageService.GetProfileImageUrl(player.UserId);
         }
     }
 }

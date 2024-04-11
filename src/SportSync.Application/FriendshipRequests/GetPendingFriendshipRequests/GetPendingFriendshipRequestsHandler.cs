@@ -27,7 +27,7 @@ public class GetPendingFriendshipRequestsHandler : IRequestHandler<List<Friendsh
 
         var friendshipRequestTypes = pendingFriendshipRequests.Select(FriendshipRequestType.FromFriendshipRequest);
 
-        await _userImageService.PopulateImageUrls(friendshipRequestTypes.ToArray());
+        await _userImageService.PopulateImageUrl(friendshipRequestTypes.ToArray());
 
         return friendshipRequestTypes.ToList();
     }

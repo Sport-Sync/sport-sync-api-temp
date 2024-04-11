@@ -4,7 +4,8 @@ namespace SportSync.Application.Core.Services
 {
     public interface IUserImageService
     {
-        Task PopulateImageUrls(params UserType[] users);
-        Task PopulateImageUrls(params FriendshipRequestType[] friendshipRequestTypes);
+        Task PopulateImageUrl(params UserType[] users);
+        Task PopulateImageUrl(params FriendshipRequestType[] friendshipRequestTypes);
+        Task PopulateImageUrl(params PlayerType[] playerTypes);
     }
 }
