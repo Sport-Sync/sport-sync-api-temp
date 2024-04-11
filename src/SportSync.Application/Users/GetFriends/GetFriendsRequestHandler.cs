@@ -8,15 +8,15 @@ using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
-namespace SportSync.Application.Users.GetUsers;
+namespace SportSync.Application.Users.GetFriends;
 
-public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<UserType>>
+public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedList<UserType>>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
     private readonly IUserProfileImageService _userProfileImageService;
 
-    public GetUsersRequestHandler(
+    public GetFriendsRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IUserRepository userRepository,
         IUserProfileImageService userProfileImageService)
@@ -26,7 +26,7 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
         _userProfileImageService = userProfileImageService;
     }
 
-    public async Task<PagedList<UserType>> Handle(GetUsersInput request, CancellationToken cancellationToken)
+    public async Task<PagedList<UserType>> Handle(GetFriendsInput request, CancellationToken cancellationToken)
     {
         var userId = _userIdentifierProvider.UserId;
 
@@ -37,25 +37,26 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
             throw new DomainException(DomainErrors.User.Forbidden);
         }
 
-        var users = _userRepository.GetQueryable<UserType>(
+        var friends = _userRepository.GetQueryable<UserType>(
             UserType.PropertySelector,
-            u => (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
+            u => (u.FriendInvitees.Any(x => x.UserId == userId) || u.FriendInviters.Any(x => x.FriendId == userId)) &&
+                 (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
             .OrderBy(u => u.FirstName);
 
-        var totalCount = await users.CountAsync(cancellationToken);
+        var totalCount = await friends.CountAsync(cancellationToken);
 
         var firstPageSize = request.FirstPageSize ?? PaginationConstants.FirstPageSize;
 
         var skip = request.Page == 1 ? 0 :
             firstPageSize + ((request.Page - 2) * request.PageSize);
 
-        var usersPage = await users
+        var friendsPage = await friends
             .Skip(skip)
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        await _userProfileImageService.PopulateImageUrl(usersPage);
+        await _userProfileImageService.PopulateImageUrl(friendsPage);
 
-        return new PagedList<UserType>(usersPage, request.Page, request.PageSize, totalCount, firstPageSize);
+        return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }
 }

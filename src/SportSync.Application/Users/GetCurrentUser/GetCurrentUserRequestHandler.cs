@@ -1,4 +1,5 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
+using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;

@@ -164,6 +164,7 @@ type Query {
   matches(input: GetMatchesInput): GetMatchesResponse @authorize
   matchById(input: GetMatchByIdInput): GetMatchByIdResponse @authorize
   announcedMatches(input: GetAnnouncedMatchesInput): GetAnnouncedMatchResponse @authorize
+  friends(input: GetFriendsInput): PagedListOfUserType @authorize
   pendingFriendshipRequests: [FriendshipRequestType] @authorize
 }
 
@@ -250,6 +251,13 @@ input GetDatesByDayOfWeekInput {
   numberOfDates: Int!
 }
 
+input GetFriendsInput {
+  search: String
+  page: Int!
+  firstPageSize: Int
+  pageSize: Int!
+}
+
 input GetMatchByIdInput {
   matchId: UUID!
 }
@@ -273,7 +281,6 @@ input GetUserProfileInput {
 
 input GetUsersInput {
   search: String
-  searchType: UsersSearchType!
   page: Int!
   firstPageSize: Int
   pageSize: Int!
@@ -371,11 +378,6 @@ enum SportType {
   HANDBALL
   BASKETBALL
   TENNIS
-}
-
-enum UsersSearchType {
-  FRIEND_LIST
-  ALL_USERS
 }
 
 directive @authorize("The name of the authorization policy that determines access to the annotated resource." policy: String "Roles that are allowed to access the annotated resource." roles: [String!] "Defines when when the authorize directive shall be applied.By default the authorize directives are applied during the validation phase." apply: ApplyPolicy! = BEFORE_RESOLVER) repeatable on OBJECT | FIELD_DEFINITION
