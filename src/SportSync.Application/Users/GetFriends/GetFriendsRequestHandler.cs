@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Application.Core.Common;
 using SportSync.Application.Core.Constants;
+using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
@@ -14,13 +14,16 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
-    private readonly IBlobStorageService _blobStorageService;
+    private readonly IUserImageService _userImageService;
 
-    public GetFriendsRequestHandler(IUserIdentifierProvider userIdentifierProvider, IUserRepository userRepository, IBlobStorageService blobStorageService)
+    public GetFriendsRequestHandler(
+        IUserIdentifierProvider userIdentifierProvider,
+        IUserRepository userRepository,
+        IUserImageService userImageService)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
-        _blobStorageService = blobStorageService;
+        _userImageService = userImageService;
     }
 
     public async Task<PagedList<UserType>> Handle(GetFriendsInput request, CancellationToken cancellationToken)
@@ -44,7 +47,7 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
 
         var firstPageSize = request.FirstPageSize ?? PaginationConstants.FirstPageSize;
 
-        var skip = request.Page == 1 ? 0 : 
+        var skip = request.Page == 1 ? 0 :
             firstPageSize + ((request.Page - 2) * request.PageSize);
 
         var friendsPage = await friends
@@ -52,10 +55,7 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        foreach (var friend in friendsPage.Where(f => f.HasProfileImage))
-        {
-            friend.ImageUrl = await _blobStorageService.GetProfileImageUrl(friend.Id);
-        }
+        await _userImageService.PopulateImageUrls(friendsPage);
 
         return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }
