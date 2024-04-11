@@ -1,5 +1,6 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Abstractions.Storage;
+using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
@@ -11,13 +12,13 @@ public class GetCurrentUserRequestHandler : IRequestHandler<UserType>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
-    private readonly IBlobStorageService _blobStorageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
-    public GetCurrentUserRequestHandler(IUserIdentifierProvider userIdentifierProvider, IUserRepository userRepository, IBlobStorageService blobStorageService)
+    public GetCurrentUserRequestHandler(IUserIdentifierProvider userIdentifierProvider, IUserRepository userRepository, IUserProfileImageService userProfileImageService)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
-        _blobStorageService = blobStorageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<UserType> Handle(CancellationToken cancellationToken)
@@ -29,10 +30,7 @@ public class GetCurrentUserRequestHandler : IRequestHandler<UserType>
             throw new DomainException(DomainErrors.User.NotFound);
         }
 
-        if (user.HasProfileImage)
-        {
-            user.ImageUrl = await _blobStorageService.GetProfileImageUrl(user.Id);
-        }
+        await _userProfileImageService.PopulateImageUrl(user);
 
         return user;
     }

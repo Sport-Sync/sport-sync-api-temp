@@ -40,6 +40,7 @@ public class IntegrationTest : IDisposable
         ServiceProvider = new ServiceCollection()
             .AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(CreateUserRequestValidator)))
             .RegisterRequestHandlers()
+            .RegisterApplicationServices()
             .RegisterInfrastructureServices()
             .AddRepositories()
             .AddGraphQLServer()

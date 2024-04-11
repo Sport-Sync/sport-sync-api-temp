@@ -1,5 +1,5 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Storage;
+using SportSync.Application.Core.Services;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -9,29 +9,26 @@ public class GetPendingFriendshipRequestsHandler : IRequestHandler<List<Friendsh
 {
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IBlobStorageService _blobStorageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
     public GetPendingFriendshipRequestsHandler(
         IFriendshipRequestRepository friendshipRequestRepository,
         IUserIdentifierProvider userIdentifierProvider,
-        IBlobStorageService blobStorageService)
+        IUserProfileImageService userProfileImageService)
     {
         _friendshipRequestRepository = friendshipRequestRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _blobStorageService = blobStorageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<List<FriendshipRequestType>> Handle(CancellationToken cancellationToken)
     {
         var pendingFriendshipRequests = await _friendshipRequestRepository.GetPendingForFriendIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 
-        var friendshipRequestTypes = pendingFriendshipRequests.Select(FriendshipRequestType.FromFriendshipRequest).ToList();
+        var friendshipRequestTypes = pendingFriendshipRequests.Select(FriendshipRequestType.FromFriendshipRequest);
 
-        foreach (var friendshipRequest in friendshipRequestTypes.Where(x => x.Sender.HasProfileImage))
-        {
-            friendshipRequest.Sender.ImageUrl = await _blobStorageService.GetProfileImageUrl(friendshipRequest.UserId);
-        }
+        await _userProfileImageService.PopulateImageUrl(friendshipRequestTypes.ToArray());
 
-        return friendshipRequestTypes;
+        return friendshipRequestTypes.ToList();
     }
 }

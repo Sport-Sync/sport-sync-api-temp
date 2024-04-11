@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Application.Core.Common;
 using SportSync.Application.Core.Constants;
+using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
@@ -14,13 +14,16 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
-    private readonly IBlobStorageService _blobStorageService;
+    private readonly IUserProfileImageService _userProfileImageService;
 
-    public GetUsersRequestHandler(IUserIdentifierProvider userIdentifierProvider, IUserRepository userRepository, IBlobStorageService blobStorageService)
+    public GetUsersRequestHandler(
+        IUserIdentifierProvider userIdentifierProvider,
+        IUserRepository userRepository,
+        IUserProfileImageService userProfileImageService)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
-        _blobStorageService = blobStorageService;
+        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<PagedList<UserType>> Handle(GetUsersInput request, CancellationToken cancellationToken)
@@ -51,10 +54,7 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        foreach (var user in usersPage.Where(f => f.HasProfileImage))
-        {
-            user.ImageUrl = await _blobStorageService.GetProfileImageUrl(user.Id);
-        }
+        await _userProfileImageService.PopulateImageUrl(usersPage);
 
         return new PagedList<UserType>(usersPage, request.Page, request.PageSize, totalCount, firstPageSize);
     }

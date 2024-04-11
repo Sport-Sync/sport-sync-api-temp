@@ -76,7 +76,7 @@ public static class DependencyInjection
 
         services.AddTransient<IPasswordHashChecker, PasswordHasher>();
 
-        services.AddTransient<IBlobStorageService, BlobStorageService>();
+        services.AddScoped<IBlobStorageService, BlobStorageService>();
 
         //services.AddTransient<IEmailService, EmailService>();
 
