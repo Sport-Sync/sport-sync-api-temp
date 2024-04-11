@@ -3,7 +3,6 @@ using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Application.Users.GetUserProfile;
 using SportSync.Domain.Core.Errors;
-using SportSync.Domain.Types;
 
 namespace SportSync.Api.Tests.Features.Users;
 
@@ -23,14 +22,17 @@ public class GetUserProfileTests : IntegrationTest
                 query{{
                     userProfile(input: {{userId: ""{Guid.NewGuid()}""}}){{
                         user{{
-                            id, firstName, lastName, email, phone, imageUrl
-                        }}
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                            id, firstName, lastName, email, phone, imageUrl,
+                            friendshipInformation{{
+                                hasPendingFriendshipRequest,
+                                pendingFriendshipRequest{{
+                                    friendshipRequestId, 
+                                    sentByMe
+                                }},
+                                mutualFriends{{
+                                    id, firstName, lastName, imageUrl
+                                }}
+                            }}
                         }}
                     }}
                 }}"));
@@ -60,22 +62,25 @@ public class GetUserProfileTests : IntegrationTest
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
-                            id, firstName, lastName, email, phone, imageUrl
-                        }} 
-                        isFriendWithCurrentUser
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                            id, firstName, lastName, email, phone, imageUrl,
+                            friendshipInformation{{
+                                isFriendWithCurrentUser,
+                                hasPendingFriendshipRequest,
+                                pendingFriendshipRequest{{
+                                    friendshipRequestId, 
+                                    sentByMe
+                                }},
+                                mutualFriends{{
+                                    id, firstName, lastName, imageUrl
+                                }}
+                            }}
                         }}
                     }}
                 }}"));
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.IsFriendWithCurrentUser.Should().Be(areFriends);
+        profileResponse.User.FriendshipInformation.IsFriendWithCurrentUser.Should().Be(areFriends);
     }
 
     [Fact]
@@ -96,23 +101,26 @@ public class GetUserProfileTests : IntegrationTest
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
-                            id, firstName, lastName, email, phone, imageUrl
-                        }}
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                            id, firstName, lastName, email, phone, imageUrl,
+                            friendshipInformation{{
+                                hasPendingFriendshipRequest,
+                                pendingFriendshipRequest{{
+                                    friendshipRequestId, 
+                                    sentByMe
+                                }},
+                                mutualFriends{{
+                                    id, firstName, lastName, imageUrl
+                                }}
+                            }}
                         }}
                     }}
                 }}"));
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeTrue();
-        profileResponse.PendingFriendshipRequest?.FriendshipRequestId.Should().Be(friendshipRequest.Id);
-        profileResponse.PendingFriendshipRequest?.SentByMe.Should().BeTrue();
+        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeTrue();
+        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.FriendshipRequestId.Should().Be(friendshipRequest.Id);
+        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.SentByMe.Should().BeTrue();
     }
 
     [Fact]
@@ -133,23 +141,26 @@ public class GetUserProfileTests : IntegrationTest
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
-                            id, firstName, lastName, email, phone, imageUrl
-                        }}
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                            id, firstName, lastName, email, phone, imageUrl,
+                            friendshipInformation{{
+                                hasPendingFriendshipRequest,
+                                pendingFriendshipRequest{{
+                                    friendshipRequestId, 
+                                    sentByMe
+                                }},
+                                mutualFriends{{
+                                    id, firstName, lastName, imageUrl
+                                }}
+                            }}
                         }}
                     }}
                 }}"));
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeTrue();
-        profileResponse.PendingFriendshipRequest?.FriendshipRequestId.Should().Be(friendshipRequest.Id);
-        profileResponse.PendingFriendshipRequest?.SentByMe.Should().BeFalse();
+        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeTrue();
+        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.FriendshipRequestId.Should().Be(friendshipRequest.Id);
+        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.SentByMe.Should().BeFalse();
     }
 
     [Fact]
@@ -170,23 +181,25 @@ public class GetUserProfileTests : IntegrationTest
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
-                            id, firstName, lastName, email, phone, imageUrl
-                        }}
-                        hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                            id, firstName, lastName, email, phone, imageUrl,
+                            friendshipInformation{{
+                                hasPendingFriendshipRequest,
+                                pendingFriendshipRequest{{
+                                    friendshipRequestId, 
+                                    sentByMe
+                                }},
+                                mutualFriends{{
+                                    id, firstName, lastName, imageUrl
+                                }}
+                            }}
                         }}
                     }}
                 }}"));
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeFalse();
-        profileResponse.PendingFriendshipRequest.Should().BeNull();
+        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeFalse();
+        profileResponse.User.FriendshipInformation.PendingFriendshipRequest.Should().BeNull();
     }
 
     [Fact]
@@ -207,23 +220,25 @@ public class GetUserProfileTests : IntegrationTest
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
-                            id, firstName, lastName, email, phone, imageUrl
-                        }}
-                        hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                            id, firstName, lastName, email, phone, imageUrl,
+                            friendshipInformation{{
+                                hasPendingFriendshipRequest,
+                                pendingFriendshipRequest{{
+                                    friendshipRequestId, 
+                                    sentByMe
+                                }},
+                                mutualFriends{{
+                                    id, firstName, lastName, imageUrl
+                                }}
+                            }}
                         }}
                     }}
                 }}"));
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeFalse();
-        profileResponse.PendingFriendshipRequest.Should().BeNull();
+        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeFalse();
+        profileResponse.User.FriendshipInformation.PendingFriendshipRequest.Should().BeNull();
     }
 
     [Fact]
@@ -255,22 +270,25 @@ public class GetUserProfileTests : IntegrationTest
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
-                            id, firstName, lastName, email, phone, imageUrl
-                        }}
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                            id, firstName, lastName, email, phone, imageUrl,
+                            friendshipInformation{{
+                                hasPendingFriendshipRequest,
+                                pendingFriendshipRequest{{
+                                    friendshipRequestId, 
+                                    sentByMe
+                                }},
+                                mutualFriends{{
+                                    id, firstName, lastName, imageUrl
+                                }}
+                            }}
                         }}
                     }}
                 }}"));
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.MutualFriends.Count.Should().Be(2);
-        profileResponse.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend1.Id).Should().NotBeNull();
-        profileResponse.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend2.Id).Should().NotBeNull();
+        profileResponse.User.FriendshipInformation.MutualFriends.Count.Should().Be(2);
+        profileResponse.User.FriendshipInformation.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend1.Id).Should().NotBeNull();
+        profileResponse.User.FriendshipInformation.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend2.Id).Should().NotBeNull();
     }
 }

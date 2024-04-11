@@ -36,7 +36,7 @@ public class UserQuery
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    public async Task<PagedList<UserType>> GetUsers(
+    public async Task<PagedList<UserProfileType>> GetUsers(
         [Service] GetUsersRequestHandler requestHandler,
         GetUsersInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);

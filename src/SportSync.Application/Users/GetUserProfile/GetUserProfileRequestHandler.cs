@@ -1,9 +1,7 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Storage;
+using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
-using SportSync.Domain.Core.Primitives.Maybe;
-using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -14,18 +12,24 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
     private readonly IUserRepository _userRepository;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IBlobStorageService _blobStorageService;
+    private readonly IUserProfileImageService _profileImageService;
+    private readonly IUserProfileImageService _userProfileImageService;
+    private readonly IFriendshipInformationService _friendshipInformationService;
 
     public GetUserProfileRequestHandler(
         IUserRepository userRepository,
         IFriendshipRequestRepository friendshipRequestRepository,
         IUserIdentifierProvider userIdentifierProvider,
-        IBlobStorageService blobStorageService)
+        IUserProfileImageService profileImageService,
+        IFriendshipInformationService friendshipInformationService,
+        IUserProfileImageService userProfileImageService)
     {
         _userRepository = userRepository;
         _friendshipRequestRepository = friendshipRequestRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _blobStorageService = blobStorageService;
+        _profileImageService = profileImageService;
+        _friendshipInformationService = friendshipInformationService;
+        _userProfileImageService = userProfileImageService;
     }
 
 
@@ -48,36 +52,17 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
         var user = maybeUser.Value;
         var currentUser = maybeCurrentUser.Value;
 
-        var friendWithCurrentUser = currentUser.IsFriendWith(user);
+        var currentUserFriends = await _userRepository.GetByIdsAsync(currentUser.Friends.ToList(), cancellationToken);
 
-        var maybePendingFriendshipRequest = friendWithCurrentUser ? Maybe<FriendshipRequest>.None :
-            await _friendshipRequestRepository.GetPendingForUsersAsync(currentUser.Id, user.Id, cancellationToken);
+        var friendshipInformation = await _friendshipInformationService.GetFriendshipInformationForCurrentUser(currentUser, user, currentUserFriends, _friendshipRequestRepository, _userProfileImageService, cancellationToken);
 
-        PendingFriendshipRequestType? pendingFriendshipRequestType = maybePendingFriendshipRequest.HasNoValue
-            ? null
-            : PendingFriendshipRequestType.Create(maybePendingFriendshipRequest.Value.Id, maybePendingFriendshipRequest.Value.IsSender(currentUser.Id));
+        var userProfileType = new UserProfileType(user, friendshipInformation);
 
-        var mutualFriendIds = user.Friends.Where(friendId => currentUser.Friends.Contains(friendId)).ToList();
-        var mutualFriends =
-            mutualFriendIds.Any() ?
-            await _userRepository.GetByIdsAsync(mutualFriendIds, cancellationToken) :
-            new List<User>();
+        await _profileImageService.PopulateImageUrl(userProfileType);
 
-        List<UserType> mutualFriendList = new();
-
-        foreach (var mutualFriend in mutualFriends)
+        var userProfileResponse = new UserProfileResponse
         {
-            var profileImage = mutualFriend.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(mutualFriend.Id) : null;
-            mutualFriendList.Add(new UserType(mutualFriend, profileImage));
-        }
-
-        var userProfileImage = user.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(user.Id) : null;
-
-        var userProfileResponse = new UserProfileResponse(user, userProfileImage)
-        {
-            IsFriendWithCurrentUser = friendWithCurrentUser,
-            PendingFriendshipRequest = pendingFriendshipRequestType,
-            MutualFriends = mutualFriendList
+            User = userProfileType
         };
 
         return userProfileResponse;

@@ -10,23 +10,29 @@ using SportSync.Domain.Types;
 
 namespace SportSync.Application.Users.GetUsers;
 
-public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<UserType>>
+public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<UserProfileType>>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IUserRepository _userRepository;
+    private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserProfileImageService _userProfileImageService;
+    private readonly IFriendshipInformationService _friendshipInformationService;
 
     public GetUsersRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IUserRepository userRepository,
-        IUserProfileImageService userProfileImageService)
+        IUserProfileImageService userProfileImageService,
+        IFriendshipRequestRepository friendshipRequestRepository,
+        IFriendshipInformationService friendshipInformationService)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _userRepository = userRepository;
         _userProfileImageService = userProfileImageService;
+        _friendshipRequestRepository = friendshipRequestRepository;
+        _friendshipInformationService = friendshipInformationService;
     }
 
-    public async Task<PagedList<UserType>> Handle(GetUsersInput request, CancellationToken cancellationToken)
+    public async Task<PagedList<UserProfileType>> Handle(GetUsersInput request, CancellationToken cancellationToken)
     {
         var userId = _userIdentifierProvider.UserId;
 
@@ -37,25 +43,39 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<U
             throw new DomainException(DomainErrors.User.Forbidden);
         }
 
-        var users = _userRepository.GetQueryable<UserType>(
-            UserType.PropertySelector,
-            u => (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
+        var currentUser = maybeUser.Value;
+
+        var usersQuery = _userRepository.GetQueryableWhere(u =>
+                u.Id != userId &&
+                (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
             .OrderBy(u => u.FirstName);
 
-        var totalCount = await users.CountAsync(cancellationToken);
+        var totalCount = await usersQuery.CountAsync(cancellationToken);
 
         var firstPageSize = request.FirstPageSize ?? PaginationConstants.FirstPageSize;
 
         var skip = request.Page == 1 ? 0 :
             firstPageSize + ((request.Page - 2) * request.PageSize);
 
-        var usersPage = await users
+        var usersPage = await usersQuery
             .Skip(skip)
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        await _userProfileImageService.PopulateImageUrl(usersPage);
+        var usersProfileTypes = usersPage.Select(x => new UserProfileType(x)).ToArray();
 
-        return new PagedList<UserType>(usersPage, request.Page, request.PageSize, totalCount, firstPageSize);
+        await _userProfileImageService.PopulateImageUrl(usersProfileTypes);
+
+        var currentUserFriends = await _userRepository.GetByIdsAsync(currentUser.Friends.ToList(), cancellationToken);
+
+        foreach (var user in usersPage)
+        {
+            var friendshipInformation = await _friendshipInformationService.GetFriendshipInformationForCurrentUser(currentUser, user, currentUserFriends, _friendshipRequestRepository, _userProfileImageService, cancellationToken);
+
+            var userProfileType = usersProfileTypes.First(x => x.Id == user.Id);
+            userProfileType.FriendshipInformation = friendshipInformation;
+        }
+
+        return new PagedList<UserProfileType>(usersProfileTypes, request.Page, request.PageSize, totalCount, firstPageSize);
     }
 }

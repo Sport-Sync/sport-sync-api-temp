@@ -1,5 +1,4 @@
 ﻿using SportSync.Application.Core.Abstractions.Storage;
-using SportSync.Application.Core.Constants;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;

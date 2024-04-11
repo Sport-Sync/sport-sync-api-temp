@@ -27,7 +27,7 @@ internal sealed class UserRepository : QueryableGenericRepository<User, UserType
     {
         return await DbContext.Set<User>()
             .Where(u => userIds.Contains(u.Id))
-            .ToListAsync(cancellationToken);
+        .ToListAsync(cancellationToken);
     }
 
     public async Task<bool> IsEmailUniqueAsync(string email) => !await AnyAsync(x => x.Email == email);

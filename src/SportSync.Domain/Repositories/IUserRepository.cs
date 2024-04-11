@@ -1,4 +1,5 @@
-﻿using SportSync.Domain.Core.Primitives.Maybe;
+﻿using System.Linq.Expressions;
+using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Types;
 using SportSync.Domain.ValueObjects;
@@ -13,4 +14,5 @@ public interface IUserRepository : IQueryableRepository<User, UserType>
     Task<bool> IsEmailUniqueAsync(string email);
     Task<bool> IsPhoneUniqueAsync(PhoneNumber phone);
     void Insert(User user);
+    IQueryable<User> GetQueryableWhere(Expression<Func<User, bool>> predicate);
 }

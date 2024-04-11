@@ -16,17 +16,6 @@ public class UserType
     [GraphQLIgnore]
     public bool HasProfileImage { get; set; }
 
-    public UserType(User user, string imageUrl = null)
-    {
-        Id = user.Id;
-        FirstName = user.FirstName;
-        LastName = user.LastName;
-        Email = user.Email;
-        Phone = user.Phone;
-        ImageUrl = imageUrl;
-        HasProfileImage = user.HasProfileImage;
-    }
-
     public UserType(User user)
     {
         Id = user.Id;

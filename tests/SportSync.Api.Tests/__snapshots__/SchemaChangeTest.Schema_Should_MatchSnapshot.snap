@@ -8,6 +8,13 @@ type Error {
   message: String
 }
 
+type FriendshipInformationType {
+  mutualFriends: [UserType]
+  pendingFriendshipRequest: PendingFriendshipRequestType
+  hasPendingFriendshipRequest: Boolean!
+  isFriendWithCurrentUser: Boolean!
+}
+
 type FriendshipRequestType {
   id: UUID!
   userId: UUID!
@@ -59,6 +66,11 @@ type MatchAnnouncementType {
   typeOfAnnouncement: MatchAnnouncementTypeEnum!
   currentUserAlreadyApplied: Boolean!
   currentUserIsPlayer: Boolean!
+}
+
+type MatchApplicationType {
+  matchId: UUID!
+  matchApplicationId: UUID!
 }
 
 type MatchAttendanceType {
@@ -117,6 +129,15 @@ type NotificationType {
   completed: Boolean!
 }
 
+type PagedListOfUserProfileType {
+  page: Int!
+  pageSize: Int!
+  totalCount: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  items: [UserProfileType!]!
+}
+
 type PagedListOfUserType {
   page: Int!
   pageSize: Int!
@@ -158,7 +179,7 @@ type Query {
   phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
   userProfileImageUrl(input: ProfileImageUrlInput): ProfileImageUrlResponse @authorize
   userProfile(input: GetUserProfileInput): UserProfileResponse @authorize
-  users(input: GetUsersInput): PagedListOfUserType @authorize
+  users(input: GetUsersInput): PagedListOfUserProfileType @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   matches(input: GetMatchesInput): GetMatchesResponse @authorize
@@ -183,11 +204,18 @@ type TokenResponse {
 }
 
 type UserProfileResponse {
-  user: UserType!
-  mutualFriends: [UserType!]!
-  pendingFriendshipRequest: PendingFriendshipRequestType
-  hasPendingFriendshipRequest: Boolean!
-  isFriendWithCurrentUser: Boolean!
+  user: UserProfileType!
+  matchApplications: [MatchApplicationType!]!
+}
+
+type UserProfileType {
+  friendshipInformation: FriendshipInformationType
+  id: UUID!
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+  imageUrl: String
 }
 
 type UserType {
