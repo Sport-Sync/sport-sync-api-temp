@@ -76,6 +76,6 @@ public abstract class GenericRepository<TEntity>
     /// </summary>
     /// <param name="predicate"></param>
     /// <returns></returns>
-    public IQueryable<TEntity> GetQueryableWhere(Expression<Func<TEntity, bool>> predicate) =>
+    public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate) =>
         DbContext.Set<TEntity>().Where(predicate);
 }

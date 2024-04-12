@@ -4,5 +4,5 @@ namespace SportSync.Application.Users.GetByPhoneNumbers;
 
 public class GetPhoneBookUsersResponse
 {
-    public List<PhoneBookUserType> Users { get; set; } = new ();
+    public List<ExtendedUserType> Users { get; set; } = new ();
 }

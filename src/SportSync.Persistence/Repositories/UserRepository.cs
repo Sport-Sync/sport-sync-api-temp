@@ -3,15 +3,14 @@ using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
-using SportSync.Domain.Types;
 using SportSync.Domain.ValueObjects;
 
 namespace SportSync.Persistence.Repositories;
 
-internal sealed class UserRepository : QueryableGenericRepository<User, UserType>, IUserRepository
+internal sealed class UserRepository : GenericRepository<User>, IUserRepository
 {
     public UserRepository(IDbContext dbContext)
-        : base(dbContext, UserType.PropertySelector)
+        : base(dbContext)
     {
     }
 

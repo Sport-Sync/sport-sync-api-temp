@@ -44,7 +44,6 @@ namespace SportSync.Application
         public static IServiceCollection RegisterApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IUserProfileImageService, UserProfileImageService>();
-            services.AddScoped<IFriendshipInformationService, FriendshipInformationService>();
 
             return services;
         }

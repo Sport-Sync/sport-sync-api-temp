@@ -1,5 +1,4 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
@@ -23,12 +22,14 @@ public class GetCurrentUserRequestHandler : IRequestHandler<UserType>
 
     public async Task<UserType> Handle(CancellationToken cancellationToken)
     {
-        var user = _userRepository.GetQueryable(x => x.Id == _userIdentifierProvider.UserId).SingleOrDefault();
+        var maybeUser = await _userRepository.GetByIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 
-        if (user is null)
+        if (maybeUser.HasNoValue)
         {
             throw new DomainException(DomainErrors.User.NotFound);
         }
+
+        var user = new UserType(maybeUser.Value);
 
         await _userProfileImageService.PopulateImageUrl(user);
 

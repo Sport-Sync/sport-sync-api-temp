@@ -3,43 +3,36 @@ using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Common;
 using SportSync.Application.Core.Constants;
 using SportSync.Application.Core.Services;
-using SportSync.Domain.Core.Errors;
-using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
 namespace SportSync.Application.Users.GetFriends;
 
-public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedList<UserType>>
+public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedList<ExtendedUserType>>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
+    private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUserProfileImageService _userProfileImageService;
 
     public GetFriendsRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
+        IFriendshipRequestRepository friendshipRequestRepository,
         IUserRepository userRepository,
         IUserProfileImageService userProfileImageService)
     {
         _userIdentifierProvider = userIdentifierProvider;
+        _friendshipRequestRepository = friendshipRequestRepository;
         _userRepository = userRepository;
         _userProfileImageService = userProfileImageService;
     }
 
-    public async Task<PagedList<UserType>> Handle(GetFriendsInput request, CancellationToken cancellationToken)
+    public async Task<PagedList<ExtendedUserType>> Handle(GetFriendsInput request, CancellationToken cancellationToken)
     {
-        var userId = _userIdentifierProvider.UserId;
+        var currentUserId = _userIdentifierProvider.UserId;
 
-        var maybeUser = await _userRepository.GetByIdAsync(userId, cancellationToken);
-
-        if (maybeUser.HasNoValue)
-        {
-            throw new DomainException(DomainErrors.User.Forbidden);
-        }
-
-        var friends = _userRepository.GetQueryable<UserType>(
-            UserType.PropertySelector,
-            u => (u.FriendInvitees.Any(x => x.UserId == userId) || u.FriendInviters.Any(x => x.FriendId == userId)) &&
+        var friends = _userRepository.Where(
+            u => (u.FriendInvitees.Any(x => x.UserId == currentUserId) || u.FriendInviters.Any(x => x.FriendId == currentUserId)) &&
                  (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
             .OrderBy(u => u.FirstName);
 
@@ -55,8 +48,21 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
             .Take(request.PageSize)
             .ToArrayAsync(cancellationToken);
 
-        await _userProfileImageService.PopulateImageUrl(friendsPage);
+        var currentUserFriendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUserId, cancellationToken);
 
-        return new PagedList<UserType>(friendsPage, request.Page, request.PageSize, totalCount, firstPageSize);
+        var friendshipRequestInfoResult = new List<ExtendedUserType>();
+
+        foreach (var friend in friendsPage)
+        {
+            var isFriendWithCurrentUser = friend.IsFriendWith(currentUserId);
+            var pendingFriendshipRequest = currentUserFriendshipRequests.FirstOrDefault(x => x.FriendId == friend.Id || x.UserId == friend.Id);
+
+            friendshipRequestInfoResult.Add(new ExtendedUserType(friend, isFriendWithCurrentUser, pendingFriendshipRequest));
+        }
+
+        await _userProfileImageService.PopulateImageUrl(friendshipRequestInfoResult.ToArray());
+
+
+        return new PagedList<ExtendedUserType>(friendshipRequestInfoResult, request.Page, request.PageSize, totalCount, firstPageSize);
     }
 }

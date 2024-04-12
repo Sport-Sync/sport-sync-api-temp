@@ -157,4 +157,9 @@ public class User : AggregateRoot
     {
         return Friends.Any(id => id == friend.Id);
     }
+
+    public bool IsFriendWith(Guid friendId)
+    {
+        return Friends.Any(id => id == friendId);
+    }
 }

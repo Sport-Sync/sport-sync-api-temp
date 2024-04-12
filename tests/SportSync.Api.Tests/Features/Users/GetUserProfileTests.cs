@@ -9,6 +9,11 @@ namespace SportSync.Api.Tests.Features.Users;
 [Collection("IntegrationTests")]
 public class GetUserProfileTests : IntegrationTest
 {
+    public GetUserProfileTests()
+    {
+        DateTimeProviderMock.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
+    }
+
     [Fact]
     public async Task GetUserProfile_ShouldReturn_NotFound()
     {
@@ -23,15 +28,11 @@ public class GetUserProfileTests : IntegrationTest
                     userProfile(input: {{userId: ""{Guid.NewGuid()}""}}){{
                         user{{
                             id, firstName, lastName, email, phone, imageUrl,
-                            friendshipInformation{{
-                                hasPendingFriendshipRequest,
-                                pendingFriendshipRequest{{
-                                    friendshipRequestId, 
-                                    sentByMe
-                                }},
-                                mutualFriends{{
-                                    id, firstName, lastName, imageUrl
-                                }}
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
                             }}
                         }}
                     }}
@@ -63,16 +64,11 @@ public class GetUserProfileTests : IntegrationTest
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
                             id, firstName, lastName, email, phone, imageUrl,
-                            friendshipInformation{{
-                                isFriendWithCurrentUser,
-                                hasPendingFriendshipRequest,
-                                pendingFriendshipRequest{{
-                                    friendshipRequestId, 
-                                    sentByMe
-                                }},
-                                mutualFriends{{
-                                    id, firstName, lastName, imageUrl
-                                }}
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
                             }}
                         }}
                     }}
@@ -80,7 +76,7 @@ public class GetUserProfileTests : IntegrationTest
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.User.FriendshipInformation.IsFriendWithCurrentUser.Should().Be(areFriends);
+        profileResponse.User.IsFriendWithCurrentUser.Should().Be(areFriends);
     }
 
     [Fact]
@@ -102,15 +98,11 @@ public class GetUserProfileTests : IntegrationTest
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
                             id, firstName, lastName, email, phone, imageUrl,
-                            friendshipInformation{{
-                                hasPendingFriendshipRequest,
-                                pendingFriendshipRequest{{
-                                    friendshipRequestId, 
-                                    sentByMe
-                                }},
-                                mutualFriends{{
-                                    id, firstName, lastName, imageUrl
-                                }}
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
                             }}
                         }}
                     }}
@@ -118,9 +110,8 @@ public class GetUserProfileTests : IntegrationTest
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeTrue();
-        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.FriendshipRequestId.Should().Be(friendshipRequest.Id);
-        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.SentByMe.Should().BeTrue();
+        profileResponse.User.PendingFriendshipRequestId.Should().Be(friendshipRequest.Id);
+        profileResponse.User.IsFriendshipRequestSentByCurrentUser.Should().BeTrue();
     }
 
     [Fact]
@@ -142,15 +133,11 @@ public class GetUserProfileTests : IntegrationTest
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
                             id, firstName, lastName, email, phone, imageUrl,
-                            friendshipInformation{{
-                                hasPendingFriendshipRequest,
-                                pendingFriendshipRequest{{
-                                    friendshipRequestId, 
-                                    sentByMe
-                                }},
-                                mutualFriends{{
-                                    id, firstName, lastName, imageUrl
-                                }}
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
                             }}
                         }}
                     }}
@@ -158,9 +145,8 @@ public class GetUserProfileTests : IntegrationTest
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeTrue();
-        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.FriendshipRequestId.Should().Be(friendshipRequest.Id);
-        profileResponse.User.FriendshipInformation.PendingFriendshipRequest?.SentByMe.Should().BeFalse();
+        profileResponse.User.PendingFriendshipRequestId.Should().Be(friendshipRequest.Id);
+        profileResponse.User.IsFriendshipRequestSentByCurrentUser.Should().BeFalse();
     }
 
     [Fact]
@@ -182,15 +168,11 @@ public class GetUserProfileTests : IntegrationTest
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
                             id, firstName, lastName, email, phone, imageUrl,
-                            friendshipInformation{{
-                                hasPendingFriendshipRequest,
-                                pendingFriendshipRequest{{
-                                    friendshipRequestId, 
-                                    sentByMe
-                                }},
-                                mutualFriends{{
-                                    id, firstName, lastName, imageUrl
-                                }}
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
                             }}
                         }}
                     }}
@@ -198,8 +180,7 @@ public class GetUserProfileTests : IntegrationTest
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeFalse();
-        profileResponse.User.FriendshipInformation.PendingFriendshipRequest.Should().BeNull();
+        profileResponse.User.PendingFriendshipRequestId.Should().BeNull();
     }
 
     [Fact]
@@ -221,15 +202,11 @@ public class GetUserProfileTests : IntegrationTest
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
                             id, firstName, lastName, email, phone, imageUrl,
-                            friendshipInformation{{
-                                hasPendingFriendshipRequest,
-                                pendingFriendshipRequest{{
-                                    friendshipRequestId, 
-                                    sentByMe
-                                }},
-                                mutualFriends{{
-                                    id, firstName, lastName, imageUrl
-                                }}
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
                             }}
                         }}
                     }}
@@ -237,8 +214,7 @@ public class GetUserProfileTests : IntegrationTest
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.User.FriendshipInformation.HasPendingFriendshipRequest.Should().BeFalse();
-        profileResponse.User.FriendshipInformation.PendingFriendshipRequest.Should().BeNull();
+        profileResponse.User.PendingFriendshipRequestId.Should().BeNull();
     }
 
     [Fact]
@@ -271,15 +247,11 @@ public class GetUserProfileTests : IntegrationTest
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
                         user{{
                             id, firstName, lastName, email, phone, imageUrl,
-                            friendshipInformation{{
-                                hasPendingFriendshipRequest,
-                                pendingFriendshipRequest{{
-                                    friendshipRequestId, 
-                                    sentByMe
-                                }},
-                                mutualFriends{{
-                                    id, firstName, lastName, imageUrl
-                                }}
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
                             }}
                         }}
                     }}
@@ -287,8 +259,8 @@ public class GetUserProfileTests : IntegrationTest
 
         var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.User.FriendshipInformation.MutualFriends.Count.Should().Be(2);
-        profileResponse.User.FriendshipInformation.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend1.Id).Should().NotBeNull();
-        profileResponse.User.FriendshipInformation.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend2.Id).Should().NotBeNull();
+        profileResponse.User.MutualFriends.Count.Should().Be(2);
+        profileResponse.User.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend1.Id).Should().NotBeNull();
+        profileResponse.User.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend2.Id).Should().NotBeNull();
     }
 }

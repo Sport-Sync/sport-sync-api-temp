@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
@@ -8,8 +9,11 @@ namespace SportSync.Persistence.Repositories;
 
 public class MatchRepository : GenericRepository<Match>, IMatchRepository
 {
-    public MatchRepository(IDbContext dbContext) : base(dbContext)
+    private readonly IDateTime _dateTime;
+
+    public MatchRepository(IDbContext dbContext, IDateTime dateTime) : base(dbContext)
     {
+        _dateTime = dateTime;
     }
 
     public override async Task<Maybe<Match>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -87,6 +91,16 @@ public class MatchRepository : GenericRepository<Match>, IMatchRepository
                 .ThenInclude(p => p.User)
             .Where(x => x.Players.Any(c => c.UserId == userId && date.Date == x.Date.Date))
             .ToListAsync(cancellationToken);
-        
+    }
+
+    public async Task<List<Match>> GetFutureUserMatches(Guid userId, CancellationToken cancellationToken)
+    {
+        var now = _dateTime.UtcNow;
+        return await DbContext.Set<Match>()
+            .Include(t => t.Announcement)
+            .Include(t => t.Players)
+                .ThenInclude(p => p.User)
+            .Where(x => x.Players.Any(c => c.UserId == userId && (x.Date > now.Date || (x.Date.Date == now.Date && x.StartTime > now))))
+            .ToListAsync(cancellationToken);
     }
 }

@@ -3,6 +3,7 @@ using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.Types;
 
 namespace SportSync.Domain.Services;
 
@@ -40,5 +41,16 @@ public class FriendshipService
         User friend = maybeFriend.Value;
 
         user.AddFriend(friend);
+    }
+
+    public async Task<List<UserType>> GetMutualFriends(User firstUser, User secondUser, List<User> firstUserFriends = null, CancellationToken cancellationToken = default)
+    {
+        firstUserFriends ??= await _userRepository.GetByIdsAsync(firstUser.Friends.ToList(), cancellationToken);
+
+        var mutualFriends = firstUserFriends.Where(friend => secondUser.Friends.Contains(friend.Id))
+            .Select(x => new UserType(x))
+            .ToList();
+
+        return mutualFriends;
     }
 }

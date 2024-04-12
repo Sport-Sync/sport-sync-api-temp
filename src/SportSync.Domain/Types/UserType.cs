@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using HotChocolate;
+﻿using HotChocolate;
 using SportSync.Domain.Entities;
 
 namespace SportSync.Domain.Types;
@@ -30,14 +29,4 @@ public class UserType
     {
 
     }
-
-    public static Expression<Func<User, UserType>> PropertySelector = x => new UserType
-    {
-        Id = x.Id,
-        FirstName = x.FirstName,
-        LastName = x.LastName,
-        Email = x.Email,
-        Phone = x.Phone.Value,
-        HasProfileImage = x.HasProfileImage
-    };
 }

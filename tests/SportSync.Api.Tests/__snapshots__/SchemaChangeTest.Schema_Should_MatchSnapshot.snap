@@ -8,11 +8,17 @@ type Error {
   message: String
 }
 
-type FriendshipInformationType {
+type ExtendedUserType {
   mutualFriends: [UserType]
-  pendingFriendshipRequest: PendingFriendshipRequestType
-  hasPendingFriendshipRequest: Boolean!
+  pendingFriendshipRequestId: UUID
+  isFriendshipRequestSentByCurrentUser: Boolean!
   isFriendWithCurrentUser: Boolean!
+  id: UUID!
+  firstName: String
+  lastName: String
+  email: String
+  phone: String
+  imageUrl: String
 }
 
 type FriendshipRequestType {
@@ -48,7 +54,7 @@ type GetNotificationsResponse {
 }
 
 type GetPhoneBookUsersResponse {
-  users: [PhoneBookUserType!]!
+  users: [ExtendedUserType!]!
 }
 
 type MatchAnnouncementType {
@@ -71,6 +77,7 @@ type MatchAnnouncementType {
 type MatchApplicationType {
   matchId: UUID!
   matchApplicationId: UUID!
+  matchName: String
 }
 
 type MatchAttendanceType {
@@ -129,37 +136,13 @@ type NotificationType {
   completed: Boolean!
 }
 
-type PagedListOfUserProfileType {
+type PagedListOfExtendedUserType {
   page: Int!
   pageSize: Int!
   totalCount: Int!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
-  items: [UserProfileType!]!
-}
-
-type PagedListOfUserType {
-  page: Int!
-  pageSize: Int!
-  totalCount: Int!
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  items: [UserType!]!
-}
-
-type PendingFriendshipRequestType {
-  friendshipRequestId: UUID!
-  sentByMe: Boolean!
-}
-
-type PhoneBookUserType {
-  pendingFriendshipRequest: PendingFriendshipRequestType
-  hasPendingFriendshipRequest: Boolean!
-  id: UUID!
-  firstName: String
-  lastName: String
-  email: String
-  phone: String
+  items: [ExtendedUserType!]!
 }
 
 type PlayerType {
@@ -179,13 +162,13 @@ type Query {
   phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
   userProfileImageUrl(input: ProfileImageUrlInput): ProfileImageUrlResponse @authorize
   userProfile(input: GetUserProfileInput): UserProfileResponse @authorize
-  users(input: GetUsersInput): PagedListOfUserProfileType @authorize
+  users(input: GetUsersInput): PagedListOfExtendedUserType @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   matches(input: GetMatchesInput): GetMatchesResponse @authorize
   matchById(input: GetMatchByIdInput): GetMatchByIdResponse @authorize
   announcedMatches(input: GetAnnouncedMatchesInput): GetAnnouncedMatchResponse @authorize
-  friends(input: GetFriendsInput): PagedListOfUserType @authorize
+  friends(input: GetFriendsInput): PagedListOfExtendedUserType @authorize
   pendingFriendshipRequests: [FriendshipRequestType] @authorize
 }
 
@@ -204,18 +187,8 @@ type TokenResponse {
 }
 
 type UserProfileResponse {
-  user: UserProfileType!
+  user: ExtendedUserType!
   matchApplications: [MatchApplicationType!]!
-}
-
-type UserProfileType {
-  friendshipInformation: FriendshipInformationType
-  id: UUID!
-  firstName: String
-  lastName: String
-  email: String
-  phone: String
-  imageUrl: String
 }
 
 type UserType {

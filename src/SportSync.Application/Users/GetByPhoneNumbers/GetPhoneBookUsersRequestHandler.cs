@@ -44,7 +44,7 @@ public class GetPhoneBookUsersRequestHandler : IRequestHandler<GetPhoneBookUsers
         var currentUserId = _userIdentifierProvider.UserId;
 
         var users = await _userRepository
-            .GetQueryable(user => 
+            .Where(user => 
                 phoneNumbers.Contains(user.Phone.Value) && 
                 user.Id != currentUserId &&
                 user.FriendInvitees.All(fi => fi.UserId != currentUserId) &&
@@ -53,15 +53,14 @@ public class GetPhoneBookUsersRequestHandler : IRequestHandler<GetPhoneBookUsers
 
         var friendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUserId, cancellationToken);
 
-        var phoneBookUsers = new List<PhoneBookUserType>();
+        var phoneBookUsers = new List<ExtendedUserType>();
         
         foreach (var user in users)
         {
+            var isFriendWithCurrentUser = user.IsFriendWith(currentUserId);
             var pendingFriendshipRequest = friendshipRequests.FirstOrDefault(x => x.FriendId == user.Id || x.UserId == user.Id);
-            PendingFriendshipRequestType? pendingFriendshipRequestType = pendingFriendshipRequest == null
-                ? null
-                : PendingFriendshipRequestType.Create(pendingFriendshipRequest.Id, pendingFriendshipRequest.IsSender(currentUserId));
-            phoneBookUsers.Add(new PhoneBookUserType(user, pendingFriendshipRequestType));
+            
+            phoneBookUsers.Add(new ExtendedUserType(user, isFriendWithCurrentUser, pendingFriendshipRequest));
         }
 
         return new GetPhoneBookUsersResponse { Users = phoneBookUsers };
