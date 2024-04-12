@@ -109,7 +109,7 @@ public class SetMatchAttendanceTests : IntegrationTest
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
-            DayOfWeek.Wednesday, new DateTime(2024, 1, 1), DateTime.UtcNow.AddHours(1), DateTime.MaxValue, true);
+            DayOfWeek.Wednesday, new DateTime(2024, 1, 1), DateTime.UtcNow.AddMinutes(5), DateTime.MaxValue, true);
         var match = Database.AddMatch(user, startDate: DateTime.Today, schedule: schedule);
 
         await Database.UnitOfWork.SaveChangesAsync();
