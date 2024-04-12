@@ -2,7 +2,6 @@
 using SportSync.Application.Core.Abstractions.Authentication;
 using SportSync.Application.Core.Common;
 using SportSync.Application.Core.Constants;
-using SportSync.Application.Core.Services;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -13,18 +12,15 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IUserProfileImageService _userProfileImageService;
-
+    
     public GetFriendsRequestHandler(
         IUserIdentifierProvider userIdentifierProvider,
         IFriendshipRequestRepository friendshipRequestRepository,
-        IUserRepository userRepository,
-        IUserProfileImageService userProfileImageService)
+        IUserRepository userRepository)
     {
         _userIdentifierProvider = userIdentifierProvider;
         _friendshipRequestRepository = friendshipRequestRepository;
         _userRepository = userRepository;
-        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<PagedList<ExtendedUserType>> Handle(GetFriendsInput request, CancellationToken cancellationToken)
@@ -59,10 +55,7 @@ public class GetFriendsRequestHandler : IRequestHandler<GetFriendsInput, PagedLi
 
             friendshipRequestInfoResult.Add(new ExtendedUserType(friend, isFriendWithCurrentUser, pendingFriendshipRequest));
         }
-
-        await _userProfileImageService.PopulateImageUrl(friendshipRequestInfoResult.ToArray());
-
-
+        
         return new PagedList<ExtendedUserType>(friendshipRequestInfoResult, request.Page, request.PageSize, totalCount, firstPageSize);
     }
 }

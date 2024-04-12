@@ -1,5 +1,4 @@
-﻿using HotChocolate;
-using SportSync.Domain.Entities;
+﻿using SportSync.Domain.Entities;
 
 namespace SportSync.Domain.Types;
 
@@ -10,8 +9,6 @@ public class PlayerType
     public string LastName { get; set; }
     public string ImageUrl { get; set; }
     public bool? IsAttending { get; set; }
-    [GraphQLIgnore]
-    public bool HasProfileImage { get; set; }
 
     public static PlayerType FromPlayer(Player player)
     {
@@ -21,7 +18,7 @@ public class PlayerType
             LastName = player.User.LastName,
             UserId = player.UserId,
             IsAttending = player.Attending,
-            HasProfileImage = player.User.HasProfileImage
+            ImageUrl = player.User.ImageUrl
         };
     }
 }

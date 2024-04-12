@@ -23,22 +23,32 @@ public class BlobStorageService : IBlobStorageService
         _settings = settings.Value;
     }
 
-    public async Task<Result> UploadFile(string fileName, IFile file, CancellationToken cancellationToken)
+    public async Task<Result<string>> UploadFile(string fileName, IFile file, CancellationToken cancellationToken)
     {
         try
         {
             var s3Client = GetS3Client();
             var fileTransferUtility = new TransferUtility(s3Client);
+
             await using Stream stream = file.OpenReadStream();
-            await fileTransferUtility.UploadAsync(stream, _settings.BucketName, fileName, cancellationToken);
+
+            var request = new TransferUtilityUploadRequest()
+            {
+                InputStream = stream,
+                BucketName = _settings.BucketName,
+                Key = fileName,
+                CannedACL = S3CannedACL.PublicRead
+            };
+
+            await fileTransferUtility.UploadAsync(request, cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while trying to upload file {fileName}", fileName);
-            return Result.Failure(DomainErrors.General.UnProcessableRequest);
+            return Result.Failure<string>(DomainErrors.General.UnProcessableRequest);
         }
 
-        return Result.Success();
+        return $"{_settings.BucketFileLocation}/{fileName}";
     }
 
     public Task<string> GetProfileImageUrl(Guid userId)

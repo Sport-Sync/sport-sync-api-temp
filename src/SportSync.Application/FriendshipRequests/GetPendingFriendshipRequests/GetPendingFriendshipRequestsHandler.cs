@@ -1,5 +1,4 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Services;
 using SportSync.Domain.Repositories;
 using SportSync.Domain.Types;
 
@@ -9,16 +8,13 @@ public class GetPendingFriendshipRequestsHandler : IRequestHandler<List<Friendsh
 {
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IUserProfileImageService _userProfileImageService;
 
     public GetPendingFriendshipRequestsHandler(
         IFriendshipRequestRepository friendshipRequestRepository,
-        IUserIdentifierProvider userIdentifierProvider,
-        IUserProfileImageService userProfileImageService)
+        IUserIdentifierProvider userIdentifierProvider)
     {
         _friendshipRequestRepository = friendshipRequestRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<List<FriendshipRequestType>> Handle(CancellationToken cancellationToken)
@@ -26,9 +22,7 @@ public class GetPendingFriendshipRequestsHandler : IRequestHandler<List<Friendsh
         var pendingFriendshipRequests = await _friendshipRequestRepository.GetPendingForFriendIdAsync(_userIdentifierProvider.UserId, cancellationToken);
 
         var friendshipRequestTypes = pendingFriendshipRequests.Select(FriendshipRequestType.FromFriendshipRequest);
-
-        await _userProfileImageService.PopulateImageUrl(friendshipRequestTypes.ToArray());
-
+        
         return friendshipRequestTypes.ToList();
     }
 }

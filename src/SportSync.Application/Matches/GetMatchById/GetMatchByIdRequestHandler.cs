@@ -1,5 +1,4 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Services;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Repositories;
@@ -13,18 +12,15 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
     private readonly IMatchRepository _matchRepository;
     private readonly IMatchApplicationRepository _matchApplicationRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IUserProfileImageService _userProfileImageService;
 
     public GetMatchByIdRequestHandler(
         IMatchRepository matchRepository,
         IMatchApplicationRepository matchApplicationRepository,
-        IUserIdentifierProvider userIdentifierProvider,
-        IUserProfileImageService userProfileImageService)
+        IUserIdentifierProvider userIdentifierProvider)
     {
         _matchRepository = matchRepository;
         _matchApplicationRepository = matchApplicationRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _userProfileImageService = userProfileImageService;
     }
 
     public async Task<GetMatchByIdResponse> Handle(GetMatchByIdInput request, CancellationToken cancellationToken)
@@ -57,12 +53,7 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
         var pendingApplicants = matchApplications
             .Select(x => new UserType(x.AppliedByUser))
             .ToArray();
-
-        await _userProfileImageService.PopulateImageUrl(playersAttending);
-        await _userProfileImageService.PopulateImageUrl(playersNotAttending);
-        await _userProfileImageService.PopulateImageUrl(playersNotResponded);
-        await _userProfileImageService.PopulateImageUrl(pendingApplicants);
-
+        
         var response = new GetMatchByIdResponse
         {
             Match = MatchType.FromMatch(match),
