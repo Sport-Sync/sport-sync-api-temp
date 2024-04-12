@@ -153,14 +153,9 @@ type PlayerType {
   isAttending: Boolean
 }
 
-type ProfileImageUrlResponse {
-  imageUrl: String
-}
-
 type Query {
   me: UserType @authorize
   phoneBookUsers(input: GetPhoneBookUsersInput): GetPhoneBookUsersResponse @authorize
-  userProfileImageUrl(input: ProfileImageUrlInput): ProfileImageUrlResponse @authorize
   userProfile(input: GetUserProfileInput): UserProfileResponse @authorize
   users(input: GetUsersInput): PagedListOfExtendedUserType @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
@@ -293,10 +288,6 @@ input MatchApplicationInput {
 
 input NotificationInput {
   notificationId: UUID!
-}
-
-input ProfileImageUrlInput {
-  userId: UUID!
 }
 
 input RemoveFriendshipInput {
