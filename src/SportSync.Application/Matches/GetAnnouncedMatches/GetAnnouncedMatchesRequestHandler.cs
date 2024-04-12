@@ -7,7 +7,7 @@ using MatchType = SportSync.Domain.Types.MatchType;
 
 namespace SportSync.Application.Matches.GetAnnouncedMatches;
 
-public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMatchesInput, GetAnnouncedMatchResponse>
+public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMatchesInput, GetAnnouncedMatchesResponse>
 {
     private readonly IUserIdentifierProvider _userIdentifierProvider;
     private readonly IMatchRepository _matchRepository;
@@ -26,7 +26,7 @@ public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMat
         _userRepository = userRepository;
     }
 
-    public async Task<GetAnnouncedMatchResponse> Handle(GetAnnouncedMatchesInput request, CancellationToken cancellationToken)
+    public async Task<GetAnnouncedMatchesResponse> Handle(GetAnnouncedMatchesInput request, CancellationToken cancellationToken)
     {
         var userId = _userIdentifierProvider.UserId;
 
@@ -40,14 +40,14 @@ public class GetAnnouncedMatchesRequestHandler : IRequestHandler<GetAnnouncedMat
         var announcedMatches = await _matchRepository.GetAnnouncedMatches(request.Date, cancellationToken);
 
         var user = maybeUser.Value;
-        var response = new GetAnnouncedMatchResponse();
+        var response = new GetAnnouncedMatchesResponse();
 
         if (!announcedMatches.Any())
         {
             return response;
         }
 
-        var userApplications = await _matchApplicationRepository.GetByUserIdAsync(userId, cancellationToken);
+        var userApplications = await _matchApplicationRepository.GetPendingByUserId(userId, cancellationToken);
         var userApplicationMap = userApplications.ToLookup(x => x.MatchId);
 
         var publicAnnouncements = announcedMatches.Where(x => x.PubliclyAnnounced);

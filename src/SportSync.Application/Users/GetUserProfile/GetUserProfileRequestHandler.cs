@@ -11,6 +11,7 @@ namespace SportSync.Application.Users.GetUserProfile;
 public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput, UserProfileResponse>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IEventRepository _eventRepository;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
     private readonly IMatchRepository _matchRepository;
     private readonly IMatchApplicationRepository _matchApplicationRepository;
@@ -19,6 +20,7 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
 
     public GetUserProfileRequestHandler(
         IUserRepository userRepository,
+        IEventRepository eventRepository,
         IFriendshipRequestRepository friendshipRequestRepository,
         IMatchRepository matchRepository,
         IMatchApplicationRepository matchApplicationRepository,
@@ -26,10 +28,12 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
         IUserProfileImageService profileImageService)
     {
         _userRepository = userRepository;
+        _eventRepository = eventRepository;
         _friendshipRequestRepository = friendshipRequestRepository;
         _matchApplicationRepository = matchApplicationRepository;
         _userIdentifierProvider = userIdentifierProvider;
         _profileImageService = profileImageService;
+        _eventRepository = eventRepository;
         _matchRepository = matchRepository;
     }
 
@@ -63,18 +67,27 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
 
         await _profileImageService.PopulateImageUrl(userProfileType);
 
-        var matchApplications = await _matchApplicationRepository.GetByUserIdAsync(request.UserId, cancellationToken);
+        var matchApplications = await _matchApplicationRepository.GetPendingByUserId(request.UserId, cancellationToken);
         var futureMatchesOfCurrentUser = await _matchRepository.GetFutureUserMatches(currentUser.Id, cancellationToken);
         var matchesMap = futureMatchesOfCurrentUser.ToLookup(x => x.Id);
 
         var matchApplicationsRelatedToCurrentUser = matchApplications
-            .Where(x => !x.Completed && matchesMap.Select(m => m.Key).Contains(x.MatchId))
+            .Where(x => matchesMap.Contains(x.MatchId))
             .Select(x => new { Match = matchesMap[x.MatchId].Single(), Application = x });
+        
+        var eventIdsThatUserIsAdminOn = await _eventRepository.GetEventIdsThatUserIsAdminOn(currentUser.Id, cancellationToken);
+        var matchApplicationTypes = new List<MatchApplicationType>();
+
+        foreach (var matchApplicationMap in matchApplicationsRelatedToCurrentUser)
+        {
+            var isCurrentUserAdminOnEvent = eventIdsThatUserIsAdminOn.Contains(matchApplicationMap.Match.EventId);
+            matchApplicationTypes.Add(new MatchApplicationType(matchApplicationMap.Match, matchApplicationMap.Application, isCurrentUserAdminOnEvent));
+        }
 
         var userProfileResponse = new UserProfileResponse
         {
             User = userProfileType,
-            MatchApplications = matchApplicationsRelatedToCurrentUser.Select(x => new MatchApplicationType(x.Match, x.Application)).ToList()
+            MatchApplications = matchApplicationTypes.ToList()
         };
 
         return userProfileResponse;

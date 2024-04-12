@@ -12,25 +12,25 @@ public class MatchApplicationRepository : GenericRepository<MatchApplication>, I
     {
     }
 
-    public async Task<List<MatchApplication>> GetByMatchIdAsync(Guid matchId, CancellationToken cancellationToken)
+    public async Task<List<MatchApplication>> GetPendingByMatchId(Guid matchId, CancellationToken cancellationToken)
     {
         return await DbContext.Set<MatchApplication>()
-            .Where(t => t.MatchId == matchId)
+            .Where(t => t.MatchId == matchId && t.CompletedOnUtc == null)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<MatchApplication>> GetByMatchIdWithIncludedUserAsync(Guid matchId, CancellationToken cancellationToken)
+    public async Task<List<MatchApplication>> GetPendingByMatchIdWithIncludedUser(Guid matchId, CancellationToken cancellationToken)
     {
         return await DbContext.Set<MatchApplication>()
-            .Where(t => t.MatchId == matchId)
+            .Where(t => t.MatchId == matchId && t.CompletedOnUtc == null)
             .Include(m => m.AppliedByUser)
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<MatchApplication>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<List<MatchApplication>> GetPendingByUserId(Guid userId, CancellationToken cancellationToken)
     {
         return await DbContext.Set<MatchApplication>()
-            .Where(t => t.AppliedByUserId == userId)
+            .Where(t => t.AppliedByUserId == userId && t.CompletedOnUtc == null)
             .ToListAsync(cancellationToken);
     }
 }

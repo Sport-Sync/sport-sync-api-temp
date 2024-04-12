@@ -53,9 +53,8 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
         var playersNotAttending = match.Players.Where(p => p.Attending == false).Select(PlayerType.FromPlayer).ToArray();
         var playersNotResponded = match.Players.Where(p => p.Attending == null).Select(PlayerType.FromPlayer).ToArray();
 
-        var matchApplications = await _matchApplicationRepository.GetByMatchIdWithIncludedUserAsync(match.Id, cancellationToken);
+        var matchApplications = await _matchApplicationRepository.GetPendingByMatchIdWithIncludedUser(match.Id, cancellationToken);
         var pendingApplicants = matchApplications
-            .Where(x => !x.Completed)
             .Select(x => new UserType(x.AppliedByUser))
             .ToArray();
 

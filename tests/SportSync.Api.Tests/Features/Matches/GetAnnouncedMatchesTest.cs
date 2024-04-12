@@ -40,7 +40,7 @@ public class GetAnnouncedMatchesTest : IntegrationTest
         Database.DbContext.Set<Player>().First(x => x.UserId == creatorUser.Id && x.MatchId == privateMatch.Id).HasAnnouncedMatch.Should().BeTrue();
         Database.DbContext.Set<Player>().First(x => x.UserId == creatorUser.Id && x.MatchId == publicMatch.Id).HasAnnouncedMatch.Should().BeTrue();
 
-        var response = result.ToResponseObject<GetAnnouncedMatchResponse>("announcedMatches");
+        var response = result.ToResponseObject<GetAnnouncedMatchesResponse>("announcedMatches");
         response.Matches.Count.Should().Be(1);
         response.Matches.Single().MatchId.Should().Be(publicMatch.Id);
     }
@@ -80,7 +80,7 @@ public class GetAnnouncedMatchesTest : IntegrationTest
                     }}
                 }}"));
 
-        var response = result.ToResponseObject<GetAnnouncedMatchResponse>("announcedMatches");
+        var response = result.ToResponseObject<GetAnnouncedMatchesResponse>("announcedMatches");
         response.Matches.Count.Should().Be(2);
         response.Matches.FirstOrDefault(x => x.MatchId == publicMatch.Id).Should().NotBeNull();
         response.Matches.FirstOrDefault(x => x.MatchId == privateFromFriendMatch.Id).Should().NotBeNull();
@@ -122,7 +122,7 @@ public class GetAnnouncedMatchesTest : IntegrationTest
                     }}
                 }}"));
 
-        var response = result.ToResponseObject<GetAnnouncedMatchResponse>("announcedMatches");
+        var response = result.ToResponseObject<GetAnnouncedMatchesResponse>("announcedMatches");
         response.Matches.Count.Should().Be(2);
         response.Matches.FirstOrDefault(x => x.MatchId == privateMatchFriend.Id).Should().NotBeNull();
         response.Matches.FirstOrDefault(x => x.MatchId == privateMatchFriend.Id).PlayerLimit.Should().Be(3);

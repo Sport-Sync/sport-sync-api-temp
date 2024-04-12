@@ -331,4 +331,64 @@ public class GetUserProfileTests : IntegrationTest
         match2Application.MatchApplicationId.Should().Be(application2Result.Value.Id);
         match2Application.MatchName.Should().Be(match2.EventName);
     }
+
+    [Fact]
+    public async Task GetUserProfile_ShouldReturn_IsCurrentUserAdminFlag()
+    {
+        var currentUser = Database.AddUser();
+        var otherAdmin = Database.AddUser();
+        var requestProfile = Database.AddUser("Michael", "Scott");
+
+        var match1 = Database.AddMatch(currentUser, startDate: DateTime.Today.AddDays(1));
+        var match2 = Database.AddMatch(otherAdmin, startDate: DateTime.Today.AddDays(1));
+        match2.AddPlayer(currentUser.Id);
+
+        await Database.SaveChangesAsync();
+
+        match1.Announce(currentUser, true, 1);
+        match2.Announce(otherAdmin, true, 1);
+        
+        var application1Result = match1.ApplyForPlaying(requestProfile);
+        var application2Result = match2.ApplyForPlaying(requestProfile);
+
+        Database.DbContext.Set<MatchApplication>().Add(application1Result.Value);
+        Database.DbContext.Set<MatchApplication>().Add(application2Result.Value);
+        
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(currentUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                query{{
+                    userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
+                        }},
+                        matchApplications{{
+                            matchId, matchApplicationId, matchName, isCurrentUserAdmin
+                        }}
+                    }}
+                }}"));
+        
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
+
+        profileResponse.MatchApplications.Count.Should().Be(2);
+        var match1Application = profileResponse.MatchApplications.FirstOrDefault(x => x.MatchId == match1.Id);
+        var match2Application = profileResponse.MatchApplications.FirstOrDefault(x => x.MatchId == match2.Id);
+
+        match1Application.MatchApplicationId.Should().Be(application1Result.Value.Id);
+        match1Application.MatchName.Should().Be(match1.EventName);
+        match1Application.IsCurrentUserAdmin.Should().BeTrue();
+
+        match2Application.MatchApplicationId.Should().Be(application2Result.Value.Id);
+        match2Application.MatchName.Should().Be(match2.EventName);
+        match2Application.IsCurrentUserAdmin.Should().BeFalse();
+    }
 }
