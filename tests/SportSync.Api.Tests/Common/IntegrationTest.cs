@@ -40,7 +40,6 @@ public class IntegrationTest : IDisposable
         ServiceProvider = new ServiceCollection()
             .AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(CreateUserRequestValidator)))
             .RegisterRequestHandlers()
-            .RegisterApplicationServices()
             .RegisterInfrastructureServices()
             .AddRepositories()
             .AddGraphQLServer()
@@ -63,8 +62,8 @@ public class IntegrationTest : IDisposable
             .AddConvention<INamingConventions>(new EnumNamingConvention())
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>
 {
-                errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
-            }))
+    errorBuilder.SetMessage(context.ValidationFailure.ErrorMessage);
+}))
             .Services
                 .AddSingleton(
                     sp =>

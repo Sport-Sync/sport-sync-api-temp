@@ -58,4 +58,13 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
             .Select(m => m.UserId)
             .CountAsync(id => id == userId, cancellationToken) > 0;
     }
+
+    public async Task<List<Guid>> GetEventIdsThatUserIsAdminOn(Guid userId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<Event>()
+            .SelectMany(x => x.Members)
+            .Where(m => m.IsAdmin && m.UserId == userId)
+            .Select(m => m.EventId)
+            .ToListAsync(cancellationToken);
+    }
 }

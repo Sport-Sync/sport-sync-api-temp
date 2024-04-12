@@ -70,4 +70,12 @@ public abstract class GenericRepository<TEntity>
     /// <returns>The maybe instance that may contain the first entity that meets the specified condition.</returns>
     protected async Task<Maybe<TEntity>> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate) =>
         await DbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+
+    /// <summary>
+    /// Gets the entities that meets the specified condition.
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+    public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate) =>
+        DbContext.Set<TEntity>().Where(predicate);
 }

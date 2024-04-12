@@ -45,7 +45,7 @@ public class User : AggregateRoot
 
     public PhoneNumber Phone { get; set; }
 
-    public bool HasProfileImage { get; set; }
+    public string ImageUrl { get; set; }
 
     /// <summary>
     /// List of users who initiated the "friendship"
@@ -156,5 +156,10 @@ public class User : AggregateRoot
     public bool IsFriendWith(User friend)
     {
         return Friends.Any(id => id == friend.Id);
+    }
+
+    public bool IsFriendWith(Guid friendId)
+    {
+        return Friends.Any(id => id == friendId);
     }
 }

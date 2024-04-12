@@ -16,6 +16,7 @@ public class MatchApplication : AggregateRoot
         Ensure.NotNull(match, "The match is required.", nameof(match));
         Ensure.NotEmpty(match.Id, "The match identifier is required.", $"{nameof(match)}{nameof(match.Id)}");
 
+        AppliedByUser = user;
         AppliedByUserId = user.Id;
         MatchId = match.Id;
     }

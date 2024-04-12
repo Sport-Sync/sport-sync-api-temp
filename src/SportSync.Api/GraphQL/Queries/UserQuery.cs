@@ -2,7 +2,6 @@
 using SportSync.Application.Core.Common;
 using SportSync.Application.Users.GetByPhoneNumbers;
 using SportSync.Application.Users.GetCurrentUser;
-using SportSync.Application.Users.GetProfileImageUrl;
 using SportSync.Application.Users.GetUserProfile;
 using SportSync.Application.Users.GetUsers;
 using SportSync.Domain.Types;
@@ -24,19 +23,13 @@ public class UserQuery
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    public async Task<ProfileImageUrlResponse> GetUserProfileImageUrl(
-        [Service] ProfileImageUrlRequestHandler requestHandler,
-        ProfileImageUrlInput input,
-        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
-
-    [Authorize]
-    public async Task<UserProfileType> GetUserProfile(
+    public async Task<UserProfileResponse> GetUserProfile(
         [Service] GetUserProfileRequestHandler requestHandler,
         GetUserProfileInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    public async Task<PagedList<UserType>> GetUsers(
+    public async Task<PagedList<ExtendedUserType>> GetUsers(
         [Service] GetUsersRequestHandler requestHandler,
         GetUsersInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);

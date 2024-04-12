@@ -3,13 +3,12 @@ using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
-using SportSync.Domain.Types;
 
 namespace SportSync.Persistence.Repositories;
 
-public class NotificationRepository : QueryableGenericRepository<Notification, NotificationType>, INotificationRepository
+public class NotificationRepository : GenericRepository<Notification>, INotificationRepository
 {
-    public NotificationRepository(IDbContext dbContext) : base(dbContext, NotificationType.PropertySelector)
+    public NotificationRepository(IDbContext dbContext) : base(dbContext)
     {
     }
 

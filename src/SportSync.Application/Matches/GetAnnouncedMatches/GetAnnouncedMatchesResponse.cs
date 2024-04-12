@@ -2,7 +2,7 @@
 
 namespace SportSync.Application.Matches.GetAnnouncedMatches;
 
-public class GetAnnouncedMatchResponse
+public class GetAnnouncedMatchesResponse
 {
     public List<MatchAnnouncementType> Matches { get; set; } = new();
 }

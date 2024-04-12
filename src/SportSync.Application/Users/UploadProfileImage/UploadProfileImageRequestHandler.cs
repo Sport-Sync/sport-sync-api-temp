@@ -43,9 +43,9 @@ public class UploadProfileImageRequestHandler : IRequestHandler<UploadProfileIma
 
         var result = await _blobStorageService.UploadFile(fileName, request.File, cancellationToken);
 
-        if (result.IsSuccess && !user.HasProfileImage)
+        if (result.IsSuccess)
         {
-            user.HasProfileImage = true;
+            user.ImageUrl = result.Value;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 

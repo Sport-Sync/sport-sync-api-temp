@@ -25,7 +25,10 @@ public class GetPhoneBookUsersTests : IntegrationTest
                 query{
                     phoneBookUsers(input: {phoneNumbers: [""0959279259"", ""0919279259"", ""099927 9259"", ""+385 99927 3333""]}){
                         users{
-                            firstName, email, phone, id
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
                         }
                     }
                 }"));
@@ -64,9 +67,10 @@ public class GetPhoneBookUsersTests : IntegrationTest
                 query{
                     phoneBookUsers(input: {phoneNumbers: [""0929279259"", ""0919279259"", ""099927 9259"", ""0929279251"", ""+385 99927 3333""]}){
                         users{
-                            firstName, email, phone, id, hasPendingFriendshipRequest, pendingFriendshipRequest{
-                                sentByMe, friendshipRequestId
-                            }
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
                         }
                     }
                 }"));
@@ -74,15 +78,14 @@ public class GetPhoneBookUsersTests : IntegrationTest
         var userResponse = result.ToResponseObject<GetPhoneBookUsersResponse>("phoneBookUsers");
 
         userResponse.Users.Count.Should().Be(4);
-        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).HasPendingFriendshipRequest.Should().BeTrue();
-        userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).HasPendingFriendshipRequest.Should().BeTrue();
-        userResponse.Users.FirstOrDefault(x => x.Id == user4.Id).HasPendingFriendshipRequest.Should().BeFalse();
-        userResponse.Users.FirstOrDefault(x => x.Id == user5.Id).HasPendingFriendshipRequest.Should().BeFalse();
+        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).PendingFriendshipRequestId.Should().NotBeNull();
+        userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).PendingFriendshipRequestId.Should().NotBeNull();
+        userResponse.Users.FirstOrDefault(x => x.Id == user4.Id).PendingFriendshipRequestId.Should().BeNull();
+        userResponse.Users.FirstOrDefault(x => x.Id == user5.Id).PendingFriendshipRequestId.Should().BeNull();
 
-        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).PendingFriendshipRequest.SentByMe.Should().BeTrue();
-        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).PendingFriendshipRequest.FriendshipRequestId.Should().Be(friendshipRequest.Id);
-        userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).PendingFriendshipRequest.SentByMe.Should().BeFalse();
-
+        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).IsFriendshipRequestSentByCurrentUser.Should().BeTrue();
+        userResponse.Users.FirstOrDefault(x => x.Id == user1.Id).PendingFriendshipRequestId.Should().Be(friendshipRequest.Id);
+        userResponse.Users.FirstOrDefault(x => x.Id == user2.Id).IsFriendshipRequestSentByCurrentUser.Should().BeFalse();
     }
 
     [Fact]
@@ -105,7 +108,10 @@ public class GetPhoneBookUsersTests : IntegrationTest
                 query{
                     phoneBookUsers(input: {phoneNumbers: [""0929279259"", ""0919279259"", ""099927 9259"", ""+385 99927 3333""]}){
                         users{
-                            firstName, email, phone, id
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
                         }
                     }
                 }"));
@@ -131,7 +137,10 @@ public class GetPhoneBookUsersTests : IntegrationTest
                 query{
                     phoneBookUsers(input: {phoneNumbers: [""0959279259"", ""0918877665""]}){
                         users{
-                            firstName, email, phone, id
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
                         }
                     }
                 }"));
@@ -163,7 +172,10 @@ public class GetPhoneBookUsersTests : IntegrationTest
                 query{{
                     phoneBookUsers(input: {{phoneNumbers: [""{inputPhoneNumber}""]}}){{
                         users{{
-                            firstName, email, phone, id
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
                         }}
                     }}
                 }}"));

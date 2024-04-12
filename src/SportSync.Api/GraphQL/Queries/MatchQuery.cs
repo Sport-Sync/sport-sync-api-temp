@@ -30,7 +30,7 @@ public class MatchQuery
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    public async Task<GetAnnouncedMatchResponse> GetAnnouncedMatches(
+    public async Task<GetAnnouncedMatchesResponse> GetAnnouncedMatches(
         [Service] GetAnnouncedMatchesRequestHandler requestHandler,
         GetAnnouncedMatchesInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);

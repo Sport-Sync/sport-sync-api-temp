@@ -40,7 +40,7 @@ public class RemoveProfileImageRequestHandler : IRequestHandler<Result>
 
         var user = maybeUser.Value;
 
-        if (!user.HasProfileImage)
+        if (string.IsNullOrEmpty(user.ImageUrl))
         {
             return Result.Success();
         }
@@ -51,7 +51,7 @@ public class RemoveProfileImageRequestHandler : IRequestHandler<Result>
 
         if (result.IsSuccess)
         {
-            user.HasProfileImage = false;
+            user.ImageUrl = null;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 

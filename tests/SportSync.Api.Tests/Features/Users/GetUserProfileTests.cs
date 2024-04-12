@@ -1,14 +1,20 @@
 ﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
+using SportSync.Application.Users.GetUserProfile;
 using SportSync.Domain.Core.Errors;
-using SportSync.Domain.Types;
+using SportSync.Domain.Entities;
 
 namespace SportSync.Api.Tests.Features.Users;
 
 [Collection("IntegrationTests")]
 public class GetUserProfileTests : IntegrationTest
 {
+    public GetUserProfileTests()
+    {
+        DateTimeProviderMock.Setup(x => x.UtcNow).Returns(DateTime.UtcNow);
+    }
+
     [Fact]
     public async Task GetUserProfile_ShouldReturn_NotFound()
     {
@@ -21,13 +27,14 @@ public class GetUserProfileTests : IntegrationTest
             q => q.SetQuery(@$"
                 query{{
                     userProfile(input: {{userId: ""{Guid.NewGuid()}""}}){{
-                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
                         }}
                     }}
                 }}"));
@@ -56,20 +63,21 @@ public class GetUserProfileTests : IntegrationTest
             q => q.SetQuery(@$"
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
-                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest, isFriendWithCurrentUser
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
                         }}
                     }}
                 }}"));
 
-        var profileResponse = result.ToResponseObject<UserProfileType>("userProfile");
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.IsFriendWithCurrentUser.Should().Be(areFriends);
+        profileResponse.User.IsFriendWithCurrentUser.Should().Be(areFriends);
     }
 
     [Fact]
@@ -89,22 +97,22 @@ public class GetUserProfileTests : IntegrationTest
             q => q.SetQuery(@$"
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
-                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
                         }}
                     }}
                 }}"));
 
-        var profileResponse = result.ToResponseObject<UserProfileType>("userProfile");
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeTrue();
-        profileResponse.PendingFriendshipRequest.FriendshipRequestId.Should().Be(friendshipRequest.Id);
-        profileResponse.PendingFriendshipRequest.SentByMe.Should().BeTrue();
+        profileResponse.User.PendingFriendshipRequestId.Should().Be(friendshipRequest.Id);
+        profileResponse.User.IsFriendshipRequestSentByCurrentUser.Should().BeTrue();
     }
 
     [Fact]
@@ -124,22 +132,22 @@ public class GetUserProfileTests : IntegrationTest
             q => q.SetQuery(@$"
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
-                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
                         }}
                     }}
                 }}"));
 
-        var profileResponse = result.ToResponseObject<UserProfileType>("userProfile");
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeTrue();
-        profileResponse.PendingFriendshipRequest.FriendshipRequestId.Should().Be(friendshipRequest.Id);
-        profileResponse.PendingFriendshipRequest.SentByMe.Should().BeFalse();
+        profileResponse.User.PendingFriendshipRequestId.Should().Be(friendshipRequest.Id);
+        profileResponse.User.IsFriendshipRequestSentByCurrentUser.Should().BeFalse();
     }
 
     [Fact]
@@ -159,21 +167,21 @@ public class GetUserProfileTests : IntegrationTest
             q => q.SetQuery(@$"
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
-                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
                         }}
                     }}
                 }}"));
 
-        var profileResponse = result.ToResponseObject<UserProfileType>("userProfile");
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeFalse();
-        profileResponse.PendingFriendshipRequest.Should().BeNull();
+        profileResponse.User.PendingFriendshipRequestId.Should().BeNull();
     }
 
     [Fact]
@@ -193,21 +201,21 @@ public class GetUserProfileTests : IntegrationTest
             q => q.SetQuery(@$"
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
-                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
                         }}
                     }}
                 }}"));
 
-        var profileResponse = result.ToResponseObject<UserProfileType>("userProfile");
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.HasPendingFriendshipRequest.Should().BeFalse();
-        profileResponse.PendingFriendshipRequest.Should().BeNull();
+        profileResponse.User.PendingFriendshipRequestId.Should().BeNull();
     }
 
     [Fact]
@@ -238,21 +246,149 @@ public class GetUserProfileTests : IntegrationTest
             q => q.SetQuery(@$"
                 query{{
                     userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
-                        id, firstName, lastName, email, phone, imageUrl, hasPendingFriendshipRequest,
-                        pendingFriendshipRequest{{
-                            friendshipRequestId, 
-                            sentByMe
-                        }},
-                        mutualFriends{{
-                            id, firstName, lastName, imageUrl
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
                         }}
                     }}
                 }}"));
 
-        var profileResponse = result.ToResponseObject<UserProfileType>("userProfile");
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
 
-        profileResponse.MutualFriends.Count.Should().Be(2);
-        profileResponse.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend1.Id).Should().NotBeNull();
-        profileResponse.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend2.Id).Should().NotBeNull();
+        profileResponse.User.MutualFriends.Count.Should().Be(2);
+        profileResponse.User.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend1.Id).Should().NotBeNull();
+        profileResponse.User.MutualFriends.FirstOrDefault(x => x.Id == mutualFriend2.Id).Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetUserProfile_ShouldReturn_MatchApplications()
+    {
+        var currentUser = Database.AddUser();
+        var otherUser = Database.AddUser();
+        var requestProfile = Database.AddUser("Michael", "Scott");
+
+        var match1 = Database.AddMatch(currentUser, startDate: DateTime.Today.AddDays(1));
+        var match2 = Database.AddMatch(currentUser, startDate: DateTime.Today.AddDays(1));
+        var acceptedMatch = Database.AddMatch(currentUser, startDate: DateTime.Today.AddDays(1));
+        var notAnnouncedMatch = Database.AddMatch(currentUser, startDate: DateTime.Today.AddDays(1));
+        var matchByOtherUser = Database.AddMatch(otherUser, startDate: DateTime.Today.AddDays(1));
+
+        await Database.SaveChangesAsync();
+
+        match1.Announce(currentUser, true, 1);
+        match2.Announce(currentUser, true, 1);
+        acceptedMatch.Announce(currentUser, true, 1);
+        matchByOtherUser.Announce(otherUser, true, 1);
+        
+        var application1Result = match1.ApplyForPlaying(requestProfile);
+        var application2Result = match2.ApplyForPlaying(requestProfile);
+        var application3Result = acceptedMatch.ApplyForPlaying(requestProfile);
+        var applicationForOtherUser = matchByOtherUser.ApplyForPlaying(requestProfile);
+        
+        Database.DbContext.Set<MatchApplication>().Add(application1Result.Value);
+        Database.DbContext.Set<MatchApplication>().Add(application2Result.Value);
+        Database.DbContext.Set<MatchApplication>().Add(applicationForOtherUser.Value);
+
+        application3Result.Value.Accept(currentUser, acceptedMatch, DateTime.UtcNow);
+
+        await Database.SaveChangesAsync();
+        
+        UserIdentifierMock.Setup(x => x.UserId).Returns(currentUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                query{{
+                    userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
+                        }},
+                        matchApplications{{
+                            matchId, matchApplicationId, matchName
+                        }}
+                    }}
+                }}"));
+
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
+
+        profileResponse.MatchApplications.Count.Should().Be(2);
+        var match1Application = profileResponse.MatchApplications.FirstOrDefault(x => x.MatchId == match1.Id);
+        var match2Application = profileResponse.MatchApplications.FirstOrDefault(x => x.MatchId == match2.Id);
+
+        match1Application.MatchApplicationId.Should().Be(application1Result.Value.Id);
+        match1Application.MatchName.Should().Be(match1.EventName);
+
+        match2Application.MatchApplicationId.Should().Be(application2Result.Value.Id);
+        match2Application.MatchName.Should().Be(match2.EventName);
+    }
+
+    [Fact]
+    public async Task GetUserProfile_ShouldReturn_IsCurrentUserAdminFlag()
+    {
+        var currentUser = Database.AddUser();
+        var otherAdmin = Database.AddUser();
+        var requestProfile = Database.AddUser("Michael", "Scott");
+
+        var match1 = Database.AddMatch(currentUser, startDate: DateTime.Today.AddDays(1));
+        var match2 = Database.AddMatch(otherAdmin, startDate: DateTime.Today.AddDays(1));
+        match2.AddPlayer(currentUser.Id);
+
+        await Database.SaveChangesAsync();
+
+        match1.Announce(currentUser, true, 1);
+        match2.Announce(otherAdmin, true, 1);
+        
+        var application1Result = match1.ApplyForPlaying(requestProfile);
+        var application2Result = match2.ApplyForPlaying(requestProfile);
+
+        Database.DbContext.Set<MatchApplication>().Add(application1Result.Value);
+        Database.DbContext.Set<MatchApplication>().Add(application2Result.Value);
+        
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(currentUser.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                query{{
+                    userProfile(input: {{userId: ""{requestProfile.Id}""}}){{
+                        user{{
+                            id, firstName, lastName, email, phone, imageUrl,
+                            pendingFriendshipRequestId,
+                            isFriendWithCurrentUser,
+                            isFriendshipRequestSentByCurrentUser,
+                            mutualFriends{{
+                                id, firstName, lastName, imageUrl
+                            }}
+                        }},
+                        matchApplications{{
+                            matchId, matchApplicationId, matchName, isCurrentUserAdmin
+                        }}
+                    }}
+                }}"));
+        
+        var profileResponse = result.ToResponseObject<UserProfileResponse>("userProfile");
+
+        profileResponse.MatchApplications.Count.Should().Be(2);
+        var match1Application = profileResponse.MatchApplications.FirstOrDefault(x => x.MatchId == match1.Id);
+        var match2Application = profileResponse.MatchApplications.FirstOrDefault(x => x.MatchId == match2.Id);
+
+        match1Application.MatchApplicationId.Should().Be(application1Result.Value.Id);
+        match1Application.MatchName.Should().Be(match1.EventName);
+        match1Application.IsCurrentUserAdmin.Should().BeTrue();
+
+        match2Application.MatchApplicationId.Should().Be(application2Result.Value.Id);
+        match2Application.MatchName.Should().Be(match2.EventName);
+        match2Application.IsCurrentUserAdmin.Should().BeFalse();
     }
 }

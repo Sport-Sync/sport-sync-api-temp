@@ -46,9 +46,8 @@ public class SendMatchApplicationRequestHandler : IRequestHandler<SendMatchAppli
             return Result.Failure(DomainErrors.Match.NotFound);
         }
 
-        var existingMatchApplications = await _matchApplicationRepository.GetByMatchIdAsync(request.MatchId, cancellationToken);
-        if (existingMatchApplications.Any(a => a.AppliedByUserId == _userIdentifierProvider.UserId &&
-                                                a.CompletedOnUtc == null))
+        var existingMatchApplications = await _matchApplicationRepository.GetPendingByMatchId(request.MatchId, cancellationToken);
+        if (existingMatchApplications.Any(a => a.AppliedByUserId == _userIdentifierProvider.UserId))
         {
             return Result.Failure(DomainErrors.MatchApplication.PendingMatchApplication);
         }

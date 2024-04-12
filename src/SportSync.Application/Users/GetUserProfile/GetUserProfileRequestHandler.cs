@@ -1,35 +1,40 @@
 ﻿using SportSync.Application.Core.Abstractions.Authentication;
-using SportSync.Application.Core.Abstractions.Storage;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
-using SportSync.Domain.Core.Primitives.Maybe;
-using SportSync.Domain.Entities;
 using SportSync.Domain.Repositories;
+using SportSync.Domain.Services;
 using SportSync.Domain.Types;
 
 namespace SportSync.Application.Users.GetUserProfile;
 
-public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput, UserProfileType>
+public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput, UserProfileResponse>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IEventRepository _eventRepository;
     private readonly IFriendshipRequestRepository _friendshipRequestRepository;
+    private readonly IMatchRepository _matchRepository;
+    private readonly IMatchApplicationRepository _matchApplicationRepository;
     private readonly IUserIdentifierProvider _userIdentifierProvider;
-    private readonly IBlobStorageService _blobStorageService;
-
+    
     public GetUserProfileRequestHandler(
         IUserRepository userRepository,
+        IEventRepository eventRepository,
         IFriendshipRequestRepository friendshipRequestRepository,
-        IUserIdentifierProvider userIdentifierProvider,
-        IBlobStorageService blobStorageService)
+        IMatchRepository matchRepository,
+        IMatchApplicationRepository matchApplicationRepository,
+        IUserIdentifierProvider userIdentifierProvider)
     {
         _userRepository = userRepository;
+        _eventRepository = eventRepository;
         _friendshipRequestRepository = friendshipRequestRepository;
+        _matchApplicationRepository = matchApplicationRepository;
         _userIdentifierProvider = userIdentifierProvider;
-        _blobStorageService = blobStorageService;
+        _eventRepository = eventRepository;
+        _matchRepository = matchRepository;
     }
 
 
-    public async Task<UserProfileType> Handle(GetUserProfileInput request, CancellationToken cancellationToken)
+    public async Task<UserProfileResponse> Handle(GetUserProfileInput request, CancellationToken cancellationToken)
     {
         var maybeUser = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
 
@@ -48,34 +53,37 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
         var user = maybeUser.Value;
         var currentUser = maybeCurrentUser.Value;
 
-        var friendWithCurrentUser = currentUser.IsFriendWith(user);
+        var areFriends = currentUser.IsFriendWith(user);
 
-        var maybePendingFriendshipRequest = friendWithCurrentUser ? Maybe<FriendshipRequest>.None :
-            await _friendshipRequestRepository.GetPendingForUsersAsync(currentUser.Id, user.Id, cancellationToken);
+        var friendshipRequests = await _friendshipRequestRepository.GetAllPendingForUserIdAsync(currentUser.Id, cancellationToken);
+        var pendingFriendshipRequest = friendshipRequests.FirstOrDefault(x => x.FriendId == user.Id || x.UserId == user.Id);
+        var mutualFriends = await new FriendshipService(_userRepository).GetMutualFriends(currentUser, user, cancellationToken: cancellationToken);
 
-        PendingFriendshipRequestType? pendingFriendshipRequestType = maybePendingFriendshipRequest.HasNoValue
-            ? null
-            : PendingFriendshipRequestType.Create(maybePendingFriendshipRequest.Value.Id, maybePendingFriendshipRequest.Value.IsSender(currentUser.Id));
+        var userProfileType = new ExtendedUserType(user, areFriends, pendingFriendshipRequest, mutualFriends);
+        
+        var matchApplications = await _matchApplicationRepository.GetPendingByUserId(request.UserId, cancellationToken);
+        var futureMatchesOfCurrentUser = await _matchRepository.GetFutureUserMatches(currentUser.Id, cancellationToken);
+        var matchesMap = futureMatchesOfCurrentUser.ToLookup(x => x.Id);
 
-        var mutualFriendIds = user.Friends.Where(friendId => currentUser.Friends.Contains(friendId)).ToList();
-        var mutualFriends =
-            mutualFriendIds.Any() ?
-            await _userRepository.GetByIdsAsync(mutualFriendIds, cancellationToken) :
-            new List<User>();
+        var matchApplicationsRelatedToCurrentUser = matchApplications
+            .Where(x => matchesMap.Contains(x.MatchId))
+            .Select(x => new { Match = matchesMap[x.MatchId].Single(), Application = x });
 
-        List<UserType> mutualFriendList = new();
+        var eventIdsThatUserIsAdminOn = await _eventRepository.GetEventIdsThatUserIsAdminOn(currentUser.Id, cancellationToken);
+        var matchApplicationTypes = new List<MatchApplicationType>();
 
-        foreach (var mutualFriend in mutualFriends)
+        foreach (var matchApplicationMap in matchApplicationsRelatedToCurrentUser)
         {
-            var profileImage = mutualFriend.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(mutualFriend.Id) : null;
-            mutualFriendList.Add(new UserType(mutualFriend, profileImage));
+            var isCurrentUserAdminOnEvent = eventIdsThatUserIsAdminOn.Contains(matchApplicationMap.Match.EventId);
+            matchApplicationTypes.Add(new MatchApplicationType(matchApplicationMap.Match, matchApplicationMap.Application, isCurrentUserAdminOnEvent));
         }
 
-        var userProfileImage = user.HasProfileImage ? await _blobStorageService.GetProfileImageUrl(user.Id) : null;
+        var userProfileResponse = new UserProfileResponse
+        {
+            User = userProfileType,
+            MatchApplications = matchApplicationTypes.ToList()
+        };
 
-        var userProfile = new UserProfileType(user, pendingFriendshipRequestType, mutualFriendList, userProfileImage);
-        userProfile.IsFriendWithCurrentUser = friendWithCurrentUser;
-
-        return userProfile;
+        return userProfileResponse;
     }
 }
