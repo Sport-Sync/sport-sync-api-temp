@@ -30,7 +30,7 @@ type FriendshipRequestType {
   sender: UserType
 }
 
-type GetAnnouncedMatchResponse {
+type GetAnnouncedMatchesResponse {
   matches: [MatchAnnouncementType!]!
 }
 
@@ -78,6 +78,7 @@ type MatchApplicationType {
   matchId: UUID!
   matchApplicationId: UUID!
   matchName: String
+  isCurrentUserAdmin: Boolean!
 }
 
 type MatchAttendanceType {
@@ -162,7 +163,7 @@ type Query {
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   matches(input: GetMatchesInput): GetMatchesResponse @authorize
   matchById(input: GetMatchByIdInput): GetMatchByIdResponse @authorize
-  announcedMatches(input: GetAnnouncedMatchesInput): GetAnnouncedMatchResponse @authorize
+  announcedMatches(input: GetAnnouncedMatchesInput): GetAnnouncedMatchesResponse @authorize
   friends(input: GetFriendsInput): PagedListOfExtendedUserType @authorize
   pendingFriendshipRequests: [FriendshipRequestType] @authorize
 }
