@@ -1,19 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
+using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
 
 namespace SportSync.Persistence.Repositories;
 
 public class MatchRepository : GenericRepository<Match>, IMatchRepository
 {
-    private readonly IDateTime _dateTime;
-
-    public MatchRepository(IDbContext dbContext, IDateTime dateTime) : base(dbContext)
+    public MatchRepository(IDbContext dbContext) : base(dbContext)
     {
-        _dateTime = dateTime;
     }
 
     public override async Task<Maybe<Match>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -93,14 +90,10 @@ public class MatchRepository : GenericRepository<Match>, IMatchRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<Match>> GetFutureUserMatches(Guid userId, CancellationToken cancellationToken)
+    public async Task<List<Match>> GetPendingUserMatches(Guid userId, CancellationToken cancellationToken)
     {
-        var now = _dateTime.UtcNow;
         return await DbContext.Set<Match>()
-            .Include(t => t.Announcement)
-            .Include(t => t.Players)
-                .ThenInclude(p => p.User)
-            .Where(x => x.Players.Any(c => c.UserId == userId && (x.Date > now.Date || (x.Date.Date == now.Date && x.StartTime > now))))
+            .Where(x => x.Players.Any(c => c.UserId == userId && x.Status == MatchStatusEnum.Pending))
             .ToListAsync(cancellationToken);
     }
 }

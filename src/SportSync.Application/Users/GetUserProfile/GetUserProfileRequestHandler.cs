@@ -62,7 +62,7 @@ public class GetUserProfileRequestHandler : IRequestHandler<GetUserProfileInput,
         var userProfileType = new ExtendedUserType(user, areFriends, pendingFriendshipRequest, mutualFriends);
         
         var matchApplications = await _matchApplicationRepository.GetPendingByUserId(request.UserId, cancellationToken);
-        var futureMatchesOfCurrentUser = await _matchRepository.GetFutureUserMatches(currentUser.Id, cancellationToken);
+        var futureMatchesOfCurrentUser = await _matchRepository.GetPendingUserMatches(currentUser.Id, cancellationToken);
         var matchesMap = futureMatchesOfCurrentUser.ToLookup(x => x.Id);
 
         var matchApplicationsRelatedToCurrentUser = matchApplications

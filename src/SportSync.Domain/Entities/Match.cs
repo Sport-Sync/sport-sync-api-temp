@@ -50,6 +50,7 @@ public class Match : AggregateRoot
         StartTime = GetLocalDateTimeOffset(date.Date, match.StartTime);
         EndTime = GetLocalDateTimeOffset(date.Date, match.EndTime);
         Date = date;
+        Status = match.Status;
     }
 
     private Match()
@@ -88,7 +89,7 @@ public class Match : AggregateRoot
         Ensure.NotNull(match.Schedule, "The schedule can not be empty for new match.",
             $"{nameof(match)}{nameof(match.Schedule)}");
 
-        match.EnsureItIsNotDone();
+        match.ThrowIfIsNotPending();
 
         var newMatch = new Match(match, date);
 
@@ -111,7 +112,7 @@ public class Match : AggregateRoot
 
     public void SetPlayerAttendance(Guid userId, bool attending)
     {
-        EnsureItIsNotDone();
+        ThrowIfIsNotPending();
 
         var player = _players.FirstOrDefault(p => p.UserId == userId);
         if (player == null)
@@ -124,7 +125,7 @@ public class Match : AggregateRoot
 
     public MatchAnnouncement Announce(User user, bool announcingPublicly, int numberOfPlayers, string description = null)
     {
-        EnsureItIsNotDone();
+        ThrowIfIsNotPending();
 
         if (!IsPlayer(user.Id))
         {
@@ -204,45 +205,23 @@ public class Match : AggregateRoot
         Announcement.Delete();
     }
 
-    public void EnsureItIsNotDone()
+    public void ThrowIfIsNotPending()
     {
-        bool finishedStatus = Status switch
+        var isPendingResult = ValidateItIsPendingStatus();
+        if (isPendingResult.IsFailure)
         {
-            MatchStatusEnum.Finished => true,
-            MatchStatusEnum.Canceled => true,
-            _ => false
-        };
-
-        if (finishedStatus)
-        {
-            throw new DomainException(DomainErrors.Match.AlreadyFinished);
+            throw new DomainException(isPendingResult.Error);
         }
-
-        if (HasPassed())
-        {
-            throw new DomainException(DomainErrors.Match.AlreadyFinished);
-        }
-    }
-
-    public bool HasPassed()
-    {
-        var dateTimeOffset = GetLocalDateTimeOffset(DateTime.UtcNow);
-
-        if (Date < dateTimeOffset.Date)
-        {
-            return true;
-        }
-
-        if (Date == dateTimeOffset.Date && StartTime.TimeOfDay <= dateTimeOffset.TimeOfDay)
-        {
-            return true;
-        }
-
-        return false;
     }
 
     public Result<MatchApplication> ApplyForPlaying(User user)
     {
+        var isPendingResult = ValidateItIsPendingStatus();
+        if (isPendingResult.IsFailure)
+        {
+            return Result.Failure<MatchApplication>(isPendingResult.Error);
+        }
+
         var canApply = IsValidApplicant(user);
 
         if (canApply.IsFailure)
@@ -300,5 +279,25 @@ public class Match : AggregateRoot
             // TODO: send push notifications to creator to enter the result
             //RaiseDomainEvent(new MatchFinishedDomainEvent(this));
         }
+    }
+
+    private Result ValidateItIsPendingStatus()
+    {
+        if (Status == MatchStatusEnum.Finished)
+        {
+            return Result.Failure(DomainErrors.Match.AlreadyFinished);
+        }
+
+        if (Status == MatchStatusEnum.InProgress)
+        {
+            return Result.Failure(DomainErrors.Match.InProgress);
+        }
+
+        if (Status == MatchStatusEnum.Canceled)
+        {
+            return Result.Failure(DomainErrors.Match.Canceled);
+        }
+
+        return Result.Success();
     }
 }

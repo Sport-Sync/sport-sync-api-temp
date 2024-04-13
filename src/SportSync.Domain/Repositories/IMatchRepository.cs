@@ -15,6 +15,6 @@ public interface IMatchRepository
     Task<List<(Match LastMatch, int PendingMatchesCount)>> GetLastRepeatableMatches();
     Task<List<Match>> GetAnnouncedMatches(DateTime date, CancellationToken cancellationToken);
     Task<List<Match>> GetUserMatchesOnDate(DateTime date, Guid userId, CancellationToken cancellationToken);
-    Task<List<Match>> GetFutureUserMatches(Guid userId, CancellationToken cancellationToken);
+    Task<List<Match>> GetPendingUserMatches(Guid userId, CancellationToken cancellationToken);
     void InsertRange(IReadOnlyCollection<Match> matches);
 }

@@ -87,7 +87,8 @@ public class CreateAdditionalMatchesJobTests
     [Theory]
     [InlineData(MatchStatusEnum.Canceled)]
     [InlineData(MatchStatusEnum.Finished)]
-    public async Task Job_ShouldFail_WhenMatchIsDone(MatchStatusEnum status)
+    [InlineData(MatchStatusEnum.InProgress)]
+    public async Task Job_ShouldFail_WhenMatchIsNotPending(MatchStatusEnum status)
     {
         var @event = Event.Create(
             User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
@@ -121,7 +122,7 @@ public class CreateAdditionalMatchesJobTests
             _unitOfWorkMock.Object);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => job.Execute(new Mock<IJobExecutionContext>().Object));
-        exception.Error.Message.Should().Be(DomainErrors.Match.AlreadyFinished.Message);
+        exception.Error.Message.Should().Be(status.ToError());
 
         _matchRepositoryMock.Verify(r => r.InsertRange(It.IsAny<List<Match>>()), Times.Never);
         _unitOfWorkMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);

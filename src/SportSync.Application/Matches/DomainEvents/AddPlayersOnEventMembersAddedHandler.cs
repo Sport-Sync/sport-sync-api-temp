@@ -1,5 +1,6 @@
 ﻿using SportSync.Domain.Core.Events;
 using SportSync.Domain.DomainEvents;
+using SportSync.Domain.Enumerations;
 using SportSync.Domain.Repositories;
 
 namespace SportSync.Application.Matches.DomainEvents;
@@ -17,7 +18,7 @@ public class AddPlayersOnEventMembersAddedHandler : IDomainEventHandler<EventMem
     {
         var matches = await _matchRepository.GetByEventId(domainEvent.Event.Id, cancellationToken);
 
-        var futureMatches = matches.Where(m => !m.HasPassed());
+        var futureMatches = matches.Where(m => m.Status == MatchStatusEnum.Pending);
 
         foreach (var match in futureMatches)
         {
