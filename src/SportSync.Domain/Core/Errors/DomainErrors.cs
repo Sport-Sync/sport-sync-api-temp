@@ -26,7 +26,9 @@ public static class DomainErrors
     {
         public static Error NotFound => new("Match.NotFound", "The match with the specified identifier was not found.");
         public static Error PlayerNotFound => new("Match.PlayerNotFound", "Identified player is not part of this match.");
-        public static Error AlreadyFinished => new("Match.AlreadyFinished", "The match has already finished or is in progress.");
+        public static Error AlreadyFinished => new("Match.AlreadyFinished", "The match has already finished.");
+        public static Error InProgress => new("Match.InProgress", "The match is in progress.");
+        public static Error Canceled => new("Match.Canceled", "The match has been canceled.");
     }
 
     public static class Event

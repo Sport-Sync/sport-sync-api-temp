@@ -46,6 +46,7 @@ internal class MatchConfiguration : IEntityTypeConfiguration<Match>
         builder.HasQueryFilter(match => !match.Deleted);
 
         builder.HasIndex(user => user.Date);
+        builder.HasIndex(user => user.Status);
 
         builder.ToTable("Matches");
     }

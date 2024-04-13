@@ -63,7 +63,7 @@ type MatchAnnouncementType {
   startTime: DateTime!
   endTime: DateTime!
   eventName: String
-  sportType: SportType!
+  sportType: SportTypeEnum!
   address: String
   price: Decimal!
   playerLimit: Int!
@@ -94,14 +94,14 @@ type MatchType {
   startTime: DateTime!
   endTime: DateTime!
   eventName: String
-  sportType: SportType!
+  sportType: SportTypeEnum!
   typeOfAnnouncement: MatchAnnouncementTypeEnum
   isAnnounced: Boolean!
   address: String
   price: Decimal!
   numberOfPlayersExpected: Int!
-  hasFinished: Boolean!
   notes: String
+  status: MatchStatusEnum!
 }
 
 type Mutation {
@@ -210,7 +210,7 @@ input CancelMatchAnnouncementInput {
 input CreateEventInput {
   memberIds: [UUID!]!
   name: String!
-  sportType: SportType!
+  sportType: SportTypeEnum!
   address: String!
   price: Decimal!
   numberOfPlayers: Int!
@@ -350,6 +350,13 @@ enum MatchAnnouncementTypeEnum {
   PUBLIC
 }
 
+enum MatchStatusEnum {
+  PENDING
+  IN_PROGRESS
+  FINISHED
+  CANCELED
+}
+
 enum NotificationTypeEnum {
   FRIENDSHIP_REQUEST_RECEIVED
   MATCH_APPLICATION_RECEIVED
@@ -361,7 +368,7 @@ enum NotificationTypeEnum {
   MATCH_APPLICATION_ACCEPTED
 }
 
-enum SportType {
+enum SportTypeEnum {
   FOOTBALL
   HANDBALL
   BASKETBALL

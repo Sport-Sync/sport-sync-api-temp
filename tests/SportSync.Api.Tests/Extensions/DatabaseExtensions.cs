@@ -60,7 +60,7 @@ public static class DatabaseExtensions
         this Database database,
         User user,
         string eventName = "event",
-        SportType sportType = SportType.Football,
+        SportTypeEnum sportType = SportTypeEnum.Football,
         EventSchedule schedule = null)
     {
         var tomorrow = DateTime.Today.AddDays(1);
@@ -77,10 +77,10 @@ public static class DatabaseExtensions
         this Database database,
         User user,
         string eventName = "event",
-        SportType sportType = SportType.Football,
+        SportTypeEnum sportType = SportTypeEnum.Football,
         EventSchedule schedule = null,
         DateTime startDate = default,
-        MatchStatus status = MatchStatus.Pending)
+        MatchStatusEnum status = MatchStatusEnum.Pending)
     {
         var tomorrow = DateTime.Today.AddDays(1);
         schedule ??= EventSchedule.Create(DayOfWeek.Wednesday, tomorrow, tomorrow.AddHours(10), tomorrow.AddHours(11), false);

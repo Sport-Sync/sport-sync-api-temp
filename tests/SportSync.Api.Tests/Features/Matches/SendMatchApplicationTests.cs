@@ -74,7 +74,7 @@ public class SendMatchApplicationTests : IntegrationTest
         var admin = Database.AddUser();
         var player = Database.AddUser("Player");
 
-        var match = Database.AddMatch(admin, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
+        var match = Database.AddMatch(admin, status: MatchStatusEnum.Pending, startDate: DateTime.Today.AddDays(1));
         match.Announce(admin, false, 3, string.Empty);
 
         await Database.SaveChangesAsync();
@@ -103,7 +103,7 @@ public class SendMatchApplicationTests : IntegrationTest
         var admin = Database.AddUser();
         var applicant = Database.AddUser("Player");
 
-        var match = Database.AddMatch(admin, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
+        var match = Database.AddMatch(admin, status: MatchStatusEnum.Pending, startDate: DateTime.Today.AddDays(1));
         match.Announce(admin, true, 3, string.Empty);
 
         await Database.SaveChangesAsync();
@@ -135,7 +135,7 @@ public class SendMatchApplicationTests : IntegrationTest
         var admin = Database.AddUser();
         var applicant = Database.AddUser("Player");
 
-        var match = Database.AddMatch(admin, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
+        var match = Database.AddMatch(admin, status: MatchStatusEnum.Pending, startDate: DateTime.Today.AddDays(1));
         Database.AddFriendship(admin, applicant);
         match.Announce(admin, false, 3, string.Empty);
 
@@ -169,7 +169,7 @@ public class SendMatchApplicationTests : IntegrationTest
         var admin2 = Database.AddUser();
         var applicant = Database.AddUser("Player");
 
-        var match = Database.AddMatch(admin1, status: MatchStatus.Pending, startDate: DateTime.Today.AddDays(1));
+        var match = Database.AddMatch(admin1, status: MatchStatusEnum.Pending, startDate: DateTime.Today.AddDays(1));
 
         match.Announce(admin1, true, 3, string.Empty);
 

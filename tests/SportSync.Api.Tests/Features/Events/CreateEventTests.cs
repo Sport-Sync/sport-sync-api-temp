@@ -61,11 +61,11 @@ public class CreateEventTests : IntegrationTest
         eventFromDb.Should().NotBeNull();
         eventFromDb.Address.Should().Be("Aleja ruža 12");
         eventFromDb.Name.Should().Be("Fuca petkom");
-        eventFromDb.SportType.Should().Be(SportType.Football);
+        eventFromDb.SportType.Should().Be(SportTypeEnum.Football);
 
         var matches = Database.DbContext.Set<Match>().Where(x => x.EventId == eventCreatedId);
         matches.Count().Should().Be(15);
-        matches.All(x => x.Status == MatchStatus.Pending).Should().BeTrue();
+        matches.All(x => x.Status == MatchStatusEnum.Pending).Should().BeTrue();
 
         var players = Database.DbContext.Set<Player>().Where(x => matches.Select(t => t.Id).Contains(x.MatchId));
         players.Count().Should().Be(30);
@@ -121,7 +121,7 @@ public class CreateEventTests : IntegrationTest
 
         var matches = Database.DbContext.Set<Match>().Where(x => x.EventId == eventCreatedId).ToList();
         matches.Count().Should().Be(1);
-        matches.All(x => x.Status == MatchStatus.Pending).Should().BeTrue();
+        matches.All(x => x.Status == MatchStatusEnum.Pending).Should().BeTrue();
 
         // will probably fail after DaylightSavingTime changes in CEST time zone!
         // TODO: Find a way to inject IDateTime to CreateEventValidator (or simply move that validation to Eeveent obbject)

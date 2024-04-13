@@ -2,6 +2,7 @@
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
 using SportSync.Domain.Core.Errors;
+using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
 using MatchType = SportSync.Domain.Types.MatchType;
@@ -126,10 +127,11 @@ public class AnnounceMatchTests : IntegrationTest
     }
 
     [Theory]
-    [InlineData(MatchStatus.Finished, false)]
-    [InlineData(MatchStatus.Canceled, false)]
-    [InlineData(MatchStatus.Pending, true)]
-    public async Task Announce_ShouldFail_WhenHasDoneStatus(MatchStatus status, bool shouldSucceed)
+    [InlineData(MatchStatusEnum.Finished, false)]
+    [InlineData(MatchStatusEnum.Canceled, false)]
+    [InlineData(MatchStatusEnum.Pending, true)]
+    [InlineData(MatchStatusEnum.InProgress, false)]
+    public async Task Announce_ShouldSucceed_OnlyWhenIsPendingStatus(MatchStatusEnum status, bool shouldSucceed)
     {
         var admin = Database.AddUser("second", "user", "user@gmail.com");
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1), status: status);
@@ -154,7 +156,7 @@ public class AnnounceMatchTests : IntegrationTest
         }
         else
         {
-            result.ShouldHaveError(DomainErrors.Match.AlreadyFinished);
+            result.ShouldHaveError(status.ToError());
             Database.DbContext.Set<Match>().Find(match.Id).Status.Should().Be(status);
         }
     }

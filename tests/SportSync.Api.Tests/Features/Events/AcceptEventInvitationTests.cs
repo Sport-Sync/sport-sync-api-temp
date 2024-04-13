@@ -176,10 +176,20 @@ public class AcceptEventInvitationTests : IntegrationTest
         var invitee = Database.AddUser();
 
         var ev = Database.AddEvent(admin);
-        var futureMatch = Match.Create(ev, now.AddDays(1), EventSchedule.Create(DayOfWeek.Friday, DateTime.Today, DateTime.Today, DateTime.Today, true));
-        var pastMatch = Match.Create(ev, now.AddDays(-1), EventSchedule.Create(DayOfWeek.Friday, DateTime.Today, DateTime.Today, DateTime.Today, true));
-        Database.DbContext.Set<Match>().Add(pastMatch);
-        Database.DbContext.Set<Match>().Add(futureMatch);
+        var pendingMatch = Match.Create(ev, now.AddDays(1), EventSchedule.Create(DayOfWeek.Friday, DateTime.Today, DateTime.Today, DateTime.Today, true));
+        var finished = Match.Create(ev, now.AddDays(-1), EventSchedule.Create(DayOfWeek.Friday, DateTime.Today, DateTime.Today, DateTime.Today, true));
+        var canceled = Match.Create(ev, now.AddDays(-1), EventSchedule.Create(DayOfWeek.Friday, DateTime.Today, DateTime.Today, DateTime.Today, true));
+        var inProgress = Match.Create(ev, now.AddDays(-1), EventSchedule.Create(DayOfWeek.Friday, DateTime.Today, DateTime.Today, DateTime.Today, true));
+
+        pendingMatch.Status = MatchStatusEnum.Pending;
+        finished.Status = MatchStatusEnum.Finished;
+        canceled.Status = MatchStatusEnum.Canceled;
+        inProgress.Status = MatchStatusEnum.InProgress;
+
+        Database.DbContext.Set<Match>().Add(pendingMatch);
+        Database.DbContext.Set<Match>().Add(finished);
+        Database.DbContext.Set<Match>().Add(canceled);
+        Database.DbContext.Set<Match>().Add(inProgress);
 
         var invitation = await ev.InviteUser(admin, invitee, eventRepositoryMock.Object);
 
@@ -202,21 +212,23 @@ public class AcceptEventInvitationTests : IntegrationTest
             .Where(m => m.EventId == ev.Id)
             .ToList();
 
-        var futureMatches = matches.Where(x => x.Date > now).Select(x => x.Id);
-        var pastMatches = matches.Where(x => x.Date < now).Select(x => x.Id);
+        var futureMatches = matches.Where(x => x.Status == MatchStatusEnum.Pending).Select(x => x.Id);
+        var notPendingMatches = matches.Where(x => x.Status != MatchStatusEnum.Pending).Select(x => x.Id);
+
+        notPendingMatches.Count().Should().Be(3);
 
         var playersInFutureMatches = Database.DbContext.Set<Player>()
             .Where(x => futureMatches.Contains(x.MatchId))
             .ToList();
 
-        var playersInPastMatches = Database.DbContext.Set<Player>()
-            .Where(x => pastMatches.Contains(x.MatchId))
+        var playersInNotPendingMatches = Database.DbContext.Set<Player>()
+            .Where(x => notPendingMatches.Contains(x.MatchId))
             .ToList();
 
-        playersInPastMatches.Count().Should().Be(0);
+        playersInNotPendingMatches.Count().Should().Be(0);
         playersInFutureMatches.Count().Should().Be(1);
 
-        playersInPastMatches.FirstOrDefault(x => x.UserId == invitee.Id).Should().BeNull();
+        playersInNotPendingMatches.FirstOrDefault(x => x.UserId == invitee.Id).Should().BeNull();
         playersInFutureMatches.FirstOrDefault(x => x.UserId == invitee.Id).Should().NotBeNull();
     }
 

@@ -10,7 +10,7 @@ public class MatchAnnouncementType
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public string EventName { get; set; }
-    public SportType SportType { get; set; }
+    public SportTypeEnum SportType { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int PlayerLimit { get; set; }

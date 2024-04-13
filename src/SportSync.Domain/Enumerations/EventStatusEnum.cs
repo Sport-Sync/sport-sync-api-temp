@@ -1,6 +1,6 @@
 ﻿namespace SportSync.Domain.Enumerations;
 
-public enum EventStatus
+public enum EventStatusEnum
 {
     Active,
     Inactive

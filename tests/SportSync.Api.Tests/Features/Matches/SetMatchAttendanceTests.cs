@@ -139,68 +139,17 @@ public class SetMatchAttendanceTests : IntegrationTest
         Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.MatchId == match.Id).Attending.Should().BeTrue();
     }
 
-    [Fact]
-    public async Task SetAttendance_ShouldFail_WhenMatchStartDatePassed()
+    [Theory]
+    [InlineData(MatchStatusEnum.Finished, false)]
+    [InlineData(MatchStatusEnum.Canceled, false)]
+    [InlineData(MatchStatusEnum.Pending, true)]
+    [InlineData(MatchStatusEnum.InProgress, false)]
+    public async Task SetAttendance_ShouldSucceed_OnlyWhenIsPendingStatus(MatchStatusEnum status, bool shouldSucceed)
     {
         var user = Database.AddUser();
         var schedule = EventSchedule.Create(
             DayOfWeek.Wednesday, new DateTime(2024, 1, 1), DateTime.UtcNow.AddHours(2), DateTime.MaxValue, true);
-        var match = Database.AddMatch(user, startDate: DateTime.Today.AddDays(-1), schedule: schedule);
-
-        await Database.UnitOfWork.SaveChangesAsync();
-
-        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
-
-        // Set to true
-        var result = await ExecuteRequestAsync(
-            q => q.SetQuery(@$"
-                mutation {{
-                    setMatchAttendance(input: {{matchId: ""{match.Id}"", attending: true}}){{
-                        players{{
-                            firstName, isAttending, userId
-                        }}
-                    }}
-                }}"));
-
-        result.ShouldHaveError(DomainErrors.Match.AlreadyFinished);
-        Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.MatchId == match.Id).Attending.Should().BeNull();
-    }
-
-    [Fact]
-    public async Task SetAttendance_ShouldFail_WhenMatchStartTimePassed()
-    {
-        var user = Database.AddUser();
-        var schedule = EventSchedule.Create(
-            DayOfWeek.Wednesday, new DateTime(2024, 1, 1), DateTime.UtcNow.AddMinutes(-20), DateTime.MaxValue, true);
-        var match = Database.AddMatch(user, startDate: DateTime.Today, schedule: schedule);
-
-        await Database.UnitOfWork.SaveChangesAsync();
-
-        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
-
-        // Set to true
-        var result = await ExecuteRequestAsync(
-            q => q.SetQuery(@$"
-                mutation {{
-                    setMatchAttendance(input: {{matchId: ""{match.Id}"", attending: true}}){{
-                        players{{
-                            firstName, isAttending, userId
-                        }}
-                    }}
-                }}"));
-
-        result.ShouldHaveError(DomainErrors.Match.AlreadyFinished);
-        Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.MatchId == match.Id).Attending.Should().BeNull();
-    }
-
-    [Theory]
-    [InlineData(MatchStatus.Finished, false)]
-    [InlineData(MatchStatus.Canceled, false)]
-    [InlineData(MatchStatus.Pending, true)]
-    public async Task SetAttendance_ShouldFail_WhenMatchHasDoneStatuses(MatchStatus status, bool shouldSucceed)
-    {
-        var user = Database.AddUser();
-        var match = Database.AddMatch(user, startDate: DateTime.Today.AddDays(1), status: status);
+        var match = Database.AddMatch(user, startDate: DateTime.Today.AddDays(-1), schedule: schedule, status: status);
 
         await Database.UnitOfWork.SaveChangesAsync();
 
@@ -231,7 +180,7 @@ public class SetMatchAttendanceTests : IntegrationTest
         }
         else
         {
-            result.ShouldHaveError(DomainErrors.Match.AlreadyFinished);
+            result.ShouldHaveError(status.ToError());
             Database.DbContext.Set<Player>().FirstOrDefault(x => x.UserId == user.Id && x.MatchId == match.Id).Attending.Should().BeNull();
         }
     }

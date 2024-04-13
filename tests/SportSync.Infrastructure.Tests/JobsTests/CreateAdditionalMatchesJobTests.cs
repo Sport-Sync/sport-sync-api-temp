@@ -5,7 +5,6 @@ using Moq;
 using Quartz;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Application.Core.Settings;
-using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
@@ -50,7 +49,7 @@ public class CreateAdditionalMatchesJobTests
         var @event = Event.Create(
             User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
             "event",
-            SportType.Football,
+            SportTypeEnum.Football,
             "address",
             12M,
             12,
@@ -85,14 +84,15 @@ public class CreateAdditionalMatchesJobTests
     }
 
     [Theory]
-    [InlineData(MatchStatus.Canceled)]
-    [InlineData(MatchStatus.Finished)]
-    public async Task Job_ShouldFail_WhenMatchIsDone(MatchStatus status)
+    [InlineData(MatchStatusEnum.Canceled)]
+    [InlineData(MatchStatusEnum.Finished)]
+    [InlineData(MatchStatusEnum.InProgress)]
+    public async Task Job_ShouldFail_WhenMatchIsNotPending(MatchStatusEnum status)
     {
         var @event = Event.Create(
             User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
             "event",
-            SportType.Football,
+            SportTypeEnum.Football,
             "address",
             12M,
             12,
@@ -121,7 +121,7 @@ public class CreateAdditionalMatchesJobTests
             _unitOfWorkMock.Object);
 
         var exception = await Assert.ThrowsAsync<DomainException>(() => job.Execute(new Mock<IJobExecutionContext>().Object));
-        exception.Error.Message.Should().Be(DomainErrors.Match.AlreadyFinished.Message);
+        exception.Error.Message.Should().Be(status.ToError());
 
         _matchRepositoryMock.Verify(r => r.InsertRange(It.IsAny<List<Match>>()), Times.Never);
         _unitOfWorkMock.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
@@ -134,7 +134,7 @@ public class CreateAdditionalMatchesJobTests
         var @event = Event.Create(
             User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
             "event",
-            SportType.Football,
+            SportTypeEnum.Football,
             "address",
             12M,
             12,

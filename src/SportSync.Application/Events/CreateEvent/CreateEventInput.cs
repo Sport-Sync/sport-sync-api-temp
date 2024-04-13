@@ -6,7 +6,7 @@ public class CreateEventInput : IRequest<Guid>
 {
     public List<Guid> MemberIds { get; set; }
     public string Name { get; set; }
-    public SportType SportType { get; set; }
+    public SportTypeEnum SportType { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayers { get; set; }
