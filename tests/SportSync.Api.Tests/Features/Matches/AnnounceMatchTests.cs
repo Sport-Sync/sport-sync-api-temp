@@ -126,10 +126,10 @@ public class AnnounceMatchTests : IntegrationTest
     }
 
     [Theory]
-    [InlineData(MatchStatus.Finished, false)]
-    [InlineData(MatchStatus.Canceled, false)]
-    [InlineData(MatchStatus.Pending, true)]
-    public async Task Announce_ShouldFail_WhenHasDoneStatus(MatchStatus status, bool shouldSucceed)
+    [InlineData(MatchStatusEnum.Finished, false)]
+    [InlineData(MatchStatusEnum.Canceled, false)]
+    [InlineData(MatchStatusEnum.Pending, true)]
+    public async Task Announce_ShouldFail_WhenHasDoneStatus(MatchStatusEnum status, bool shouldSucceed)
     {
         var admin = Database.AddUser("second", "user", "user@gmail.com");
         var match = Database.AddMatch(admin, startDate: DateTime.Today.AddDays(1), status: status);

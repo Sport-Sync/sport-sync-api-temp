@@ -50,7 +50,7 @@ public class CreateAdditionalMatchesJobTests
         var @event = Event.Create(
             User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
             "event",
-            SportType.Football,
+            SportTypeEnum.Football,
             "address",
             12M,
             12,
@@ -85,14 +85,14 @@ public class CreateAdditionalMatchesJobTests
     }
 
     [Theory]
-    [InlineData(MatchStatus.Canceled)]
-    [InlineData(MatchStatus.Finished)]
-    public async Task Job_ShouldFail_WhenMatchIsDone(MatchStatus status)
+    [InlineData(MatchStatusEnum.Canceled)]
+    [InlineData(MatchStatusEnum.Finished)]
+    public async Task Job_ShouldFail_WhenMatchIsDone(MatchStatusEnum status)
     {
         var @event = Event.Create(
             User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
             "event",
-            SportType.Football,
+            SportTypeEnum.Football,
             "address",
             12M,
             12,
@@ -134,7 +134,7 @@ public class CreateAdditionalMatchesJobTests
         var @event = Event.Create(
             User.Create("Ante", "Kadic", "ante@gmail.com", PhoneNumber.Create("095472836").Value, "jd394fz4398"),
             "event",
-            SportType.Football,
+            SportTypeEnum.Football,
             "address",
             12M,
             12,

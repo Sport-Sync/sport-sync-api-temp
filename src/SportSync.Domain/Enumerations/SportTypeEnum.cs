@@ -1,6 +1,6 @@
 ﻿namespace SportSync.Domain.Enumerations;
 
-public enum SportType
+public enum SportTypeEnum
 {
     Football,
     Handball,

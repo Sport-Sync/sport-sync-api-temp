@@ -31,7 +31,7 @@ public class Match : AggregateRoot
         StartTime = GetLocalDateTimeOffset(date.Date, schedule.StartTime);
         EndTime = GetLocalDateTimeOffset(date.Date, schedule.EndTime);
         Date = date;
-        Status = MatchStatus.Pending;
+        Status = MatchStatusEnum.Pending;
     }
 
     private Match(Match match, DateTime date)
@@ -63,8 +63,8 @@ public class Match : AggregateRoot
     public DateTimeOffset StartTime { get; set; }
     public DateTimeOffset EndTime { get; set; }
     public string EventName { get; set; }
-    public SportType SportType { get; set; }
-    public MatchStatus Status { get; set; }
+    public SportTypeEnum SportType { get; set; }
+    public MatchStatusEnum Status { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayersExpected { get; set; }
@@ -194,12 +194,22 @@ public class Match : AggregateRoot
         return Result.Success();
     }
 
+    public void RemoveAnnouncement()
+    {
+        if (!Announced)
+        {
+            return;
+        }
+
+        Announcement.Delete();
+    }
+
     public void EnsureItIsNotDone()
     {
         bool finishedStatus = Status switch
         {
-            MatchStatus.Finished => true,
-            MatchStatus.Canceled => true,
+            MatchStatusEnum.Finished => true,
+            MatchStatusEnum.Canceled => true,
             _ => false
         };
 
@@ -279,5 +289,16 @@ public class Match : AggregateRoot
         }
 
         return Result.Success();
+    }
+
+    public void UpdateStatus(MatchStatusEnum status)
+    {
+        Status = status;
+
+        if (Status == MatchStatusEnum.Finished)
+        {
+            // TODO: send push notifications to creator to enter the result
+            //RaiseDomainEvent(new MatchFinishedDomainEvent(this));
+        }
     }
 }

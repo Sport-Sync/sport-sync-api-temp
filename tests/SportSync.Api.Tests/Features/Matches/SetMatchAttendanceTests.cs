@@ -194,10 +194,10 @@ public class SetMatchAttendanceTests : IntegrationTest
     }
 
     [Theory]
-    [InlineData(MatchStatus.Finished, false)]
-    [InlineData(MatchStatus.Canceled, false)]
-    [InlineData(MatchStatus.Pending, true)]
-    public async Task SetAttendance_ShouldFail_WhenMatchHasDoneStatuses(MatchStatus status, bool shouldSucceed)
+    [InlineData(MatchStatusEnum.Finished, false)]
+    [InlineData(MatchStatusEnum.Canceled, false)]
+    [InlineData(MatchStatusEnum.Pending, true)]
+    public async Task SetAttendance_ShouldFail_WhenMatchHasDoneStatuses(MatchStatusEnum status, bool shouldSucceed)
     {
         var user = Database.AddUser();
         var match = Database.AddMatch(user, startDate: DateTime.Today.AddDays(1), status: status);

@@ -7,7 +7,7 @@ namespace SportSync.Persistence.Repositories;
 
 public class MatchApplicationRepository : GenericRepository<MatchApplication>, IMatchApplicationRepository
 {
-    public MatchApplicationRepository(IDbContext dbContext) 
+    public MatchApplicationRepository(IDbContext dbContext)
         : base(dbContext)
     {
     }
@@ -16,6 +16,13 @@ public class MatchApplicationRepository : GenericRepository<MatchApplication>, I
     {
         return await DbContext.Set<MatchApplication>()
             .Where(t => t.MatchId == matchId && t.CompletedOnUtc == null)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<MatchApplication>> GetPendingByMatchesIds(List<Guid> matchIds, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<MatchApplication>()
+            .Where(t => matchIds.Contains(t.MatchId) && t.CompletedOnUtc == null)
             .ToListAsync(cancellationToken);
     }
 

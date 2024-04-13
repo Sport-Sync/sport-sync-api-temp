@@ -14,7 +14,7 @@ public class Event : AggregateRoot
     private readonly HashSet<EventSchedule> _schedules = new();
     private readonly HashSet<EventInvitation> _invitations = new();
 
-    private Event(User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes, params Guid[] memberIds)
+    private Event(User creator, string name, SportTypeEnum sportType, string address, decimal price, int numberOfPlayers, string notes, params Guid[] memberIds)
         : base(Guid.NewGuid())
     {
         Ensure.NotNull(creator, "The creator is required.", nameof(creator));
@@ -43,8 +43,8 @@ public class Event : AggregateRoot
     }
 
     public string Name { get; set; }
-    public SportType SportType { get; set; }
-    public EventStatus Status { get; set; }
+    public SportTypeEnum SportType { get; set; }
+    public EventStatusEnum Status { get; set; }
     public string Address { get; set; }
     public decimal Price { get; set; }
     public int NumberOfPlayers { get; set; }
@@ -56,7 +56,7 @@ public class Event : AggregateRoot
     public List<Guid> MemberUserIds => _members.Select(m => m.UserId).ToList();
 
     public static Event Create(
-        User creator, string name, SportType sportType, string address, decimal price, int numberOfPlayers, string notes, params Guid[] memberIds)
+        User creator, string name, SportTypeEnum sportType, string address, decimal price, int numberOfPlayers, string notes, params Guid[] memberIds)
     {
         var @event = new Event(creator, name, sportType, address, price, numberOfPlayers, notes, memberIds);
 

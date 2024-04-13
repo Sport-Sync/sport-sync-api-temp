@@ -42,7 +42,7 @@ public static class DependencyInjection
         services.AddQuartz();
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
-        services.ConfigureOptions<CreateAdditionalMatchesJobSetup>();
+        services.ConfigureOptions<BackgroundJobsSetup>();
 
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SettingsKey));
         services.Configure<EventSettings>(configuration.GetSection(EventSettings.SettingsKey));

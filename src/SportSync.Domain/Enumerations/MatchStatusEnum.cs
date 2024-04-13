@@ -1,8 +1,9 @@
 ﻿namespace SportSync.Domain.Enumerations;
 
-public enum MatchStatus
+public enum MatchStatusEnum
 {
     Pending,
+    InProgress,
     Finished,
     Canceled
 }
