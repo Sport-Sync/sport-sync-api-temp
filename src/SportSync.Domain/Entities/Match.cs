@@ -269,7 +269,7 @@ public class Match : AggregateRoot
         return Result.Success();
     }
 
-    public void UpdateStatus(MatchStatusEnum status)
+    public void SetStatus(MatchStatusEnum status)
     {
         Status = status;
 

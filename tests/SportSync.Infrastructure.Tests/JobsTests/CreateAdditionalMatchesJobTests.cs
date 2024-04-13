@@ -5,7 +5,6 @@ using Moq;
 using Quartz;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Application.Core.Settings;
-using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;

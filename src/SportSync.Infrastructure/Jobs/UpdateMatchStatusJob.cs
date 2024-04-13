@@ -36,24 +36,29 @@ public class UpdateMatchStatusJob : IJob
 
         var now = _dateTime.UtcNow;
 
-        var matches = await _matchRepository.Where(x =>
+        var matches = _matchRepository.Where(x =>
             x.Date.Date == now.Date &&
             (x.Status == MatchStatusEnum.Pending || x.Status == MatchStatusEnum.InProgress))
             .Include(x => x.Announcement)
-            .ToListAsync();
+            .ToList();
+
+        if (!matches.Any())
+        {
+            return;
+        }
 
         var matchIds = matches.Select(m => m.Id).ToList();
         var matchApplications = await _matchApplicationRepository.GetPendingByMatchesIds(matchIds, CancellationToken.None);
         var matchApplicationsMap = matchApplications.ToLookup(x => x.MatchId);
 
-        var pendingMatches = matches.Where(x => x.Status == MatchStatusEnum.Pending);
-        var inProgressMatches = matches.Where(x => x.Status == MatchStatusEnum.InProgress);
+        var pendingMatches = matches.Where(x => x.Status == MatchStatusEnum.Pending).ToList();
+        var inProgressMatches = matches.Where(x => x.Status == MatchStatusEnum.InProgress).ToList();
 
         foreach (var pendingMatch in pendingMatches)
         {
-            if (pendingMatch.StartTime.UtcDateTime > now)
+            if (pendingMatch.StartTime.UtcDateTime < now)
             {
-                pendingMatch.UpdateStatus(MatchStatusEnum.InProgress);
+                pendingMatch.SetStatus(MatchStatusEnum.InProgress);
                 pendingMatch.RemoveAnnouncement();
 
                 foreach (var matchApplication in matchApplicationsMap[pendingMatch.Id])
@@ -65,9 +70,9 @@ public class UpdateMatchStatusJob : IJob
 
         foreach (var inProgressMatch in inProgressMatches)
         {
-            if (inProgressMatch.EndTime.UtcDateTime > now)
+            if (inProgressMatch.EndTime.UtcDateTime < now)
             {
-                inProgressMatch.UpdateStatus(MatchStatusEnum.Finished);
+                inProgressMatch.SetStatus(MatchStatusEnum.Finished);
             }
         }
 
