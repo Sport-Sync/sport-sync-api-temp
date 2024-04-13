@@ -14,7 +14,7 @@ internal class BackgroundJobsSetup : IConfigureOptions<QuartzOptions>
                     .ForJob(createAdditionalJobKey)
                     .WithDailyTimeIntervalSchedule(
                         s => s.WithIntervalInHours(24)
-                            .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(0, 0))
+                            .StartingDailyAt(TimeOfDay.HourAndMinuteOfDay(3, 0))
                             .InTimeZone(TimeZoneInfo.Utc)));
 
         var updateMatchStatusJobKey = JobKey.Create(nameof(UpdateMatchStatusJob));

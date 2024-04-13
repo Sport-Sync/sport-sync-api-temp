@@ -70,7 +70,6 @@ public class Match : AggregateRoot
     public decimal Price { get; set; }
     public int NumberOfPlayersExpected { get; set; }
     public string Notes { get; set; }
-
     public EventSchedule Schedule { get; set; }
     public MatchAnnouncement Announcement { get; set; }
     public IReadOnlyCollection<Player> Players => _players.ToList();

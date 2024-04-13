@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SportSync.Application.Core.Abstractions.Common;
 using SportSync.Application.Core.Abstractions.Data;
 using SportSync.Domain.Core.Primitives.Maybe;
 using SportSync.Domain.Entities;
@@ -9,8 +10,11 @@ namespace SportSync.Persistence.Repositories;
 
 public class MatchRepository : GenericRepository<Match>, IMatchRepository
 {
-    public MatchRepository(IDbContext dbContext) : base(dbContext)
+    private readonly IDateTime _dateTime;
+
+    public MatchRepository(IDbContext dbContext, IDateTime dateTime) : base(dbContext)
     {
+        _dateTime = dateTime;
     }
 
     public override async Task<Maybe<Match>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -57,7 +61,7 @@ public class MatchRepository : GenericRepository<Match>, IMatchRepository
 
     public async Task<List<(Match LastMatch, int PendingMatchesCount)>> GetLastRepeatableMatches()
     {
-        var today = DateTime.Today;
+        var today = _dateTime.UtcNow.Date;
 
         var lastMatchesByEvent = await DbContext.Set<Match>()
             .Include(t => t.Schedule)
