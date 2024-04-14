@@ -116,6 +116,7 @@ type Mutation {
   cancelMatchAnnouncement(input: CancelMatchAnnouncementInput): Result @authorize
   sendAnnouncementToFriends(input: SendAnnouncementToFriendsInput): Result @authorize
   sendMatchApplication(input: SendMatchApplicationInput): Result @authorize
+  cancelMatchApplication(input: CancelMatchApplicationInput): Result @authorize
   acceptMatchApplication(input: MatchApplicationInput): Result @authorize
   rejectMatchApplication(input: MatchApplicationInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
@@ -205,6 +206,10 @@ input AnnounceMatchInput {
 
 input CancelMatchAnnouncementInput {
   matchId: UUID!
+}
+
+input CancelMatchApplicationInput {
+  matchApplicationId: UUID!
 }
 
 input CreateEventInput {
