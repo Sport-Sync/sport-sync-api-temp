@@ -63,13 +63,19 @@ public class SendFriendshipRequestHandler : IRequestHandler<SendFriendshipReques
 
             if (friendshipRequestResult.IsFailure)
             {
-                _logger.LogError("Failed to send friendship request from user {userId} to friend {friendId}. Reason: {error}", 
-                    user.Id, 
-                    friend.Id, 
-                    friendshipRequestResult.Error.Message);
+                _logger.LogError("Failed to send friendship request from user {userId} to friend {friendId}. Reason: {error}",
+                    user.Id, friend.Id, friendshipRequestResult.Error.Message);
             }
 
             friendshipRequests.Add(friendshipRequestResult);
+        }
+
+        if (friendshipRequests.Any(x => x.IsFailure))
+        {
+            var countFailed = friendshipRequests.Count(x => x.IsFailure);
+
+            _logger.LogError("Failed to send {countFailed}/{totalCount} friendship request(s).",
+                countFailed, friendshipRequests.Count);
         }
 
         if (friendshipRequests.All(x => x.IsFailure))
