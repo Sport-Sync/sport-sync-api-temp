@@ -142,7 +142,8 @@ public class SportSyncDbContext : DbContext, IDbContext, IUnitOfWork
             return;
         }
 
-        foreach (ReferenceEntry referenceEntry in entityEntry.References.Where(r => r.TargetEntry.State == EntityState.Deleted))
+        foreach (ReferenceEntry referenceEntry in entityEntry.References.Where(r => 
+                     r.TargetEntry != null && r.TargetEntry?.State == EntityState.Deleted))
         {
             referenceEntry.TargetEntry.State = EntityState.Unchanged;
 
