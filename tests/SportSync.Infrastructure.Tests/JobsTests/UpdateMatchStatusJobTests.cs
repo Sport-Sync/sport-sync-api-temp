@@ -34,6 +34,7 @@ public class UpdateMatchStatusJobTests
         var scheduleFiveMinutesBeforeNow = EventSchedule.Create(DayOfWeek.Wednesday, now.Date, new DateTimeOffset(now.AddMinutes(-5), TimeSpan.Zero), new DateTimeOffset(now.AddHours(1), TimeSpan.Zero), false);
         var scheduleInOneMinutes = EventSchedule.Create(DayOfWeek.Wednesday, now.Date, new DateTimeOffset(now.AddMinutes(1), TimeSpan.Zero), new DateTimeOffset(now.AddHours(1), TimeSpan.Zero), false);
         var scheduleInFiveMinutes = EventSchedule.Create(DayOfWeek.Wednesday, now.Date, new DateTimeOffset(now.AddMinutes(5), TimeSpan.Zero), new DateTimeOffset(now.AddHours(1), TimeSpan.Zero), false);
+        var scheduleInSixMinutes = EventSchedule.Create(DayOfWeek.Wednesday, now.Date, new DateTimeOffset(now.AddMinutes(6), TimeSpan.Zero), new DateTimeOffset(now.AddHours(1), TimeSpan.Zero), false);
         var scheduleFinishedBeforeFiveMinutes = EventSchedule.Create(DayOfWeek.Wednesday, now.Date, new DateTimeOffset(now.AddHours(-2), TimeSpan.Zero), new DateTimeOffset(now.AddMinutes(-5), TimeSpan.Zero), false);
         var user = User.Create("Michael", "Scott", "michael@gmail.com", PhoneNumber.Create("0987654321").Value, "237854138");
         var ev = Event.Create(user, "Event", SportTypeEnum.Football, "address", 2, 10, null);
@@ -44,6 +45,7 @@ public class UpdateMatchStatusJobTests
         var matchFiveMinutesBeforeNow = Domain.Entities.Match.Create(ev, now, scheduleFiveMinutesBeforeNow);
         var matchInOneMinute = Domain.Entities.Match.Create(ev, now, scheduleInOneMinutes);
         var matchInFiveMinutes = Domain.Entities.Match.Create(ev, now, scheduleInFiveMinutes);
+        var matchInSixMinutes = Domain.Entities.Match.Create(ev, now, scheduleInSixMinutes);
         var matchPendingButFinishedBeforeFiveMinutes = Domain.Entities.Match.Create(ev, now, scheduleFinishedBeforeFiveMinutes);
         var matchInProgressFinishedBeforeFiveMinutes = Domain.Entities.Match.Create(ev, now, scheduleFinishedBeforeFiveMinutes);
         matchInProgressFinishedBeforeFiveMinutes.SetStatus(MatchStatusEnum.InProgress);
@@ -56,6 +58,7 @@ public class UpdateMatchStatusJobTests
             matchFiveMinutesBeforeNow,
             matchInOneMinute,
             matchInFiveMinutes,
+            matchInSixMinutes,
             matchPendingButFinishedBeforeFiveMinutes,
             matchInProgressFinishedBeforeFiveMinutes
         }.AsQueryable();
@@ -81,8 +84,9 @@ public class UpdateMatchStatusJobTests
         matchOneMinuteBeforeNow.Status.Should().Be(MatchStatusEnum.InProgress);
         matchOneHourBeforeNow.Status.Should().Be(MatchStatusEnum.InProgress);
         matchFiveMinutesBeforeNow.Status.Should().Be(MatchStatusEnum.InProgress);
-        matchInOneMinute.Status.Should().Be(MatchStatusEnum.Pending);
-        matchInFiveMinutes.Status.Should().Be(MatchStatusEnum.Pending);
+        matchInOneMinute.Status.Should().Be(MatchStatusEnum.InProgress);
+        matchInFiveMinutes.Status.Should().Be(MatchStatusEnum.InProgress);
+        matchInSixMinutes.Status.Should().Be(MatchStatusEnum.Pending);
         matchPendingButFinishedBeforeFiveMinutes.Status.Should().Be(MatchStatusEnum.InProgress);
         matchInProgressFinishedBeforeFiveMinutes.Status.Should().Be(MatchStatusEnum.Finished);
 

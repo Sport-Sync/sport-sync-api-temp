@@ -56,7 +56,7 @@ public class UpdateMatchStatusJob : IJob
 
         foreach (var pendingMatch in pendingMatches)
         {
-            if (pendingMatch.StartTime.UtcDateTime < now)
+            if (pendingMatch.StartTime.UtcDateTime <= now.AddMinutes(5))
             {
                 pendingMatch.SetStatus(MatchStatusEnum.InProgress);
                 pendingMatch.RemoveAnnouncement();
