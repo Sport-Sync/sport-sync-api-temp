@@ -221,7 +221,7 @@ public class Match : AggregateRoot
             return Result.Failure<MatchApplication>(isPendingResult.Error);
         }
 
-        var canApply = IsValidApplicant(user);
+        var canApply = CanUserApplyForMatch(user);
 
         if (canApply.IsFailure)
         {
@@ -240,7 +240,7 @@ public class Match : AggregateRoot
         return _players.Any(x => x.UserId == userId);
     }
 
-    private Result IsValidApplicant(User user)
+    private Result CanUserApplyForMatch(User user)
     {
         if (IsPlayer(user.Id))
         {
@@ -249,7 +249,7 @@ public class Match : AggregateRoot
 
         if (!Announced)
         {
-            return Result.Failure(DomainErrors.MatchApplication.NotAnnounced);
+            return Result.Failure<MatchApplication>(DomainErrors.MatchApplication.NotAnnounced);
         }
 
         if (PubliclyAnnounced)
