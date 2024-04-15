@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportSync.Persistence;
 
@@ -11,9 +12,11 @@ using SportSync.Persistence;
 namespace SportSync.Persistence.Migrations
 {
     [DbContext(typeof(SportSyncDbContext))]
-    partial class SportSyncDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240415120657_AddTeamsTable")]
+    partial class AddTeamsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -550,6 +553,9 @@ namespace SportSync.Persistence.Migrations
                     b.Property<Guid>("EventId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("EventId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("datetime2");
 
@@ -560,6 +566,8 @@ namespace SportSync.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("EventId1");
 
                     b.ToTable("Teams", (string)null);
                 });
@@ -809,10 +817,14 @@ namespace SportSync.Persistence.Migrations
             modelBuilder.Entity("SportSync.Domain.Entities.Team", b =>
                 {
                     b.HasOne("SportSync.Domain.Entities.Event", null)
-                        .WithMany("Teams")
+                        .WithMany()
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("SportSync.Domain.Entities.Event", null)
+                        .WithMany("Teams")
+                        .HasForeignKey("EventId1");
                 });
 
             modelBuilder.Entity("SportSync.Domain.Entities.User", b =>

@@ -29,6 +29,7 @@ public class SchemaChangeTest
             .AddType<NotificationMutation>()
             .AddType<MatchMutation>()
             .AddType<EventMutation>()
+            .AddType<TeamMutation>()
             .AddType<FriendshipMutation>()
             .BuildSchemaAsync();
 
