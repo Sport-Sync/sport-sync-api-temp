@@ -124,6 +124,10 @@ public static class DomainErrors
             "MatchApplication.AlreadyRejected",
             "The application has already been rejected.");
 
+        public static Error AlreadyCanceled => new Error(
+            "MatchApplication.AlreadyCanceled",
+            "The application has already been canceled by user.");
+
         public static Error AlreadyPlayer => new Error(
             "MatchApplication.AlreadyPlayer",
             "The user is already a player in this match.");

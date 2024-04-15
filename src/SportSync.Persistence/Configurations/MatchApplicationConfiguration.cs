@@ -32,6 +32,8 @@ internal class MatchApplicationConfiguration : IEntityTypeConfiguration<MatchApp
 
         builder.Property(application => application.Rejected).HasDefaultValue(false);
 
+        builder.Property(application => application.Canceled).HasDefaultValue(false);
+
         builder.Property(application => application.CompletedOnUtc);
 
         builder.Property(application => application.CreatedOnUtc).IsRequired();

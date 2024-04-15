@@ -3,6 +3,7 @@ using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
 using SportSync.Domain.DomainEvents;
+using static SportSync.Domain.Core.Errors.DomainErrors;
 
 namespace SportSync.Domain.Entities;
 
@@ -39,6 +40,8 @@ public class MatchApplication : AggregateRoot
 
     public bool Rejected { get; private set; }
 
+    public bool Canceled { get; private set; }
+
     public DateTime? CompletedOnUtc { get; private set; }
 
     public bool Completed => CompletedOnUtc != null;
@@ -58,6 +61,11 @@ public class MatchApplication : AggregateRoot
         if (Rejected)
         {
             return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
+        }
+
+        if (Canceled)
+        {
+            return Result.Failure(DomainErrors.MatchApplication.AlreadyCanceled);
         }
 
         var matchAnnouncement = match.Announcement;
@@ -89,10 +97,48 @@ public class MatchApplication : AggregateRoot
         {
             return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
         }
+
+        if (Canceled)
+        {
+            return Result.Failure(DomainErrors.MatchApplication.AlreadyCanceled);
+        }
+
         Rejected = true;
 
         CompletedOnUtc = utcNow;
         CompletedByUserId = user.Id;
+
+        return Result.Success();
+    }
+
+    public Result Cancel(User user, DateTime utcNow)
+    {
+        if (AppliedByUserId != user.Id)
+        {
+            return Result.Failure(DomainErrors.User.Forbidden);
+        }
+
+        if (Accepted)
+        {
+            return Result.Failure(DomainErrors.MatchApplication.AlreadyAccepted);
+        }
+
+        if (Rejected)
+        {
+            return Result.Failure(DomainErrors.MatchApplication.AlreadyRejected);
+        }
+
+        if (Canceled)
+        {
+            return Result.Failure(DomainErrors.MatchApplication.AlreadyCanceled);
+        }
+
+        Canceled = true;
+
+        CompletedOnUtc = utcNow;
+        CompletedByUserId = user.Id;
+
+        RaiseDomainEvent(new MatchApplicationCanceledDomainEvent(this));
 
         return Result.Success();
     }

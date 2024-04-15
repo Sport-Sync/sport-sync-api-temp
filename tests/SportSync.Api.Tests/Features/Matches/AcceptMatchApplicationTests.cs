@@ -93,6 +93,7 @@ public class AcceptMatchApplicationTests : IntegrationTest
         var matchApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
         matchApplication.Accepted.Should().BeTrue();
         matchApplication.Rejected.Should().BeFalse();
+        matchApplication.Canceled.Should().BeFalse();
         matchApplication.CompletedOnUtc.Should().Be(completedTime);
         matchApplication.CompletedByUserId.Should().Be(adminOnEvent.Id);
     }
@@ -128,9 +129,47 @@ public class AcceptMatchApplicationTests : IntegrationTest
         result.ShouldBeFailureResult("acceptMatchApplication", DomainErrors.MatchApplication.AlreadyRejected);
         var matchApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
         matchApplication.Accepted.Should().BeFalse();
+        matchApplication.Canceled.Should().BeFalse();
         matchApplication.Rejected.Should().BeTrue();
         matchApplication.CompletedOnUtc.Should().Be(completedTime);
         matchApplication.CompletedByUserId.Should().Be(adminOnEvent.Id);
+    }
+
+    [Fact]
+    public async Task AcceptMatchApplication_ShouldFail_WhenApplicationIsAlreadyCanceled()
+    {
+        var completedTime = DateTime.UtcNow;
+
+        var user = Database.AddUser();
+        var applicant = Database.AddUser("applicant");
+        var adminOnEvent = Database.AddUser("admin");
+        var match = Database.AddMatch(adminOnEvent, startDate: DateTime.Today.AddDays(1));
+        match.AddPlayers(new List<Guid>() { user.Id });
+        match.Announce(adminOnEvent, true, 3, string.Empty);
+
+        var application = Database.AddMatchApplication(applicant, match);
+
+        await Database.SaveChangesAsync();
+        application.Cancel(applicant, completedTime);
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(adminOnEvent.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    acceptMatchApplication(input: {{ 
+                        matchApplicationId: ""{application.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeFailureResult("acceptMatchApplication", DomainErrors.MatchApplication.AlreadyCanceled);
+        var matchApplication = Database.DbContext.Set<MatchApplication>().First(x => x.MatchId == match.Id);
+        matchApplication.Accepted.Should().BeFalse();
+        matchApplication.Rejected.Should().BeFalse();
+        matchApplication.Canceled.Should().BeTrue();
+        matchApplication.CompletedOnUtc.Should().Be(completedTime);
+        matchApplication.CompletedByUserId.Should().Be(applicant.Id);
     }
 
     [Fact]
