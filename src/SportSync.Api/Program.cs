@@ -45,6 +45,7 @@ public class Program
             .AddType<UploadType>()
             .AddType<UserQuery>()
             .AddType<NotificationQuery>()
+            .AddType<EventQuery>()
             .AddType<MatchQuery>()
             .AddType<FriendshipQuery>()
             .AddMutationType(q => q.Name("Mutation"))

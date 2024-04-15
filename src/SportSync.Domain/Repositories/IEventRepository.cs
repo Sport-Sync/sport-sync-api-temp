@@ -12,4 +12,5 @@ public interface IEventRepository
     Task EnsureUserIsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken);
     Task<bool> IsAdminOnEvent(Guid eventId, Guid userId, CancellationToken cancellationToken);
     Task<List<Guid>> GetEventIdsThatUserIsAdminOn(Guid userId, CancellationToken cancellationToken);
+    Task<List<Event>> GetEventsByUserId(Guid userId, CancellationToken cancellationToken);
 }
