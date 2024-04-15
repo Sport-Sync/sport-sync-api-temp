@@ -1,4 +1,5 @@
 ﻿using SportSync.Domain.Core.Errors;
+using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.Core.Primitives;
 using SportSync.Domain.Core.Primitives.Result;
 using SportSync.Domain.Core.Utility;
@@ -13,6 +14,7 @@ public class Event : AggregateRoot
     private readonly HashSet<EventMember> _members = new();
     private readonly HashSet<EventSchedule> _schedules = new();
     private readonly HashSet<EventInvitation> _invitations = new();
+    private readonly HashSet<Team> _teams = new();
 
     private Event(User creator, string name, SportTypeEnum sportType, string address, decimal price, int numberOfPlayers, string notes, params Guid[] memberIds)
         : base(Guid.NewGuid())
@@ -52,6 +54,7 @@ public class Event : AggregateRoot
 
     public IReadOnlyCollection<EventSchedule> Schedules => _schedules.ToList();
     public IReadOnlyCollection<EventInvitation> Invitations => _invitations.ToList();
+    public IReadOnlyCollection<Team> Teams => _teams.ToList();
     public IReadOnlyCollection<EventMember> Members => _members.ToList();
     public List<Guid> MemberUserIds => _members.Select(m => m.UserId).ToList();
 
@@ -203,5 +206,19 @@ public class Event : AggregateRoot
         {
             _members.Add(EventMember.Create(userId, Id));
         }
+    }
+
+    public Team AddTeam(Guid userId, string teamName)
+    {
+        if (!IsAdmin(userId))
+        {
+            throw new DomainException(DomainErrors.User.Forbidden);
+        }
+
+        var team = Team.Create(teamName, Id);
+
+        _teams.Add(team);
+
+        return team;
     }
 }

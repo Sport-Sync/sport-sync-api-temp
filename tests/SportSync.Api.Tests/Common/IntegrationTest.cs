@@ -59,6 +59,7 @@ public class IntegrationTest : IDisposable
             .AddType<UserMutation>()
             .AddType<NotificationMutation>()
             .AddType<EventMutation>()
+            .AddType<TeamMutation>()
             .AddType<FriendshipMutation>()
             .AddConvention<INamingConventions>(new EnumNamingConvention())
             .AddFluentValidation(x => x.UseErrorMapper((errorBuilder, context) =>

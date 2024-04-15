@@ -35,8 +35,6 @@ type FriendshipRequestType {
   id: UUID!
   userId: UUID!
   friendId: UUID!
-  accepted: Boolean!
-  rejected: Boolean!
   sender: UserType
 }
 
@@ -133,6 +131,7 @@ type Mutation {
   sendEventInvitation(input: SendEventInvitationInput): Result @authorize
   acceptEventInvitation(input: EventInvitationInput): Result @authorize
   rejectEventInvitation(input: EventInvitationInput): Result @authorize
+  createTeam(input: CreateTeamInput): TeamType @authorize
   sendFriendshipRequest(input: SendFriendshipRequestInput): Result @authorize
   acceptFriendshipRequest(input: FriendshipRequestInput): Result @authorize
   rejectFriendshipRequest(input: FriendshipRequestInput): Result @authorize
@@ -190,6 +189,12 @@ type SetMatchAttendanceResponse {
   players: [PlayerType!]!
 }
 
+type TeamType {
+  id: UUID!
+  eventId: UUID!
+  name: String
+}
+
 type TokenResponse {
   token: String!
 }
@@ -232,6 +237,11 @@ input CreateEventInput {
   numberOfPlayers: Int!
   notes: String
   eventTime: [TimeInput!]!
+}
+
+input CreateTeamInput {
+  eventId: UUID!
+  name: String!
 }
 
 input CreateUserInput {
