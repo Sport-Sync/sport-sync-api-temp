@@ -8,6 +8,16 @@ type Error {
   message: String
 }
 
+type EventType {
+  id: UUID!
+  name: String
+  sportType: SportTypeEnum!
+  address: String
+  price: Decimal!
+  numberOfPlayers: Int!
+  notes: String
+}
+
 type ExtendedUserType {
   mutualFriends: [UserType]
   pendingFriendshipRequestId: UUID
@@ -161,6 +171,7 @@ type Query {
   userProfile(input: GetUserProfileInput): UserProfileResponse @authorize
   users(input: GetUsersInput): PagedListOfExtendedUserType @authorize
   notifications(input: GetNotificationsInput): GetNotificationsResponse @authorize
+  events: [EventType] @authorize
   datesByDayOfWeek(input: GetDatesByDayOfWeekInput): GetDatesByDayOfWeekResponse
   matches(input: GetMatchesInput): GetMatchesResponse @authorize
   matchById(input: GetMatchByIdInput): GetMatchByIdResponse @authorize

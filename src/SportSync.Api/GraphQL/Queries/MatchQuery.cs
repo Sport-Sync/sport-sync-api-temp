@@ -16,14 +16,12 @@ public class MatchQuery
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    [UseProjection]
     public async Task<GetMatchesResponse> GetMatches(
         [Service] GetMatchesRequestHandler requestHandler,
         GetMatchesInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 
     [Authorize]
-    [UseProjection]
     public async Task<GetMatchByIdResponse> GetMatchById(
         [Service] GetMatchByIdRequestHandler requestHandler,
         GetMatchByIdInput input,

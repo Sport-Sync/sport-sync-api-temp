@@ -67,4 +67,12 @@ internal sealed class EventRepository : GenericRepository<Event>, IEventReposito
             .Select(m => m.EventId)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<List<Event>> GetEventsByUserId(Guid userId, CancellationToken cancellationToken)
+    {
+        return await DbContext.Set<Event>()
+            .Where(e => e.Members.Select(m => m.UserId).Contains(userId))
+            .OrderBy(e => e.Name)
+            .ToListAsync(cancellationToken);
+    }
 }
