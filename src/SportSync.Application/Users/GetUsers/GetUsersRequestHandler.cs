@@ -41,6 +41,8 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<E
 
         var usersQuery = _userRepository.Where(u =>
                 u.Id != currentUserId &&
+                u.FriendInvitees.All(x => x.UserId != currentUserId) && 
+                u.FriendInviters.All(x => x.FriendId != currentUserId) &&
                 (request.Search == null || u.FirstName.StartsWith(request.Search) || u.LastName.StartsWith(request.Search)))
             .OrderBy(u => u.FirstName);
 
