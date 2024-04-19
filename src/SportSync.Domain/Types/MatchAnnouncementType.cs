@@ -25,8 +25,8 @@ public class MatchAnnouncementType
         MatchId = match.Announcement.MatchId;
         Address = match.Address;
         Date = match.Date;
-        StartTime = match.StartTime.DateTime.ToUniversalTime();
-        EndTime = match.EndTime.DateTime.ToUniversalTime();
+        StartTime = match.StartTime.UtcDateTime;
+        EndTime = match.EndTime.UtcDateTime;
         SportType = match.SportType;
         PlayerLimit = match.Announcement.PlayerLimit;
         AcceptedPlayersCount = match.Announcement.AcceptedPlayersCount;
