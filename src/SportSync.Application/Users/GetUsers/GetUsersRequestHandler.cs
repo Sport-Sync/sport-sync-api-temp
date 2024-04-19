@@ -65,11 +65,10 @@ public class GetUsersRequestHandler : IRequestHandler<GetUsersInput, PagedList<E
 
         foreach (var user in usersPage)
         {
-            var isFriendWithCurrentUser = user.IsFriendWith(currentUserId);
             var pendingFriendshipRequest = friendshipRequests.FirstOrDefault(x => x.FriendId == user.Id || x.UserId == user.Id);
             var mutualFriends = await new FriendshipService(_userRepository).GetMutualFriends(currentUser, user, currentUserFriends, cancellationToken);
 
-            usersResult.Add(new ExtendedUserType(user, isFriendWithCurrentUser, pendingFriendshipRequest, mutualFriends));
+            usersResult.Add(new ExtendedUserType(user, false, pendingFriendshipRequest, mutualFriends));
         }
 
         return new PagedList<ExtendedUserType>(usersResult, request.Page, request.PageSize, totalCount, firstPageSize);
