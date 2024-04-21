@@ -28,6 +28,7 @@ public class GetNotificationsRequestHandler : IRequestHandler<GetNotificationsIn
 
         var notifications = await _notificationRepository
             .Where(x => x.UserId == _userIdentifierProvider.UserId)
+            .OrderByDescending(x => x.CreatedOnUtc)
             .AsNoTracking()
             .Take(request.Count)
             .Select(NotificationType.PropertySelector)

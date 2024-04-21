@@ -143,6 +143,7 @@ type NotificationType {
   notificationId: UUID!
   resourceId: UUID
   type: NotificationTypeEnum!
+  dateTime: DateTime!
   content: String
   completed: Boolean!
 }
