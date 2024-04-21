@@ -31,7 +31,7 @@ public class CreateNotificationOnMatchApplicationHandler : IDomainEventHandler<M
                 Notification.Create(
                     admin.UserId,
                     NotificationTypeEnum.MatchApplicationReceived,
-                    NotificationContentData.Create(matchApplication.AppliedByUser.FullName, match.EventName, match.Date.ToShortDateString()),
+                    NotificationContentData.Create(matchApplication.AppliedByUser.FullName, match.EventName, match.Date.ToString("dd.MM.yyyy.")),
                     matchApplication.AppliedByUserId)
                 .WithEntitySource(matchApplication.Id);
 

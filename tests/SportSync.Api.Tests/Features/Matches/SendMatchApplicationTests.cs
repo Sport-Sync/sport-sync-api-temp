@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using SportSync.Api.Tests.Common;
 using SportSync.Api.Tests.Extensions;
+using SportSync.Application.Core.Extensions;
 using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
@@ -213,7 +214,7 @@ public class SendMatchApplicationTests : IntegrationTest
             notification.CompletedOnUtc.Should().BeNull();
             notification.ResourceId.Should().Be(applicant.Id);
             notification.Type.Should().Be(NotificationTypeEnum.MatchApplicationReceived);
-            notification.ContentData.Data.Should().BeEquivalentTo(applicant.FullName, @event.Name, match.Date.ToShortDateString());
+            notification.ContentData.Data.Should().BeEquivalentTo(applicant.FullName, @event.Name, match.Date.ToDateString());
         }
     }
 }

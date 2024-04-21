@@ -1,4 +1,5 @@
-﻿using SportSync.Domain.Core.Events;
+﻿using SportSync.Application.Core.Extensions;
+using SportSync.Domain.Core.Events;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
@@ -30,7 +31,7 @@ public class CreateNotificationOnMatchAnnouncedToFriendsHandler : IDomainEventHa
             var notification = Notification.Create(
                 friendId,
                 NotificationTypeEnum.MatchAnnouncedByFriend,
-                NotificationContentData.Create(user.FullName, match.EventName, match.Date.ToShortDateString()),
+                NotificationContentData.Create(user.FullName, match.EventName, match.Date.ToDateString()),
                 match.Id);
 
             notifications.Add(notification);
