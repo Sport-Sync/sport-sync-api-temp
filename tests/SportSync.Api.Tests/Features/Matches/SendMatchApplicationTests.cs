@@ -201,7 +201,7 @@ public class SendMatchApplicationTests : IntegrationTest
         application.Accepted.Should().BeFalse();
         application.CompletedOnUtc.Should().BeNull();
 
-        var notifications = Database.DbContext.Set<Notification>().Where(x => x.ResourceId == match.Id);
+        var notifications = Database.DbContext.Set<Notification>().Where(x => x.ResourceId == applicant.Id);
         notifications.Count().Should().Be(2);
 
         notifications.FirstOrDefault(x => x.UserId == admin1.Id && x.Type == NotificationTypeEnum.MatchApplicationReceived).Should().NotBeNull();
@@ -211,7 +211,7 @@ public class SendMatchApplicationTests : IntegrationTest
         {
             notification.Completed.Should().BeFalse();
             notification.CompletedOnUtc.Should().BeNull();
-            notification.ResourceId.Should().Be(match.Id);
+            notification.ResourceId.Should().Be(applicant.Id);
             notification.Type.Should().Be(NotificationTypeEnum.MatchApplicationReceived);
             notification.ContentData.Data.Should().BeEquivalentTo(applicant.FullName, @event.Name, match.Date.ToShortDateString());
         }

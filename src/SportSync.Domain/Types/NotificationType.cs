@@ -11,6 +11,7 @@ public class NotificationType
     public Guid NotificationId { get; set; }
     public Guid? ResourceId { get; set; }
     public NotificationTypeEnum Type { get; set; }
+    public DateTime DateTime { get; set; }
     public string Content { get; set; }
     [GraphQLIgnore]
     public NotificationContentData ContentData { get; set; }
@@ -19,6 +20,7 @@ public class NotificationType
     public static Expression<Func<Notification, NotificationType>> PropertySelector = x => new NotificationType
     {
         NotificationId = x.Id,
+        DateTime = x.CreatedOnUtc,
         Type = x.Type,
         ResourceId = x.ResourceId,
         ContentData = x.ContentData,
