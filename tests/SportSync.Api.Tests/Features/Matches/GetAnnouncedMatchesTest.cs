@@ -117,7 +117,7 @@ public class GetAnnouncedMatchesTest : IntegrationTest
                 query {{
                     announcedMatches(input: {{date: ""{tomorrow.Date}""}}){{
                         matches{{
-                            matchId, playerLimit
+                            matchId, maxApplicationsThatCanBeAccepted
                         }}
                     }}
                 }}"));
@@ -125,8 +125,8 @@ public class GetAnnouncedMatchesTest : IntegrationTest
         var response = result.ToResponseObject<GetAnnouncedMatchesResponse>("announcedMatches");
         response.Matches.Count.Should().Be(2);
         response.Matches.FirstOrDefault(x => x.MatchId == privateMatchFriend.Id).Should().NotBeNull();
-        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchFriend.Id).PlayerLimit.Should().Be(3);
+        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchFriend.Id).MaxApplicationsThatCanBeAccepted.Should().Be(3);
         response.Matches.FirstOrDefault(x => x.MatchId == privateMatchBothUsersAnnouncedByFriend.Id).Should().NotBeNull();
-        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchBothUsersAnnouncedByFriend.Id).PlayerLimit.Should().Be(6);
+        response.Matches.FirstOrDefault(x => x.MatchId == privateMatchBothUsersAnnouncedByFriend.Id).MaxApplicationsThatCanBeAccepted.Should().Be(6);
     }
 }
