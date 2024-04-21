@@ -162,4 +162,18 @@ public class User : AggregateRoot
     {
         return Friends.Any(id => id == friendId);
     }
+
+    public Result AddFriendToMatch(Guid friendId, Match match)
+    {
+        if (!IsFriendWith(friendId))
+        {
+            return Result.Failure(DomainErrors.User.NotFriends);
+        }
+
+        match.AddPlayer(friendId);
+
+        RaiseDomainEvent(new FriendAddedToMatchDomainEvent(this, friendId, match));
+
+        return Result.Success();
+    }
 }

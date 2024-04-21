@@ -17,6 +17,8 @@ public static class DomainErrors
 
         public static Error Forbidden => new("User.Forbidden", "The current user does not have the permissions to perform this operation.");
 
+        public static Error NotFriends => new("User.NotFriends", "The users are not friends.");
+
         public static Error CannotChangePassword => new (
             "User.CannotChangePassword",
             "The password cannot be changed to the specified password.");
