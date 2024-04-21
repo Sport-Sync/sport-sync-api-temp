@@ -1,4 +1,5 @@
-﻿using SportSync.Domain.Core.Errors;
+﻿using SportSync.Application.Core.Extensions;
+using SportSync.Domain.Core.Errors;
 using SportSync.Domain.Core.Events;
 using SportSync.Domain.Core.Exceptions;
 using SportSync.Domain.DomainEvents;
@@ -42,7 +43,7 @@ public class CreateNotificationOnMatchApplicationAcceptedHandler : IDomainEventH
             Notification.Create(
                     matchApplication.AppliedByUserId,
                     NotificationTypeEnum.MatchApplicationAccepted,
-                    NotificationContentData.Create(acceptedByUser.FullName, match.EventName, match.Date.ToShortDateString()),
+                    NotificationContentData.Create(acceptedByUser.FullName, match.EventName, match.Date.ToDateString()),
                     match.Id);
 
         _notificationRepository.Insert(notification);

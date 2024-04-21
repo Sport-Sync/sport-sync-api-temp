@@ -17,9 +17,9 @@ public class CreateEventRequestValidator : AbstractValidator<CreateEventInput>
             .Must(x => x.StartTime <= x.EndTime)
             .WithMessage("StartTime needs to be earlier than EndTime.")
             .Must(x => x.StartDate.Date == x.StartTime.DateTime.Date)
-            .WithMessage("StartTime needs at the same date as StartDate.")
+            .WithMessage("StartTime needs to have the same date as StartDate.")
             .Must(x => x.StartDate.Date == x.EndTime.DateTime.Date)
-            .WithMessage("EndTime needs at the same date as StartDate.")
+            .WithMessage("EndTime needs to have the same date as StartDate.")
             .Must(x => x.StartDate.DayOfWeek == x.DayOfWeek)
             .WithMessage("StartDate should be on the same day as 'DayOfWeek' input.");
 
