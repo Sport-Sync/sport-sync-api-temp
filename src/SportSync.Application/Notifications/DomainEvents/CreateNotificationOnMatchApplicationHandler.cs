@@ -1,4 +1,5 @@
-﻿using SportSync.Domain.Core.Events;
+﻿using SportSync.Application.Core.Extensions;
+using SportSync.Domain.Core.Events;
 using SportSync.Domain.DomainEvents;
 using SportSync.Domain.Entities;
 using SportSync.Domain.Enumerations;
@@ -31,7 +32,7 @@ public class CreateNotificationOnMatchApplicationHandler : IDomainEventHandler<M
                 Notification.Create(
                     admin.UserId,
                     NotificationTypeEnum.MatchApplicationReceived,
-                    NotificationContentData.Create(matchApplication.AppliedByUser.FullName, match.EventName, match.Date.ToString("dd.MM.yyyy.")),
+                    NotificationContentData.Create(matchApplication.AppliedByUser.FullName, match.EventName, match.Date.ToDateString()),
                     matchApplication.AppliedByUserId)
                 .WithEntitySource(matchApplication.Id);
 
