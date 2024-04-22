@@ -31,6 +31,7 @@ public static class DomainErrors
         public static Error AlreadyFinished => new("Match.AlreadyFinished", "The match has already finished.");
         public static Error InProgress => new("Match.InProgress", "The match is in progress.");
         public static Error Canceled => new("Match.Canceled", "The match has been canceled.");
+        public static Error AlreadyPlayer => new ("Match.AlreadyPlayer", "The user is already a player in this match.");
     }
 
     public static class Event
@@ -129,10 +130,6 @@ public static class DomainErrors
         public static Error AlreadyCanceled => new Error(
             "MatchApplication.AlreadyCanceled",
             "The application has already been canceled by user.");
-
-        public static Error AlreadyPlayer => new Error(
-            "MatchApplication.AlreadyPlayer",
-            "The user is already a player in this match.");
 
         public static Error NotAnnounced => new Error(
             "MatchApplication.NotAnnounced",

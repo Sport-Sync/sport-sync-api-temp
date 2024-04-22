@@ -170,6 +170,11 @@ public class User : AggregateRoot
             return Result.Failure(DomainErrors.Match.PlayerNotFound);
         }
 
+        if (match.IsPlayer(friendId))
+        {
+            return Result.Failure(DomainErrors.Match.AlreadyPlayer);
+        }
+
         if (!IsFriendWith(friendId))
         {
             return Result.Failure(DomainErrors.User.NotFriends);

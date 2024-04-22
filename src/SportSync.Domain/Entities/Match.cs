@@ -244,7 +244,7 @@ public class Match : AggregateRoot
     {
         if (IsPlayer(user.Id))
         {
-            return Result.Failure<MatchApplication>(DomainErrors.MatchApplication.AlreadyPlayer);
+            return Result.Failure<MatchApplication>(DomainErrors.Match.AlreadyPlayer);
         }
 
         if (!Announced)

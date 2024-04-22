@@ -95,6 +95,31 @@ public class AddFriendToMatchTests : IntegrationTest
         result.ShouldBeFailureResult("addFriendToMatch", DomainErrors.User.NotFriends);
     }
 
+    [Fact]
+    public async Task AddFriendToMatch_ShouldFail_WhenFriendIsAlreadyPlayer()
+    {
+        var user = Database.AddUser();
+        var friend = Database.AddUser();
+        var match = Database.AddMatch(user);
+
+        user.AddFriend(friend);
+        match.AddPlayer(friend.Id);
+
+        await Database.SaveChangesAsync();
+
+        UserIdentifierMock.Setup(x => x.UserId).Returns(user.Id);
+
+        var result = await ExecuteRequestAsync(
+            q => q.SetQuery(@$"
+                    mutation {{
+                    addFriendToMatch(input: {{ 
+                        matchId: ""{match.Id}"", friendId: ""{friend.Id}"" }}){{
+                            isSuccess, isFailure, error{{ message, code }}
+                        }}}}"));
+
+        result.ShouldBeFailureResult("addFriendToMatch", DomainErrors.Match.AlreadyPlayer);
+    }
+
     [Theory]
     [InlineData(MatchStatusEnum.InProgress, false)]
     [InlineData(MatchStatusEnum.Canceled, false)]

@@ -33,7 +33,7 @@ public class SendMatchApplicationTests : IntegrationTest
                     }}
                 }}"));
 
-        result.ShouldBeFailureResult("sendMatchApplication", DomainErrors.MatchApplication.AlreadyPlayer);
+        result.ShouldBeFailureResult("sendMatchApplication", DomainErrors.Match.AlreadyPlayer);
 
         var application = Database.DbContext.Set<MatchApplication>()
             .FirstOrDefault(x => x.AppliedByUserId == player.Id && x.MatchId == match.Id);
