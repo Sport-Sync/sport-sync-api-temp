@@ -74,8 +74,9 @@ type MatchAnnouncementType {
   sportType: SportTypeEnum!
   address: String
   price: Decimal!
-  playerLimit: Int!
-  acceptedPlayersCount: Int!
+  maxApplicationsThatCanBeAccepted: Int!
+  acceptedApplicationsCount: Int!
+  playersInMatchCount: Int!
   description: String
   typeOfAnnouncement: MatchAnnouncementTypeEnum!
   currentUserAlreadyApplied: Boolean!
