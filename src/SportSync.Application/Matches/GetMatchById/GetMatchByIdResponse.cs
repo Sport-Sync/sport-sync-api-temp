@@ -6,7 +6,7 @@ namespace SportSync.Application.Matches.GetMatchById;
 public class GetMatchByIdResponse
 {
     public bool IsCurrentUserAdmin { get; set; }
-    public bool CurrentUserHasPermissionToActOnMatchApplications { get; set; }
+    public bool CurrentUserHasPermissionToCancelAnnouncement { get; set; }
     public MatchType Match { get; set; }
     public MatchAttendanceType Attendance { get; set; }
     public List<UserType> PendingApplicants { get; set; }

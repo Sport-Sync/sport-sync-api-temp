@@ -54,14 +54,14 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
             .Select(x => new UserType(x.AppliedByUser))
             .ToArray();
 
-        var currentUserCanActOnMatchApplications = isCurrentUserAdmin ||
+        var canCurrentUserCancelAnnouncement = isCurrentUserAdmin ||
                                                    (match.PrivatelyAnnounced && match.Announcement?.UserId == currentUserId);
 
         var response = new GetMatchByIdResponse
         {
             Match = MatchType.FromMatch(match),
             IsCurrentUserAdmin = isCurrentUserAdmin,
-            CurrentUserHasPermissionToActOnMatchApplications = currentUserCanActOnMatchApplications,
+            CurrentUserHasPermissionToCancelAnnouncement = canCurrentUserCancelAnnouncement,
             PendingApplicants = pendingApplicants.ToList(),
             Attendance = new MatchAttendanceType()
             {
