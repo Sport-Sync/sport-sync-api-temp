@@ -127,6 +127,7 @@ type Mutation {
   cancelMatchApplication(input: CancelMatchApplicationInput): Result @authorize
   acceptMatchApplication(input: MatchApplicationInput): Result @authorize
   rejectMatchApplication(input: MatchApplicationInput): Result @authorize
+  addFriendToMatch(input: AddFriendToMatchInput): Result @authorize
   createEvent(input: CreateEventInput): UUID! @authorize
   sendEventInvitation(input: SendEventInvitationInput): Result @authorize
   acceptEventInvitation(input: EventInvitationInput): Result @authorize
@@ -212,6 +213,11 @@ type UserType {
   email: String
   phone: String
   imageUrl: String
+}
+
+input AddFriendToMatchInput {
+  friendId: UUID!
+  matchId: UUID!
 }
 
 input AnnounceMatchInput {
@@ -393,6 +399,7 @@ enum NotificationTypeEnum {
   MEMBER_JOINED_EVENT
   MATCH_ANNOUNCED_BY_FRIEND
   MATCH_APPLICATION_ACCEPTED
+  ADDED_TO_MATCH_BY_FRIEND
 }
 
 enum SportTypeEnum {

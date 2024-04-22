@@ -7,7 +7,7 @@ using SportSync.Domain.Entities;
 namespace SportSync.Api.Tests.Features.Matches;
 
 [Collection("IntegrationTests")]
-public class GetAnnouncedMatchesTest : IntegrationTest
+public class GetAnnouncedMatchesTests : IntegrationTest
 {
     [Fact]
     public async Task GetAnnouncedMatches_ShouldReturnOnlyPublic_WhenUserHasNoFriends()

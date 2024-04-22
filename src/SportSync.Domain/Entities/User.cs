@@ -165,9 +165,21 @@ public class User : AggregateRoot
 
     public Result AddFriendToMatch(Guid friendId, Match match)
     {
+        if (!match.IsPlayer(Id))
+        {
+            return Result.Failure(DomainErrors.Match.PlayerNotFound);
+        }
+
         if (!IsFriendWith(friendId))
         {
             return Result.Failure(DomainErrors.User.NotFriends);
+        }
+
+        var matchPendingResult = match.ValidateItIsPendingStatus();
+
+        if (matchPendingResult.IsFailure)
+        {
+            return matchPendingResult;
         }
 
         match.AddPlayer(friendId);
