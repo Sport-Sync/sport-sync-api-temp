@@ -1,6 +1,7 @@
 ﻿using AppAny.HotChocolate.FluentValidation;
 using HotChocolate.Authorization;
 using SportSync.Application.Matches.AcceptMatchApplication;
+using SportSync.Application.Matches.AddFriendToMatch;
 using SportSync.Application.Matches.AnnounceMatch;
 using SportSync.Application.Matches.CancelMatchAnnouncement;
 using SportSync.Application.Matches.CancelMatchApplication;
@@ -63,5 +64,11 @@ public class MatchMutation
     public async Task<Result> RejectMatchApplication(
         [Service] RejectMatchApplicationRequestHandler requestHandler,
         MatchApplicationInput input,
+        CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
+
+    [Authorize]
+    public async Task<Result> AddFriendToMatch(
+        [Service] AddFriendToMatchRequestHandler requestHandler,
+        AddFriendToMatchInput input,
         CancellationToken cancellationToken) => await requestHandler.Handle(input, cancellationToken);
 }

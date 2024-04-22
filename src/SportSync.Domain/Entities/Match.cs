@@ -280,7 +280,7 @@ public class Match : AggregateRoot
         }
     }
 
-    private Result ValidateItIsPendingStatus()
+    public Result ValidateItIsPendingStatus()
     {
         if (Status == MatchStatusEnum.Finished)
         {

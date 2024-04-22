@@ -162,4 +162,30 @@ public class User : AggregateRoot
     {
         return Friends.Any(id => id == friendId);
     }
+
+    public Result AddFriendToMatch(Guid friendId, Match match)
+    {
+        if (!match.IsPlayer(Id))
+        {
+            return Result.Failure(DomainErrors.Match.PlayerNotFound);
+        }
+
+        if (!IsFriendWith(friendId))
+        {
+            return Result.Failure(DomainErrors.User.NotFriends);
+        }
+
+        var matchPendingResult = match.ValidateItIsPendingStatus();
+
+        if (matchPendingResult.IsFailure)
+        {
+            return matchPendingResult;
+        }
+
+        match.AddPlayer(friendId);
+
+        RaiseDomainEvent(new FriendAddedToMatchDomainEvent(this, friendId, match));
+
+        return Result.Success();
+    }
 }
