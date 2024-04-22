@@ -48,6 +48,7 @@ type GetDatesByDayOfWeekResponse {
 
 type GetMatchByIdResponse {
   isCurrentUserAdmin: Boolean!
+  currentUserHasPermissionToActOnMatchApplications: Boolean!
   match: MatchType!
   attendance: MatchAttendanceType!
   pendingApplicants: [UserType!]!

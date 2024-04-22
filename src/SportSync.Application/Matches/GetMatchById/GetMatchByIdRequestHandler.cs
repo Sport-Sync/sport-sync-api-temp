@@ -53,11 +53,15 @@ public class GetMatchByIdRequestHandler : IRequestHandler<GetMatchByIdInput, Get
         var pendingApplicants = matchApplications
             .Select(x => new UserType(x.AppliedByUser))
             .ToArray();
-        
+
+        var currentUserCanActOnMatchApplications = isCurrentUserAdmin ||
+                                                   (match.PrivatelyAnnounced && match.Announcement?.UserId == currentUserId);
+
         var response = new GetMatchByIdResponse
         {
             Match = MatchType.FromMatch(match),
             IsCurrentUserAdmin = isCurrentUserAdmin,
+            CurrentUserHasPermissionToActOnMatchApplications = currentUserCanActOnMatchApplications,
             PendingApplicants = pendingApplicants.ToList(),
             Attendance = new MatchAttendanceType()
             {
