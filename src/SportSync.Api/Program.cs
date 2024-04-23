@@ -11,6 +11,7 @@ using SportSync.Persistence;
 
 namespace SportSync.Api;
 
+
 public class Program
 {
     public static async Task Main(string[] args)
